@@ -72,7 +72,7 @@ theme: next
 deploy:
   type: git
   repository: https://github.com/lifengsofts/lifengsofts.github.io.git
-  branch: gh-pages
+  branch: master
 
 # 多说
 duoshuo_shortname: iwoblog
