@@ -3,13 +3,16 @@ node_js: stable
 
 # S: Build Lifecycle
 install:
+  - npm install hexo-cli -g
   - npm install
 
 before_script:
   - npm install gulp
 
 script:
-  - gulp dist
+  - hexo clean
+  - hexo g
+  - hexo d
 
 after_script:
   - cd dist
