@@ -3,19 +3,15 @@ node_js: stable
 
 # S: Build Lifecycle
 install:
-  - npm install hexo-cli -g
   - npm install
 
-before_script:
-  - npm install gulp
+#before_script:
+ # - npm install -g gulp
 
 script:
-  - hexo clean
   - hexo g
-  - hexo d
 
 after_script:
-  - cd dist
   - git init
   - git config user.name "lifengsofts"
   - git config user.email "lifengsofts@gmail.com"
@@ -27,8 +23,7 @@ after_script:
 branches:
   only:
     - blog-source
-
 env:
-  global:
-    - GH_REF: github.com/lifengsofts/lifengsofts.github.io.git
-    - secure: "TS0z/YgjZVwW+Gq2srmm6vGpelq9t5qiCye8yscx3WSX9oRzQejAaxV3Wz/DXx9cGXEmko9dcJTqKK9phEemfYb6hglKB3pZ/5H/CcTttRXdj28dd6YOq+C0Qdp3rQNastW5w205dvOHGKAtSlhAZNmooNz/kv6WefsafjTafn7rC3OFukdU5ojtTOjJ9zoFwFQDgeAfuS23moguQc89DWn2nYaU/J9gh7ckl1MKoFUNiwU0eOoYYYLsFzIZmp4kM9Mq7g2pw71lda1805mNObHsRDsvOllJWWQRJitBxCsg9kRadE0oQ8VX2vHVcKH2ZWmWNbcWC6nYWE2LFujOR8bMZdhIhshGFBojeEP3waFPDQyCtRQ35vjGYQu5PvoEKHEomBwNaHikWBBgWgE25GYo8csNO13w6FO3Wjn0AJVjJeybFYww30R/g9PWRBqPE6Whi10UDBkdZ1AiixzOonh99OkAY8pei+ERbP6+h6k6ILlhOU4uaSfrzDgL60DD25gWBDitGx9y2EaLF2p+XNdu0OG43XBAsIoqqzrj5bOvjPKRqRuVgGUyRWoq46TzDNr5K8hogS7RG87q69SZ20OU595aCrLU07R1q9oeet9OCaZTRD26lUivl8U4w5x29CBUETCWYnFVBn1dALBNTGgQXr8LfnIYRIe1MEIwhzg="
+ global:
+   - GH_REF: github.com/lifengsofts/lifengsofts.github.io
+   - secure: "AbnMOuFU97TFru/CEnAExWi5zMtf8z6dRCv7EkIKavPEkn2TmkUZxf6HGGbQlJoX7E1QBUsrONTZay8QF67YKKQszf0OGO/xZB9fIgDzgTOuQEcS43YMY7OE80OuJE5ShFB1rJG5ctvX2CDzjSFNtA6WdID9/mC0NQkZwACXOCf9gyPTbm3V72QL1EWGt2DNwanUDaKftiLCFIpIpi3w2IL5bpa5SCTiULZvmF9+kHcVDwiSJL/JlJoq1hlkXy3XIt1I21saLyI1JlkHfnObOqJ0yzMBt7vOZNGsQVA5SJeHRektHwths5uQiYmMcSXGZcPVeInhmxdCwp+IGwSfG3OfblcLbJwWpd18e/wgTBzBlM/QIXDLEqTRL0ZpJNJcOkDYZydJC9tZwnhhVAP8EPnJvutqmSkSLfPkQTpPABww+5Q+AHu41gwdG9XbspMHX6MF1X3cDh/Kfx/t0ov4kPCxXkdct5bC9E+dDvyK+S7idMMmQZ+gxiXBGU072FHtusbyRmkyw7gaBsCUyLeIpwzvHULC2Nd7RE3OMhJzaw0NeLhgLmzfKQLKpL8oeQuYk+1FhGc62mYNwJtylyAh466vXOkQoyqZ001iiW8WNjKQnWcOEk3+YFmMp/JYAYqFIjGtQUNXXxGq/PYYCKHUcYFquUeTitLPdhetiEwz/8w="
