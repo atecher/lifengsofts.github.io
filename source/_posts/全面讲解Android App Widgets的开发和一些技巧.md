@@ -1,5 +1,5 @@
 ---
-title: 全面讲解Android App Widgets之基本使用(一)
+title: 全面讲解Android App Widgets的开发和一些技巧
 date: 2016-5-12 10:05:05
 categories: Android
 tags: 
