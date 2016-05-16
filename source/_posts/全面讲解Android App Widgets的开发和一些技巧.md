@@ -165,6 +165,155 @@ minResizeWidth：最小可调整到的尺寸，比如：我最小尺寸是110dp�
 
 这一篇就到这里，下一篇我们会讲解Widget的高级使用，以及一个使用实例
 
+
+## 一个App有多个Widget
+
+这个就很简单了，重新再按照上面的步骤在写一个，安装完后，就可以在插件界面看到多个Widget
+
+## Widget的配置界面
+
+我都知道第一次初始化Widget时候可以弹出一个界面，配置几个Widget的一些信息，比如：背景
+
+我们创建一个ConfigActivity，并且在清单文件中配置他，由于它是系统启动，所以我们要让他能接受Intent
+
+```shell
+<activity android:name=".ConfigActivity">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+    </intent-filter>
+</activity>
+```
+
+同时这个activity也要申明到xml文件中的configure熟悉，只是全包名
+```shell
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:minWidth="180dp"
+                    android:minHeight="180dp"
+                    android:configure="cn.woblog.testappwidget.ConfigActivity"
+                    android:updatePeriodMillis="86400000"
+                    android:resizeMode="vertical|horizontal"
+                    android:previewImage="@drawable/con_preview"
+                    android:initialLayout="@layout/layout_configuration_widget"
+                    android:widgetCategory="home_screen">
+</appwidget-provider>
+```
+
+### 通过配置Activity更新Widget
+
+通过上面的实例我们发现，更新一个Widget我需要拿到id，但是我们现在是在自己的activity，那该怎么拿到呢。试想下这个界面是谁启动的，系统，没错就是他，我们通过getIntent来获取
+
+```java
+//获取id
+Intent intent = getIntent();
+Bundle extras = intent.getExtras();
+if (extras != null) {
+    mAppWidgetId = extras.getInt(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID);
+
+
+    appWidgetManager = AppWidgetManager.getInstance(this);
+}
+```
+
+然后更新布局
+
+```java
+//更新配置
+RemoteViews views = new RemoteViews(getPackageName(),
+        R.layout.layout_configuration_widget);
+
+Intent intent = new Intent(this, MainActivity.class);
+PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+// Get the layout for the App Widget and attach an on-click listener
+// to the button
+views.setOnClickPendingIntent(R.id.bt_open_app, pendingIntent);
+views.setTextColor(R.id.tv, getColor(R.color.red));
+
+appWidgetManager.updateAppWidget(mAppWidgetId, views);
+```
+
+更新完成后，设置结果返回给系统
+
+```java
+//配置完成分，返回成功
+Intent resultValue = new Intent();
+resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+setResult(RESULT_OK, resultValue);
+finish();
+```
+
+完整代码如下：
+
+```java
+
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.RemoteViews;
+
+public class ConfigActivity extends AppCompatActivity {
+
+    private int mAppWidgetId = -1;
+
+    private AppWidgetManager appWidgetManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_config);
+
+//获取id
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+
+
+            appWidgetManager = AppWidgetManager.getInstance(this);
+        }
+    }
+
+    public void changeColor(View view) {
+        if (mAppWidgetId != -1) {
+//更新配置
+            RemoteViews views = new RemoteViews(getPackageName(),
+                    R.layout.layout_configuration_widget);
+
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+// Get the layout for the App Widget and attach an on-click listener
+// to the button
+            views.setOnClickPendingIntent(R.id.bt_open_app, pendingIntent);
+            views.setTextColor(R.id.tv, getColor(R.color.red));
+
+            appWidgetManager.updateAppWidget(mAppWidgetId, views);
+
+//配置完成分，返回成功
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_OK, resultValue);
+            finish();
+        }
+
+    }
+}
+```
+
+这样我们每次新创建Widgets时他就会打开配置界面，我们就可以在这里做一些相应的配置
+
+## 使用复杂数据结构控件ListView
+
+
+
 参考：http://blog.csdn.net/jjwwmlp456/article/details/38466969
 http://www.cnblogs.com/devinzhang/archive/2012/01/26/2329790.html
 http://developer.android.com/guide/topics/appwidgets/index.html
