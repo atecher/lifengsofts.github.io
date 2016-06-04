@@ -1,3 +1,11 @@
+title: 两个surfaceview的重叠效果类似直播效果中的视频和讲义实践
+date: 2016-6-4 19:13:39
+categories: Android
+tags:
+  - SurfaceView
+---
+[TOC]
+
 ## 效果图
 
 首先还是不废话，直接上一张图，有图才有真相，不然大家看半天才发现不是我想要的效果，所以这样浪费大家的时间了
