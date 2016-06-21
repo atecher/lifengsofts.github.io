@@ -136,4 +136,4 @@ productFlavors {
     android:label="完全更改清单文件"
 ```
 
-更改完成后效果也是我们想要的，好了今天就到这里，源码可以这里下载
+更改完成后效果也是我们想要的，好了今天就到这里，，[源码可以这里下载](https://github.com/lifengsofts/TsetBuildVariants)
