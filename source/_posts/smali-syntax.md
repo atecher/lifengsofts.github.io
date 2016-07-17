@@ -175,13 +175,43 @@ Lpackage/name/ObjectName;->FiedlName:Ljava/lang/String;
 \# instance fields：实例字段
 
 
+# Dalvik指令集
 
+他在调用格式上模仿了C语言的调用约定，[官方地址](https://source.android.com/devices/tech/dalvik/dalvik-bytecode.html),指令语法与助词有如下特点：
 
+1. 采用采用从目标(destination)到源(source)的方法
+2. 根据字节码的大小与类型不同，一些字节码添加了名称后缀已消除歧义
+2.1 32位常规类型的字节码未添加任何后缀
+2.2 64位常规类型的字节码添加 -wide后缀
+3.3 特殊类型的字节码根据具体类型添加后缀，-boolean,-byte,-char,-short,-int,-long,-float,-double,-object,-string,-class,-void之一
+3. 根据字节码的布局和选项不同，一些字节码添加了字节后缀消除歧义，后缀与字节码直接用/分割
+4. 在指令集的描述中，宽度值中每个字母表示宽度为4位
 
+如：
+move-wide/from16 vAA, vBBBB
+move-wide/from16 v18, v0
 
+move:基础字节码(base opcode)，标示是基本操作
+wide:标示指令操作的数据宽度为64位宽度
+from16:字节码后缀(opcode suffix),标示源(vBBBB)为一个16的寄存器引用变量
+vAA:目的寄存器，v0~v255
+vBBBB:源寄存器，v0~v65535
 
+# 方法调用
 
+在方法调用者我们可以看到有：
 
+```smali
+invoke-super {p0, p1}, Lcom/woblog/testsmali/BaseActivity;->onCreate(Landroid/os/Bundle;)V
+
+invoke-virtual {p0, v0}, Lcom/woblog/testsmali/MainActivity;->setContentView(I)V
+
+invoke-direct {p0}, Lcom/woblog/testsmali/MainActivity;->initMove()V
+
+invoke-static {}, Lcom/woblog/testsmali/TimeUtil;->getCurrentTime()J
+
+invoke-interface {v0}, Lcom/woblog/testsmali/ICallback;->onSuccess()V
+```
 
 
 
