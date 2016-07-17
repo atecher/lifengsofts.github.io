@@ -45,7 +45,7 @@ Z：返回值
 
 BakSmali生成的方法代码以.method指令开始，以.end method指令结束，根据方法的类型不同，可以会在方法前加#表示方法类型
 
-# vitual methods:虚方法，如：
+\# vitual methods:虚方法，如：
 
 ```smali
 # virtual methods
@@ -69,7 +69,7 @@ BakSmali生成的方法代码以.method指令开始，以.end method指令结束
 .end method
 ```
 
-# direct methods:直接方法，如：
+\# direct methods:直接方法，如：
 
 ```smali
 # direct methods
@@ -123,8 +123,56 @@ BakSmali生成的方法代码以.method指令开始，以.end method指令结束
 .end method
 ```
 
+静态方法：
+
+```smali
+.method public static formatTime(J)Ljava/lang/String;
+    .locals 4
+    .param p0, "date"    # J
+
+    .prologue
+    .line 11
+    new-instance v0, Ljava/text/SimpleDateFormat;
+
+    const-string v1, "yyyy\u5e74MM\u6708dd\u65e5 EEEE"
+
+    sget-object v2, Ljava/util/Locale;->CHINESE:Ljava/util/Locale;
+
+    invoke-direct {v0, v1, v2}, Ljava/text/SimpleDateFormat;-><init>(Ljava/lang/String;Ljava/util/Locale;)V
+
+    .line 13
+    .local v0, "simpleDateFormat":Ljava/text/SimpleDateFormat;
+    invoke-static {p0, p1}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
+
+    move-result-object v1
+
+    invoke-virtual {v0, v1}, Ljava/text/SimpleDateFormat;->format(Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v1
+
+    return-object v1
+.end method
+```
+
+# 字段
+
+与方法表示很相似，只是字段没有方法签名和返回值，取而代之的是字段类型
+Lpackage/name/ObjectName;->FiedlName:Ljava/lang/String;
+
+其中字段名与字段类型用冒号“:”分割
+
+```smali
+# static fields
+.field private static instance:Lcn/woblog/markdowndiary/repository/LocalNoteRepository;
 
 
+# instance fields
+.field private final context:Landroid/content/Context;
+```
+
+其中：
+\# static fields：静态字段
+\# instance fields：实例字段
 
 
 
