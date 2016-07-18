@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-好这就是一个最最基本的Dagger注入例子了，下一篇我们来详细分析下他的实现原理或者再写一个MVP架构例子，感谢你的阅读。源代码下载请查看原文：[http://i.woblog.cn](http://i.woblog.cn)
+好这就是一个最最基本的Dagger注入例子了，下一篇我们来详细分析下他的实现原理或者再写一个MVP架构例子，感谢你的阅读。源代码下载:[https://github.com/lifengsofts/AndroidDagger2](https://github.com/lifengsofts/AndroidDagger2)
 
 如果我的文章对来带来的帮助或者有不明白的地方，可加QQ群：129961195，大家一起交流
 
