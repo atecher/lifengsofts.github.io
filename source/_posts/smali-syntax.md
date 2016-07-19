@@ -606,6 +606,330 @@ private synchronized void callLockMethod() {
 .end method
 ```
 
+## 实例操作
+包括类型转换，检查和创建新实例
+check-cast vAA, type@BBBB：将vAA中的对象转为指定类型，如果失败会抛出ClassCastException异常，如果类型B是基本类型，对于分基本类型的A来说运行始终是失败的
+instance-of vA, vB, type@CCCC:判断vB寄存器的对象是否可以转为指定类型，如果可以vA为1，否则为0
+new-instance vAA, type@BBBB:构造一个指定类型的对象，并赋值给vAA寄存器，不能是数组类型
+
+```java
+CharSequence cs = new String();
+Object o = cs;
+
+String s = (String) cs;
+
+//实例检测
+if (s instanceof CharSequence) {
+    Log.d("TAG", "ok");
+} else {
+    Log.d("TAG","no");
+}
+
+
+//创建实例
+StringBuilder sb = new StringBuilder();
+sb.append("Ok");
+
+String s1 = new String("new string");
+String s2 = "string";
+```
+
+```smali
+new-instance v1, Ljava/lang/String;
+
+invoke-direct {v1}, Ljava/lang/String;-><init>()V
+
+.line 33
+.local v1, "cs":Ljava/lang/CharSequence;
+move-object v7, v1
+
+.local v7, "o":Ljava/lang/CharSequence;
+move-object v8, v1
+
+.line 35
+check-cast v8, Ljava/lang/String;
+
+.line 38
+.local v8, "s":Ljava/lang/String;
+instance-of v12, v8, Ljava/lang/CharSequence;
+
+if-eqz v12, :cond_0
+
+.line 39
+const-string v12, "TAG"
+
+const-string v13, "ok"
+
+invoke-static {v12, v13}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+.line 46
+:goto_0
+new-instance v11, Ljava/lang/StringBuilder;
+
+invoke-direct {v11}, Ljava/lang/StringBuilder;-><init>()V
+
+.line 47
+.local v11, "sb":Ljava/lang/StringBuilder;
+const-string v12, "Ok"
+
+invoke-virtual {v11, v12}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+.line 49
+new-instance v9, Ljava/lang/String;
+
+const-string v12, "new string"
+
+invoke-direct {v9, v12}, Ljava/lang/String;-><init>(Ljava/lang/String;)V
+
+.line 50
+.local v9, "s1":Ljava/lang/String;
+const-string v10, "string"
+
+.line 51
+.local v10, "s2":Ljava/lang/String;
+return-void
+
+.line 41
+.end local v9    # "s1":Ljava/lang/String;
+.end local v10    # "s2":Ljava/lang/String;
+.end local v11    # "sb":Ljava/lang/StringBuilder;
+:cond_0
+const-string v12, "TAG"
+
+const-string v13, "no"
+
+invoke-static {v12, v13}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+goto :goto_0
+```
+
+## 数组操作
+包括获取数组长度，新建数组，数组赋值，数组元素取值与赋值等
+array-length vA, vB:获取vB寄存器中数组的长度并赋值给vA寄存器
+new-array vA, vB, type@CCCC：构造指定类型(type@CCCC)与大小(vB)的数组，并赋值给vA寄存器
+filled-new-array {vC,vD,vE,vF,vG}, type@BBBB:构造指定类型(type@BBBB)与大小vA的数组并填充数组内容，除了指定数组的大小还指定了参数个数
+filled-new-array/range {vCCCC .. vNNNN}, type@BBBB:与上一条类似，只是参数使用取值范围，vC是第一个参数寄存器，N=A+C-1
+fill-array-data vAA, +BBBBBBBB:vAA为寄存器数组引用，后面跟一个数据表
+arrayop vAA, vBB, vCC：对vBB寄存器指定的数组元素进入取值或赋值。vCC指定数组元素索引，vAA寄存器用来存放读取的或需要设置的值。读取元素使用age类指令，赋值使用aput类指令，根据数组中存储的类指令后面会跟不同的后缀：
+aget,aget-wide,aget-object,aget-boolean,aget-byte,aget-char,aget-short
+aput,aput-wide,aput-object,aput-boolean,aput-byte,aput-char,aput-short
+
+```java
+private void testArray() {
+    int[] ints = new int[2];
+    int[] ints1 = null;
+    int[] ints2 = {1,2,3};
+
+    Integer[] integers = new Integer[]{1,2,4};
+
+    int[] strings = {1,2,3,4,5,6,5,6,6,6,6,6,6,7,7,8,8,8,8,8,1,1,1,3,3,5,6,54,5,6,56,567,67,6,34,45,45,6,56,57,45,45,5,56,56,7,34,543,543,6,56,56,45,4,54,5,45,56};
+
+    //数组长度
+    int length = ints.length;
+    int length1 = ints2.length;
+    int length2 = strings.length;
+
+    //获取数组元素
+    int string = strings[30];
+    int string1 = ints2[1];
+
+    //赋值
+    strings[30] =  length;
+    ints2[1] =  length2;
+}
+```
+
+```smali
+.method private testArray()V
+    .locals 15
+
+    .prologue
+    const/16 v14, 0x1e
+
+    const/4 v10, 0x3
+
+    const/4 v13, 0x2
+
+    const/4 v12, 0x1
+
+    .line 27
+    new-array v1, v13, [I
+
+    .line 28
+    .local v1, "ints":[I
+    const/4 v2, 0x0
+
+    .line 29
+    .local v2, "ints1":[I
+    new-array v3, v10, [I
+
+    fill-array-data v3, :array_0
+
+    .line 31
+    .local v3, "ints2":[I
+    new-array v0, v10, [Ljava/lang/Integer;
+
+    const/4 v10, 0x0
+
+    invoke-static {v12}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v11
+
+    aput-object v11, v0, v10
+
+    invoke-static {v13}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v10
+
+    aput-object v10, v0, v12
+
+    const/4 v10, 0x4
+
+    invoke-static {v10}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v10
+
+    aput-object v10, v0, v13
+
+    .line 33
+    .local v0, "integers":[Ljava/lang/Integer;
+    const/16 v10, 0x3a
+
+    new-array v9, v10, [I
+
+    fill-array-data v9, :array_1
+
+    .line 36
+    .local v9, "strings":[I
+    array-length v4, v1
+
+    .line 37
+    .local v4, "length":I
+    array-length v5, v3
+
+    .line 38
+    .local v5, "length1":I
+    array-length v6, v9
+
+    .line 41
+    .local v6, "length2":I
+    aget v7, v9, v14
+
+    .line 42
+    .local v7, "string":I
+    aget v8, v3, v12
+
+    .line 45
+    .local v8, "string1":I
+    aput v4, v9, v14
+
+    .line 46
+    aput v6, v3, v12
+
+    .line 47
+    return-void
+
+    .line 29
+    :array_0
+    .array-data 4
+        0x1
+        0x2
+        0x3
+    .end array-data
+
+    .line 33
+    :array_1
+    .array-data 4
+        0x1
+        0x2
+        0x3
+        0x4
+        0x5
+        0x6
+        0x5
+        0x6
+        0x6
+        0x6
+        0x6
+        0x6
+        0x6
+        0x7
+        0x7
+        0x8
+        0x8
+        0x8
+        0x8
+        0x8
+        0x1
+        0x1
+        0x1
+        0x3
+        0x3
+        0x5
+        0x6
+        0x36
+        0x5
+        0x6
+        0x38
+        0x237
+        0x43
+        0x6
+        0x22
+        0x2d
+        0x2d
+        0x6
+        0x38
+        0x39
+        0x2d
+        0x2d
+        0x5
+        0x38
+        0x38
+        0x7
+        0x22
+        0x21f
+        0x21f
+        0x6
+        0x38
+        0x38
+        0x2d
+        0x4
+        0x36
+        0x5
+        0x2d
+        0x38
+    .end array-data
+.end method
+```
+
+## 异常指令
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
