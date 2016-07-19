@@ -904,10 +904,287 @@ private void testArray() {
 
 ## 异常指令
 
+throw vAA:抛出vAA寄存器中指定类型的异常
 
 
+```java
+private void throw2() {
+    try {
+        throw new Exception("test throw runtime exception");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+private void throw1() {
+    throw new RuntimeException("test throw runtime exception");
+}
+```
 
 
+```smali
+.method private throw1()V
+    .locals 2
+
+    .prologue
+    .line 38
+    new-instance v0, Ljava/lang/RuntimeException;
+
+    const-string v1, "test throw runtime exception"
+
+    invoke-direct {v0, v1}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/String;)V
+
+    throw v0
+.end method
+
+.method private throw2()V
+    .locals 3
+
+    .prologue
+    .line 31
+    :try_start_0
+    new-instance v1, Ljava/lang/Exception;
+
+    const-string v2, "test throw runtime exception"
+
+    invoke-direct {v1, v2}, Ljava/lang/Exception;-><init>(Ljava/lang/String;)V
+
+    throw v1
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+
+    .line 32
+    :catch_0
+    move-exception v0
+
+    .line 33
+    .local v0, "e":Ljava/lang/Exception;
+    invoke-virtual {v0}, Ljava/lang/Exception;->printStackTrace()V
+
+    .line 35
+    return-void
+.end method
+```
+
+## 跳转指令
+用于从当前地址跳转到指定的偏移处，提供了三种指令：无条件(goto),分支跳转(switch),条件跳转(if)
+goto +AA:无条件跳转到指定偏移处，AA不能为0
+goto/16 +AAAA
+goto/32 +AAAAAAAA
+
+packed-switch vAA, +BBBBBBBB:分支跳转，vAA寄存器为switch分支需要判断的值
+
+if-test vA, vB, +CCCC 条件跳转指令，比较vA寄存器与vB寄存器的值，如果比较结果满足就跳转到CCCC指定的偏移处，不能为0，有以下几条：
+
+if-eq:if(vA==vB)
+if-ne:vA!=vB
+if-lt:vA<vB
+if-gt:vA>vB
+if-le:vA<=vB
+if-ge:vA>=vB
+
+if-testz vAA, +BBBB:条件转移，拿vAA寄存器与0比较，如果比较结果满足或值为0就跳转到BBBB指定的偏移处，不为0
+
+if-eqz:vAA==0
+if-nez:vAA!=0
+if-ltz:vAA<0
+if-gtz:vAA>0
+if-lez:vAA<=0
+if-gez:vAA>=0
+
+```java
+private void testIfz() {
+    int a = 3;
+    if (a == 0) {
+
+    } else {
+
+    }
+    if (a != 0) {
+
+    } else {
+
+    }
+    if (a < 0) {
+
+    } else {
+
+    }
+    if (a > 0) {
+
+    } else {
+
+    }
+    if (a <= 0) {
+
+    } else {
+
+    }
+    if (a >= 0) {
+
+    } else {
+
+    }
+
+    if (a < 5) {
+        Log.d("TAG", "<5");
+    } else if (a > 5) {
+        Log.d("TAG", ">5");
+    } else {
+        Log.d("TAG", "=5");
+    }
+}
+
+private void testIf() {
+    int a = 2;
+    int b = 3;
+    if (a == b) {
+
+    } else {
+
+    }
+    if (a != b) {
+
+    } else {
+
+    }
+    if (a < b) {
+
+    } else {
+
+    }
+    if (a > b) {
+
+    } else {
+
+    }
+    if (a <= b) {
+
+    } else {
+
+    }
+    if (a >= b) {
+
+    } else {
+
+    }
+
+}
+```
+
+```smali
+.method private testIf()V
+    .locals 2
+
+    .prologue
+    .line 69
+    const/4 v0, 0x2
+
+    .line 70
+    .local v0, "a":I
+    const/4 v1, 0x3
+
+    .line 71
+    .local v1, "b":I
+    if-ne v0, v1, :cond_0
+
+    .line 76
+    :cond_0
+    if-eq v0, v1, :cond_1
+
+    .line 81
+    :cond_1
+    if-ge v0, v1, :cond_2
+
+    .line 86
+    :cond_2
+    if-le v0, v1, :cond_3
+
+    .line 91
+    :cond_3
+    if-gt v0, v1, :cond_4
+
+    .line 96
+    :cond_4
+    if-lt v0, v1, :cond_5
+
+    .line 102
+    :cond_5
+    return-void
+.end method
+
+.method private testIfz()V
+    .locals 3
+
+    .prologue
+    const/4 v1, 0x5
+
+    .line 27
+    const/4 v0, 0x3
+
+    .line 28
+    .local v0, "a":I
+    if-nez v0, :cond_0
+
+    .line 33
+    :cond_0
+    if-eqz v0, :cond_1
+
+    .line 38
+    :cond_1
+    if-gez v0, :cond_2
+
+    .line 43
+    :cond_2
+    if-lez v0, :cond_3
+
+    .line 48
+    :cond_3
+    if-gtz v0, :cond_4
+
+    .line 53
+    :cond_4
+    if-ltz v0, :cond_5
+
+    .line 59
+    :cond_5
+    if-ge v0, v1, :cond_6
+
+    .line 60
+    const-string v1, "TAG"
+
+    const-string v2, "<5"
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 66
+    :goto_0
+    return-void
+
+    .line 61
+    :cond_6
+    if-le v0, v1, :cond_7
+
+    .line 62
+    const-string v1, "TAG"
+
+    const-string v2, ">5"
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 64
+    :cond_7
+    const-string v1, "TAG"
+
+    const-string v2, "=5"
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+.end method
+```
 
 
 
