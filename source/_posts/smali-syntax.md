@@ -197,22 +197,6 @@ from16:字节码后缀(opcode suffix),标示源(vBBBB)为一个16的寄存器引
 vAA:目的寄存器，v0~v255
 vBBBB:源寄存器，v0~v65535
 
-# 方法调用
-
-在方法调用者我们可以看到有：
-
-```smali
-invoke-super {p0, p1}, Lcom/woblog/testsmali/BaseActivity;->onCreate(Landroid/os/Bundle;)V
-
-invoke-virtual {p0, v0}, Lcom/woblog/testsmali/MainActivity;->setContentView(I)V
-
-invoke-direct {p0}, Lcom/woblog/testsmali/MainActivity;->initMove()V
-
-invoke-static {}, Lcom/woblog/testsmali/TimeUtil;->getCurrentTime()J
-
-invoke-interface {v0}, Lcom/woblog/testsmali/ICallback;->onSuccess()V
-```
-
 # 指令
 
 ## nop
@@ -1186,17 +1170,604 @@ private void testIf() {
 .end method
 ```
 
+## 比较指令
+
+用于对两个寄存器的值比较
+cmpkind vAA, vBB, vCC：vBB和vCC为要比较的值，结果放到vAA中
+cmpl-float:单精度，vBB大于vCC，vAA=-1,等于vAA=0,小于vAA=1
+cmpg-float：单精度，vBB大于vCC，vAA=1,等于vAA=0,小于vAA=-1
+cmpl-double:双精度
+cmpg-double:双精度
+cmp-long:长整形
 
 
+```java
+private void testCmpLong() {
+    long a = 13;
+    long b = 12;
+    if (a < b) {
+        Log.d("TAG", "<");
+    } else if (a > b) {
+        Log.d("TAG", ">");
+    } else {
+        Log.d("TAG", "=");
+    }
+}
+
+private void testCmpDouble() {
+    double a = 13.4;
+    double b = 11.4;
+    if (a < b) {
+        Log.d("TAG", "<");
+    } else if (a > b) {
+        Log.d("TAG", ">");
+    } else {
+        Log.d("TAG", "=");
+    }
+}
+
+private void testCmpFloat() {
+    float a = 13.4F;
+    float b = 10.4F;
+    if (a < b) {
+        Log.d("TAG", "<");
+    } else if (a > b) {
+        Log.d("TAG", ">");
+    } else {
+        Log.d("TAG", "=");
+    }
+}
+```
+
+```smali
+.method private testCmpDouble()V
+    .locals 6
+
+    .prologue
+    .line 46
+    const-wide v0, 0x402acccccccccccdL    # 13.4
+
+    .line 47
+    .local v0, "a":D
+    const-wide v2, 0x4026cccccccccccdL    # 11.4
+
+    .line 48
+    .local v2, "b":D
+    cmpg-double v4, v0, v2
+
+    if-gez v4, :cond_0
+
+    .line 49
+    const-string v4, "TAG"
+
+    const-string v5, "<"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 55
+    :goto_0
+    return-void
+
+    .line 50
+    :cond_0
+    cmpl-double v4, v0, v2
+
+    if-lez v4, :cond_1
+
+    .line 51
+    const-string v4, "TAG"
+
+    const-string v5, ">"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 53
+    :cond_1
+    const-string v4, "TAG"
+
+    const-string v5, "="
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+.end method
+
+.method private testCmpFloat()V
+    .locals 4
+
+    .prologue
+    .line 58
+    const v0, 0x41566666    # 13.4f
+
+    .line 59
+    .local v0, "a":F
+    const v1, 0x41266666    # 10.4f
+
+    .line 60
+    .local v1, "b":F
+    cmpg-float v2, v0, v1
+
+    if-gez v2, :cond_0 #>=
+
+    .line 61
+    const-string v2, "TAG"
+
+    const-string v3, "<"
+
+    invoke-static {v2, v3}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 67
+    :goto_0
+    return-void
+
+    .line 62
+    :cond_0
+    cmpl-float v2, v0, v1
+
+    if-lez v2, :cond_1 #<=
+
+    .line 63
+    const-string v2, "TAG"
+
+    const-string v3, ">"
+
+    invoke-static {v2, v3}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 65
+    :cond_1
+    const-string v2, "TAG"
+
+    const-string v3, "="
+
+    invoke-static {v2, v3}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+.end method
+
+.method private testCmpLong()V
+    .locals 6
+
+    .prologue
+    .line 34
+    const-wide/16 v0, 0xd
+
+    .line 35
+    .local v0, "a":J
+    const-wide/16 v2, 0xc
+
+    .line 36
+    .local v2, "b":J
+    cmp-long v4, v0, v2
+
+    if-gez v4, :cond_0
+
+    .line 37
+    const-string v4, "TAG"
+
+    const-string v5, "<"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 43
+    :goto_0
+    return-void
+
+    .line 38
+    :cond_0
+    cmp-long v4, v0, v2
+
+    if-lez v4, :cond_1
+
+    .line 39
+    const-string v4, "TAG"
+
+    const-string v5, ">"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 41
+    :cond_1
+    const-string v4, "TAG"
+
+    const-string v5, "="
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+.end method
+```
+
+## 字段操作指令
+用来对 对象实例的字段进行读写操作。字段类型可以是Java中有效的类型，对于实例字段和静态字段有两类指令：
+iget,iput对实例字段进行读，写
+sget,sput对静态字段
+
+会根据类型不同添加不同的后缀
+iget，iget-wide,iget-object,iget-boolean,iget-byte,iget-char,iget-short
+iput,iput-wide,iput-object,iput-boolean,iput-byte,iput-char,iput-short
+
+sget,sget-wide,sget-object,sget-boolean,sget-byte,sget-char,sget-short
+...
+
+```java
+private void testInstanceFieldOperator() {
+    //write
+    InstanceObject instanceObject = new InstanceObject();
+    instanceObject.aInt=1;
+    instanceObject.aLong=12454L;
+    instanceObject.aFloat=12344.45F;
+    instanceObject.aDouble=123546.2;
+    instanceObject.object=new Object();
+    instanceObject.aBoolean=true;
+    instanceObject.aByte=3;
+    instanceObject.aChar='c';
+    instanceObject.aShort=1;
+
+    Log.d("TAG",String.valueOf(instanceObject.aInt));
+    Log.d("TAG",String.valueOf(instanceObject.aLong));
+    Log.d("TAG",String.valueOf(instanceObject.aFloat));
+    Log.d("TAG",String.valueOf(instanceObject.aDouble));
+    Log.d("TAG",String.valueOf(instanceObject.object));
+    Log.d("TAG",String.valueOf(instanceObject.aBoolean));
+    Log.d("TAG",String.valueOf(instanceObject.aByte));
+    Log.d("TAG",String.valueOf(instanceObject.aChar));
+    Log.d("TAG",String.valueOf(instanceObject.aShort));
+}
+
+private void testStatusFieldOperator() {
+    //write
+    StatusObject.aInt=1;
+    StatusObject.aLong=12454L;
+    StatusObject.aFloat=12344.45F;
+    StatusObject.aDouble=123546.2;
+    StatusObject.object=new Object();
+    StatusObject.aBoolean=true;
+    StatusObject.aByte=3;
+    StatusObject.aChar='c';
+    StatusObject.aShort=1;
+
+    Log.d("TAG",String.valueOf(StatusObject.aInt));
+    Log.d("TAG",String.valueOf(StatusObject.aLong));
+    Log.d("TAG",String.valueOf(StatusObject.aFloat));
+    Log.d("TAG",String.valueOf(StatusObject.aDouble));
+    Log.d("TAG",String.valueOf(StatusObject.object));
+    Log.d("TAG",String.valueOf(StatusObject.aBoolean));
+    Log.d("TAG",String.valueOf(StatusObject.aByte));
+    Log.d("TAG",String.valueOf(StatusObject.aChar));
+    Log.d("TAG",String.valueOf(StatusObject.aShort));
+}
+```
 
 
+```smali
+.method private testInstanceFieldOperator()V
+    .locals 5
 
+    .prologue
+    const/4 v4, 0x1
 
+    .line 30
+    new-instance v0, Lcom/woblog/testsmali/InstanceObject;
 
+    invoke-direct {v0}, Lcom/woblog/testsmali/InstanceObject;-><init>()V
 
+    .line 31
+    .local v0, "instanceObject":Lcom/woblog/testsmali/InstanceObject;
+    iput v4, v0, Lcom/woblog/testsmali/InstanceObject;->aInt:I
 
+    .line 32
+    const-wide/16 v2, 0x30a6
 
+    iput-wide v2, v0, Lcom/woblog/testsmali/InstanceObject;->aLong:J
 
+    .line 33
+    const v1, 0x4640e1cd
+
+    iput v1, v0, Lcom/woblog/testsmali/InstanceObject;->aFloat:F
+
+    .line 34
+    const-wide v2, 0x40fe29a333333333L    # 123546.2
+
+    iput-wide v2, v0, Lcom/woblog/testsmali/InstanceObject;->aDouble:D
+
+    .line 35
+    new-instance v1, Ljava/lang/Object;
+
+    invoke-direct {v1}, Ljava/lang/Object;-><init>()V
+
+    iput-object v1, v0, Lcom/woblog/testsmali/InstanceObject;->object:Ljava/lang/Object;
+
+    .line 36
+    iput-boolean v4, v0, Lcom/woblog/testsmali/InstanceObject;->aBoolean:Z
+
+    .line 37
+    const/4 v1, 0x3
+
+    iput-byte v1, v0, Lcom/woblog/testsmali/InstanceObject;->aByte:B
+
+    .line 38
+    const/16 v1, 0x63
+
+    iput-char v1, v0, Lcom/woblog/testsmali/InstanceObject;->aChar:C
+
+    .line 39
+    iput-short v4, v0, Lcom/woblog/testsmali/InstanceObject;->aShort:S
+
+    .line 41
+    const-string v1, "TAG"
+
+    iget v2, v0, Lcom/woblog/testsmali/InstanceObject;->aInt:I
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 42
+    const-string v1, "TAG"
+
+    iget-wide v2, v0, Lcom/woblog/testsmali/InstanceObject;->aLong:J
+
+    invoke-static {v2, v3}, Ljava/lang/String;->valueOf(J)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 43
+    const-string v1, "TAG"
+
+    iget v2, v0, Lcom/woblog/testsmali/InstanceObject;->aFloat:F
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(F)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 44
+    const-string v1, "TAG"
+
+    iget-wide v2, v0, Lcom/woblog/testsmali/InstanceObject;->aDouble:D
+
+    invoke-static {v2, v3}, Ljava/lang/String;->valueOf(D)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 45
+    const-string v1, "TAG"
+
+    iget-object v2, v0, Lcom/woblog/testsmali/InstanceObject;->object:Ljava/lang/Object;
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 46
+    const-string v1, "TAG"
+
+    iget-boolean v2, v0, Lcom/woblog/testsmali/InstanceObject;->aBoolean:Z
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(Z)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 47
+    const-string v1, "TAG"
+
+    iget-byte v2, v0, Lcom/woblog/testsmali/InstanceObject;->aByte:B
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 48
+    const-string v1, "TAG"
+
+    iget-char v2, v0, Lcom/woblog/testsmali/InstanceObject;->aChar:C
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(C)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 49
+    const-string v1, "TAG"
+
+    iget-short v2, v0, Lcom/woblog/testsmali/InstanceObject;->aShort:S
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 50
+    return-void
+.end method
+
+.method private testStatusFieldOperator()V
+    .locals 4
+
+    .prologue
+    const/4 v2, 0x1
+
+    .line 54
+    sput v2, Lcom/woblog/testsmali/StatusObject;->aInt:I
+
+    .line 55
+    const-wide/16 v0, 0x30a6
+
+    sput-wide v0, Lcom/woblog/testsmali/StatusObject;->aLong:J
+
+    .line 56
+    const v0, 0x4640e1cd
+
+    sput v0, Lcom/woblog/testsmali/StatusObject;->aFloat:F
+
+    .line 57
+    const-wide v0, 0x40fe29a333333333L    # 123546.2
+
+    sput-wide v0, Lcom/woblog/testsmali/StatusObject;->aDouble:D
+
+    .line 58
+    new-instance v0, Ljava/lang/Object;
+
+    invoke-direct {v0}, Ljava/lang/Object;-><init>()V
+
+    sput-object v0, Lcom/woblog/testsmali/StatusObject;->object:Ljava/lang/Object;
+
+    .line 59
+    sput-boolean v2, Lcom/woblog/testsmali/StatusObject;->aBoolean:Z
+
+    .line 60
+    const/4 v0, 0x3
+
+    sput-byte v0, Lcom/woblog/testsmali/StatusObject;->aByte:B
+
+    .line 61
+    const/16 v0, 0x63
+
+    sput-char v0, Lcom/woblog/testsmali/StatusObject;->aChar:C
+
+    .line 62
+    sput-short v2, Lcom/woblog/testsmali/StatusObject;->aShort:S
+
+    .line 64
+    const-string v0, "TAG"
+
+    sget v1, Lcom/woblog/testsmali/StatusObject;->aInt:I
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 65
+    const-string v0, "TAG"
+
+    sget-wide v2, Lcom/woblog/testsmali/StatusObject;->aLong:J
+
+    invoke-static {v2, v3}, Ljava/lang/String;->valueOf(J)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 66
+    const-string v0, "TAG"
+
+    sget v1, Lcom/woblog/testsmali/StatusObject;->aFloat:F
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(F)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 67
+    const-string v0, "TAG"
+
+    sget-wide v2, Lcom/woblog/testsmali/StatusObject;->aDouble:D
+
+    invoke-static {v2, v3}, Ljava/lang/String;->valueOf(D)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 68
+    const-string v0, "TAG"
+
+    sget-object v1, Lcom/woblog/testsmali/StatusObject;->object:Ljava/lang/Object;
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 69
+    const-string v0, "TAG"
+
+    sget-boolean v1, Lcom/woblog/testsmali/StatusObject;->aBoolean:Z
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(Z)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 70
+    const-string v0, "TAG"
+
+    sget-byte v1, Lcom/woblog/testsmali/StatusObject;->aByte:B
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 71
+    const-string v0, "TAG"
+
+    sget-char v1, Lcom/woblog/testsmali/StatusObject;->aChar:C
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(C)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 72
+    const-string v0, "TAG"
+
+    sget-short v1, Lcom/woblog/testsmali/StatusObject;->aShort:S
+
+    invoke-static {v1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 73
+    return-void
+.end method
+```
+
+## 方法调用
+
+在方法调用者我们可以看到有：
+
+```smali
+invoke-super {p0, p1}, Lcom/woblog/testsmali/BaseActivity;->onCreate(Landroid/os/Bundle;)V
+
+invoke-virtual {p0, v0}, Lcom/woblog/testsmali/MainActivity;->setContentView(I)V
+
+invoke-direct {p0}, Lcom/woblog/testsmali/MainActivity;->initMove()V
+
+invoke-static {}, Lcom/woblog/testsmali/TimeUtil;->getCurrentTime()J
+
+invoke-interface {v0}, Lcom/woblog/testsmali/ICallback;->onSuccess()V
+```
 
 
 
