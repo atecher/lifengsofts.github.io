@@ -229,7 +229,7 @@ private void testConst() {
 ```
 
 ```smali
-//小于255用4，大于255小于等于65535用16
+//-8到7用4，大于255小于等于65535用16
 const/4 v0, 0x1
 
 .line 25
@@ -2044,11 +2044,74 @@ dalvikvm -cp /data/local/classes.dex HelloWorld
 ```
 
 
+加强版本
+```smali
+.class public LHelloWorld; #定义类名
+.super Ljava/lang/Object; #定义父类
+.method public static main([Ljava/lang/String;)V #声明静态的main函数
+    .locals 10 #使用的寄存器个数，包括一个参数寄存器
+    .param p0, "args" #一个参数
+
+    .prologue #代码起始指令
+
+    sget-object v0, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+    # 空指令
+
+    nop
+
+    nop
+
+    nop
 
 
+    # 数据定义指令
+    
+    const/4 v2, 0x3
+
+    const/16 v3, 0xffff ##不能大于65535
+
+    #大于65535用-wide
+    
+    const-wide v4, 0x10000
 
 
+    # 定义一个类 类型
+    
+    const-class v5, Ljava/lang/String;
 
+
+    # 数据操作指令
+
+    move v6, v5
+
+    new-instance v7, Ljava/lang/StringBuilder;
+
+    invoke-direct {v7}, Ljava/lang/StringBuilder;-><init>()V
+
+
+    const-string v8, "\u8fd9\u662f\u624b\u5199\u7684\u0073\u006d\u0061\u006c\u0069\u0044\u0065\u006d\u006f"
+
+    invoke-virtual {v7, v12}, Ljava/java/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilber;
+
+    invoke-direct {v7}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v9
+
+    invoke-virtual {v0, v9}, Ljava/io/PrintStream;->println(Ljava/java/String;)V
+
+
+    # 打印字符串
+
+    const-string v1, "Hello World"
+
+
+    invoke-virtual {v0,v1}, Ljava/io/PrintStream;->println(Ljava/lang/String;)V
+
+
+    return-void
+.end method
+```
 
 
 
