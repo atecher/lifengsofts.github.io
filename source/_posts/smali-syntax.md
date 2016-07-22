@@ -2083,22 +2083,23 @@ dalvikvm -cp /data/local/classes.dex HelloWorld
 
     # 数据操作指令
 
-    move v6, v5
+    move v6, v2
 
     new-instance v7, Ljava/lang/StringBuilder;
 
     invoke-direct {v7}, Ljava/lang/StringBuilder;-><init>()V
 
+    const-string v8, "\u8fd9\u662f\u4e00\u4e2a\u624b\u5199\u7684\u0073\u006d\u0061\u006c\u0069\u5b9e\u4f8b"
 
-    const-string v8, "\u8fd9\u662f\u624b\u5199\u7684\u0073\u006d\u0061\u006c\u0069\u0044\u0065\u006d\u006f"
+    invoke-virtual {v7, v8}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {v7, v12}, Ljava/java/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilber;
+    move-result-object v7
 
-    invoke-direct {v7}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    invoke-virtual {v7}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
     move-result-object v9
 
-    invoke-virtual {v0, v9}, Ljava/io/PrintStream;->println(Ljava/java/String;)V
+    invoke-virtual {v0, v9}, Ljava/io/PrintStream;->println(Ljava/lang/String;)V
 
 
     # 打印字符串
