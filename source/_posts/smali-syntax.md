@@ -203,6 +203,65 @@ vBBBB:源寄存器，v0~v65535
 
 空操作，被用来做对齐代码
 
+## 数据定义
+
+用来定义程序中用到的常量，字符串，类等数据
+const/4 vA, #+B :将数组扩展为32位后赋给寄存器vA
+const/16 vAA, #+BBBB
+const vAA, #+BBBBBBBB：将数组赋值给寄存器vAA
+const-wide/16 vAA, #+BBBBB ：将数值扩展为64位后赋给寄存器vAA
+const-string vAA, string@BBBB：将字符串索引构造一个字符串并赋给vAA
+const-class vAA, type@BBBB:通过类型索引获取一个类的引用并赋给寄存器vAA
+
+
+```java
+private void testConst() {
+    int a = 1;
+    int b = 7;
+    int c = 254;
+    int d = 2345;
+    int d1 = 65538;
+
+    long e = 12435465657677L;
+    float f = 123235409234.09097945F;
+    double g = 111343333454999999999.912384375;
+}
+```
+
+```smali
+//小于255用4，大于255小于等于65535用16
+const/4 v0, 0x1
+
+.line 25
+.local v0, "a":I
+const/4 v1, 0x7
+
+.line 26
+.local v1, "b":I
+const/16 v2, 0xfe
+
+.line 27
+.local v2, "c":I
+const/16 v3, 0x929
+
+.line 28
+.local v3, "d":I
+const v4, 0x10002 //65538，大于65535用const v4
+
+//long用const-wide
+.line 30
+.local v4, "d1":I
+const-wide v6, 0xb4f5b835d4dL
+
+.line 31
+.local v6, "e":J
+const v5, 0x51e58b39
+
+.line 32
+.local v5, "f":F
+const-wide v8, 0x441824cbef6b9491L    # 1.11343333455E20
+```
+
 ## 数据操作指令
 
 move destination, source
@@ -407,65 +466,6 @@ private void returnVoid() {
     .local v0, "a":I
     return-void
 .end method
-```
-
-## 数据定义
-
-用来定义程序中用到的常量，字符串，类等数据
-const/4 vA, #+B :将数组扩展为32位后赋给寄存器vA
-const/16 vAA, #+BBBB
-const vAA, #+BBBBBBBB：将数组赋值给寄存器vAA
-const-wide/16 vAA, #+BBBBB ：将数值扩展为64位后赋给寄存器vAA
-const-string vAA, string@BBBB：将字符串索引构造一个字符串并赋给vAA
-const-class vAA, type@BBBB:通过类型索引获取一个类的引用并赋给寄存器vAA
-
-
-```java
-private void testConst() {
-    int a = 1;
-    int b = 7;
-    int c = 254;
-    int d = 2345;
-    int d1 = 65538;
-
-    long e = 12435465657677L;
-    float f = 123235409234.09097945F;
-    double g = 111343333454999999999.912384375;
-}
-```
-
-```smali
-//小于255用4，大于255小于等于65535用16
-const/4 v0, 0x1
-
-.line 25
-.local v0, "a":I
-const/4 v1, 0x7
-
-.line 26
-.local v1, "b":I
-const/16 v2, 0xfe
-
-.line 27
-.local v2, "c":I
-const/16 v3, 0x929
-
-.line 28
-.local v3, "d":I
-const v4, 0x10002 //65538，大于65535用const v4
-
-//long用const-wide
-.line 30
-.local v4, "d1":I
-const-wide v6, 0xb4f5b835d4dL
-
-.line 31
-.local v6, "e":J
-const v5, 0x51e58b39
-
-.line 32
-.local v5, "f":F
-const-wide v8, 0x441824cbef6b9491L    # 1.11343333455E20
 ```
 
 ## 锁指令
@@ -1769,20 +1769,279 @@ invoke-static {}, Lcom/woblog/testsmali/TimeUtil;->getCurrentTime()J
 invoke-interface {v0}, Lcom/woblog/testsmali/ICallback;->onSuccess()V
 ```
 
+## 数据转换
+
+数据转换指令用于将一种数据类型转换为另一个类型，unop vA, vB:寄存器存储要转换的数据，vA存储转换后的数据
+neg-int:整形求补
+not-int:整形求反
+neg-long:长整型求补
+not-long:长整型求反
+neg-float:单精度求补
+not-float:
+neg-double:
+not-double:
+
+int-to-long:整型转为长整型
+int-to-float:整型转单精度浮点型
+int-to-double:整型转双精度浮点型
+
+int-to-byte:整型转字节型
+int-to-char:整型转字符串
+int-to-short:整型转短整型
+
+long-to-int
+long-to-float
+long-to-double
+
+float-to-int
+float-to-long
+float-to-double
+
+double-to-int
+double-to-long
+double-to-float
 
 
+```java
+private void testConvert() {
+    int i1=13;
+
+    //int 转其他类型
+    long l1 = i1;
+    float f1 = i1;
+    double d1 = i1;
+
+    byte b1 = (byte) i1;
+    char c1 = (char) i1;
+    short s1 = (short) i1;
+
+    //long 转其他类型
+    long l2 = 234444556576L;
+    int i2 = (int) l2;
+    float f2 = l2;
+    double d2 = l2;
+
+    //float 转其他类型
+    float f10 =234399.9F;
+    int i10 = (int) f10;
+    long l10 = (long) f10;
+    double d10 = f10;
+
+    //double 转其他类型
+    double d20 = 123344445.324;
+    int i20 = (int) d20;
+    long l20 = (long) d20;
+    float f20 = (float) d20;
+}
+```
+
+```smali
+.method private testConvert()V
+    .locals 29
+
+    .prologue
+    .line 30
+    const/16 v16, 0xd
+
+    .line 33
+    .local v16, "i1":I
+    move/from16 v0, v16
+
+    int-to-long v0, v0
+
+    move-wide/from16 v20, v0
+
+    .line 34
+    .local v20, "l1":J
+    move/from16 v0, v16
+
+    int-to-float v12, v0
+
+    .line 35
+    .local v12, "f1":F
+    move/from16 v0, v16
+
+    int-to-double v4, v0
+
+    .line 37
+    .local v4, "d1":D
+    move/from16 v0, v16
+
+    int-to-byte v2, v0
+
+    .line 38
+    .local v2, "b1":B
+    move/from16 v0, v16
+
+    int-to-char v3, v0
+
+    .line 39
+    .local v3, "c1":C
+    move/from16 v0, v16
+
+    int-to-short v0, v0
+
+    move/from16 v28, v0
+
+    .line 42
+    .local v28, "s1":S
+    const-wide v24, 0x3695fc0920L
+
+    .line 43
+    .local v24, "l2":J
+    move-wide/from16 v0, v24
+
+    long-to-int v0, v0
+
+    move/from16 v18, v0
+
+    .line 44
+    .local v18, "i2":I
+    move-wide/from16 v0, v24
+
+    long-to-float v14, v0
+
+    .line 45
+    .local v14, "f2":F
+    move-wide/from16 v0, v24
+
+    long-to-double v8, v0
+
+    .line 48
+    .local v8, "d2":D
+    const v13, 0x4864e7fa    # 234399.9f
+
+    .line 49
+    .local v13, "f10":F
+    float-to-int v0, v13
+
+    move/from16 v17, v0
+
+    .line 50
+    .local v17, "i10":I
+    float-to-long v0, v13
+
+    move-wide/from16 v22, v0
+
+    .line 51
+    .local v22, "l10":J
+    float-to-double v6, v13
+
+    .line 54
+    .local v6, "d10":D
+    const-wide v10, 0x419d6858f54bc6a8L    # 1.23344445324E8
+
+    .line 55
+    .local v10, "d20":D
+    double-to-int v0, v10
+
+    move/from16 v19, v0
+
+    .line 56
+    .local v19, "i20":I
+    double-to-long v0, v10
+
+    move-wide/from16 v26, v0
+
+    .line 57
+    .local v26, "l20":J
+    double-to-float v15, v10
+
+    .line 58
+    .local v15, "f20":F
+    return-void
+.end method
+```
+
+## 数据运行指令
+
+算术运算：加，减，乘，除，模，移位等
+逻辑运算：与，或，非，异或等
+
+binop vAA, vBB, vCC：将vBB寄存器与vCC寄存器进行运算，结果保存到vAA
+
+上面的指令会根据数据类型的不同在基础后面添加数据类型后缀，如：-int或-long
+add-type vBB：vBB寄存器与vCC寄存器值进行加法运算,+
+sub-type vBB:-
+mul-type vBB:*
+div-type vBB:/
+rem-type vBB:%
+and-type vBB:and
+or-type vBB:or
+xor-type vBB:xor
+shl-type vBB:左移vCC位，<<
+shr-type vBB:右移vCC位，>>
+ushr-type vBB:无符号>>
+
+其中type可以为int,long,float,double
+
+binop/2addr vA, vB:将vA寄存器与vB寄存器进行运算，结果保存到vA
+binop/lit16 vA, vB, #+CCCC:将vB寄存器与常量CCCC进行运算，结果保存到vA
+binop/lit8 vAA, vBB, #+CC:将vBB寄存器与常量CC进行运行，结果保存到vAA
 
 
+## Dalvik hello world
+
+首先写一个基本框架
+
+```smali
+.class public LHelloWorld; #定义类名
+.super Ljava/lang/Object; #定义父类
+.method public static main([Ljava/lang/String;)V #声明静态的main函数
+    .locals 4 #使用的寄存器个数，包括一个参数寄存器
+    .param p0, "args" #一个参数
+
+    .prologue #代码起始指令
 
 
+    # 这里是代码主体
 
 
+    return-void
+.end method
+```
+
+完整版如下：
+```smali
+.class public LHelloWorld; #定义类名
+.super Ljava/lang/Object; #定义父类
+.method public static main([Ljava/lang/String;)V #声明静态的main函数
+    .locals 4 #使用的寄存器个数，包括一个参数寄存器
+    .param p0, "args" #一个参数
+
+    .prologue #代码起始指令
 
 
+    const-string v1, "Hello World"
+
+    sget-object v0, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+    invoke-virtual {v0,v1}, Ljava/io/PrintStream;->println(Ljava/lang/String;)V
 
 
+    return-void
+.end method
+```
 
+### 编译smali
 
+我们去官网下载smali.jar，然后运行
+
+```smali
+java -jar smali.jar -o classes.dex HelloWorld.smali
+```
+
+编译完后我们把classes.dex push到手机里面
+
+```smali
+adb push classes.dex /data/local/ 
+```
+
+### 运行
+
+```shell
+dalvikvm -cp /data/local/classes.dex HelloWorld  
+```
 
 
 
