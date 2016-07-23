@@ -31,7 +31,7 @@ dex将原来class每个文件都有的共有信息合成一体，这样减少了
 |uleb128|  无符号LEB128,               |
 |uleb128p1| 无符号LEB128值加1，          |
 
-其中u1~u8很好理解,(不理解的可以参考这里)[http://blog.csdn.net/zklth/article/details/7978362]，表示1到8个字节的无符号数，后面三个是dex特有的数据类型，更详细的参考：[深入到源码解析leb128数据类型](http://i.woblog.cn/2016/07/23/leb128-format/)
+其中u1~u8很好理解,[不理解的可以参考这里](http://blog.csdn.net/zklth/article/details/7978362)，表示1到8个字节的无符号数，后面三个是dex特有的数据类型，更详细的参考：(深入到源码解析leb128数据类型)[http://i.woblog.cn/2016/07/23/leb128-format/]
 
 
 
