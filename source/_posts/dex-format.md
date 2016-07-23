@@ -31,45 +31,7 @@ dex将原来class每个文件都有的共有信息合成一体，这样减少了
 |uleb128|  无符号LEB128,               |
 |uleb128p1| 无符号LEB128值加1，          |
 
-其中u1~u8很好理解，表示1到8个字节的无符号数
-
-后面三个是dex特有的数据类型，每个LEB128由1~5字节组成，所有的字节组合在一起表示一个32位的数据 
-
-
-<table class="leb128Bits">
-<thead>
-<tr><th colspan="16">Bitwise diagram of a two-byte LEB128 value</th></tr>
-<tr>
-  <th colspan="8">First byte
-  </th><th colspan="8">Second byte
-</th></tr>
-</thead>
-<tbody>
-<tr>
-  <td class="start1"><code>1</code></td>
-  <td>bit<sub>6</sub></td>
-  <td>bit<sub>5</sub></td>
-  <td>bit<sub>4</sub></td>
-  <td>bit<sub>3</sub></td>
-  <td>bit<sub>2</sub></td>
-  <td>bit<sub>1</sub></td>
-  <td>bit<sub>0</sub></td>
-  <td class="start2"><code>0</code></td>
-  <td>bit<sub>13</sub></td>
-  <td>bit<sub>12</sub></td>
-  <td>bit<sub>11</sub></td>
-  <td>bit<sub>10</sub></td>
-  <td>bit<sub>9</sub></td>
-  <td>bit<sub>8</sub></td>
-  <td class="end2">bit<sub>7</sub></td>
-</tr>
-</tbody>
-</table>
-
-从上图我们可以看到：
-第一个的最高位为1，表示他还需要第二个字节，但是我们看第二个字节的最高位发现他是0，所以他不需要第三个字节了
-
-更详细的参考：[深入到源码解析leb128数据类型]()
+其中u1~u8很好理解,(不理解的可以参考这里)[http://blog.csdn.net/zklth/article/details/7978362]，表示1到8个字节的无符号数，后面三个是dex特有的数据类型，更详细的参考：[深入到源码解析leb128数据类型](http://i.woblog.cn/2016/07/23/leb128-format/)
 
 
 
