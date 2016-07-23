@@ -164,7 +164,7 @@ DEX_INLINE int readUnsignedLeb128(const u1** pStream) {
 下面举例子：计算d1 c2 b3 40的sleb128值
 
   1101 0001 0xd1
- +0111 1111
+  0111 1111
  ----------
   0101 0001 0x51
 
