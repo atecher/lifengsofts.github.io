@@ -74,14 +74,31 @@ struct DexFile {
 
 简单记录了dex文件的一些基本信息，以及大致的数据分布。长度固定为0x70,其中每一项信息所占用的内存空间也是固定的，好处是虚拟机在处理dex时不用考虑dex文件的多样性
 
-|字段名称   |偏移值    |长度     |说明     |
-|:--------:|:-------:|:------:|:----------------------------:|
-|magic     |0x0       |8       |魔数字段，值为"dex\n035\0"     |
-|checksum  |0x8       |4        |校验码                       |
-|signature  |0xc        |20     |sha-1签名                    |
-|file_size  |0x20       |4      |dex文件总长度                  |
-
-
+|字段名称        |偏移值    |长度     |说明     |
+|:-------------:|:-------:|:------:|:----------------------------:|
+|magic          |0x0       |8       |魔数字段，值为"dex\n035\0"     |
+|checksum       |0x8       |4        |校验码                       |
+|signature      |0xc        |20     |sha-1签名                    |
+|file_size      |0x20       |4      |dex文件总长度                  |
+|header_size    |0x24       |4      |文件头长度，009版本=0x5c,035版本=0x70    |
+|endian_tag     |0x28       |4      |标示字节顺序的常量                      |
+|link_size      |0x2c       |4      |链接段的大小，如果为0就是静态链接          |
+|link_off       |0x30       |4      |链接段的开始位置                          |
+|map_off        |0x34       |4      |map数据基址                            |
+|string_ids_size|0x38       |4      |字符串列表中字符串个数                    |
+|string_ids_off |0x3c       |4      |字符串列表基址                            |
+|type_ids_size  |0x40       |4      |类列表里的类型个数                          |
+|type_ids_off   |0x44       |4      |类列表基址                      |
+|proto_ids_size |0x48       |4      |原型列表里面的原型个数            |
+|proto_ids_off  |0x4c       |4      |原型列表基址                     |
+|field_ids_size |0x50       |4      |字段个数                       |
+|field_ids_off  |0x54       |4      |字段列表基址                     |
+|method_ids_size|0x58       |4      |方法个数                       |
+|method_ids_off |0x5c       |4      |方法列表基址                     |
+|class_defs_size|0x60       |4      |类定义标中类的个数                 |
+|class_defs_off |0x64       |4      |类定义列表基址                    |
+|data_size      |0x68       |4      |数据段的大小，必须4k对齐          |
+|data_off       |0x6c       |4      |数据段基址                      |
 
 
 我们可以用：hexdump -c classes.dex查看dex单字节显示的结果，如下：
