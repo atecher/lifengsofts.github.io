@@ -101,6 +101,38 @@ struct DexFile {
 |data_off       |0x6c       |4      |数据段基址                      |
 
 
+/dalvik/libdex/DexFile.h
+
+定义如下：
+
+```c++
+struct DexHeader {
+    u1  magic[8];           /* includes version number */
+    u4  checksum;           /* adler32 checksum */
+    u1  signature[kSHA1DigestLen]; /* SHA-1 hash */
+    u4  fileSize;           /* length of entire file */
+    u4  headerSize;         /* offset to start of next section */
+    u4  endianTag;
+    u4  linkSize;
+    u4  linkOff;
+    u4  mapOff;
+    u4  stringIdsSize;
+    u4  stringIdsOff;
+    u4  typeIdsSize;
+    u4  typeIdsOff;
+    u4  protoIdsSize;
+    u4  protoIdsOff;
+    u4  fieldIdsSize;
+    u4  fieldIdsOff;
+    u4  methodIdsSize;
+    u4  methodIdsOff;
+    u4  classDefsSize;
+    u4  classDefsOff;
+    u4  dataSize;
+    u4  dataOff;
+};
+```
+
 我们可以用：hexdump -c classes.dex查看dex单字节显示的结果，如下：
 
 ```shell
@@ -232,6 +264,122 @@ hexdump -C classes.dex
 000003a0  f8 02 00 00                                       |....|
 000003a4
 ```
+
+## magic
+
+标识一个有效的dex文件，他的固定值为：64 65 78 0a 30 33 35 00，转换为字符串为dex.035.
+在电子取证中也称“文件签名”
+
+## checksum
+
+他是整个头部的校验和。它被用来校验头部是否损坏
+
+## signature
+
+## file_size
+
+记录包括dexHeader在内的整个dex文件大小，用来计算偏移和方便定位某区段(section),他也有诸如唯一的标识dex,因为他是dex文件中计算sha-1区段的一个组成部分
+
+## header_size
+
+存放整个DexHeadeer结构体的长度，它也可用来计算下一个区段在文件中的起始位置，目前值为0x70
+
+## endian_tag
+
+指定dex运行环境的CPU字节序，存放的是一个固定值，所有dex文件都一样的，值为：78 56 34 12,0x12345678,表示默认采用little-endian字节序
+
+## link_size 
+
+## link_off
+
+当多个class文件被编译到一个dex文件是，他们会用到link_size和link_off，通常为0
+
+可以看到上面的，link_off：为00 00 00 00
+
+## map_off
+
+他指定了dexMapList结构的文件偏移量
+
+## string_ids_size
+
+是指string存放区段的大小，用来计算string区段起始位置-相对于dex文件加载基地址的偏移量
+
+string_ids_off存放string区段的实际偏移量，单位字节。他可以帮助编译器和虚拟机直接跳到这个区段，而不必从前读到后，一直读取到该位置。
+type,prototype,method,class,data id的大小(size)和偏移量(offset)和string的作用一样
+
+每个字符串都对应一个DexStringId数据结构，大小为4B,同时虚拟机可以通过头文件中的string_ids_size知道当前dex文件中字符串的总数，也就是string_ids区域中DexStringId数据结构的总数，所以虚拟机可以通过简单的乘法运算即可实现对字符串资源的索引,我们举个例子来根据header里面的字符串信息索引字符串，还是以上面的classes.dex文件来分析：
+
+### 根据stringIdsSize找到有多少个DexStringId（也就是有多少个字符串）
+
+0x38：0x14,说明有20个字符串
+
+### 根据stringIdsOff查看DexStringId的偏移量
+
+0x3c：0x70,说明DexStringId的开始位置在0x70
+
+读取4个字节：6c 01 00 00，转为地址为0x16c，这就是第一个字符串的位置
+在读取4个字节：74 01 00 00，0x174
+
+分别获取这个两个位置的字符串：
+3c 69 6e 69 74 3e 00:值为<init>\0
+0b 48 65 6c 6c 6f 20 57 6f 72 6c 64:值为Hello World\0
+
+我们发现每个字符串是使用“\0”分割的
+
+## dex文件结构分析
+
+我们采用前面的classes.dex文件作为演示对象
+
+dalvik虚拟机解析dex文件的内容，最终将其映射成DexMapList数据结构，DexHeader中的mapOff字段指定了DexMapList结构在dex在文件中的偏移，他的申明如下：
+
+
+/dalvik/libdex/DexFile.h
+
+```c++
+struct DexMapList {
+    u4  size;               /* 个数 */
+    DexMapItem list[1];     /* DexMapItem的结构 */
+};
+```
+
+其中size字段表示dex接来下有多少个DexMapItem结构
+
+```c++
+struct DexMapItem {
+    u2 type;              /* kDexType开头的类型 */
+    u2 unused;            /*未使用，用于字节对齐 */
+    u4 size;              /* 类型的个数 */
+    u4 offset;            /* 类型的文件偏移 */
+};
+```
+
+type字段为一个枚举常量，可以通过类型名称很容易判断他的具体类型：
+
+```c++
+enum {
+    kDexTypeHeaderItem               = 0x0,
+    kDexTypeStringIdItem             = 0x1,
+    kDexTypeTypeIdItem               = 0x2,
+    kDexTypeProtoIdItem              = 0x3,
+    kDexTypeFieldIdItem              = 0x4,
+    kDexTypeMethodIdItem             = 0x5,
+    kDexTypeClassDefItem             = 0x6,
+    kDexTypeMapList                  = 0x0,
+    kDexTypeTypeList                 = 0x1,
+    kDexTypeAnnotationSetRefList     = 0x2,
+    kDexTypeAnnotationSetItem        = 0x3,
+    kDexTypeClassDataItem            = 0x0,
+    kDexTypeCodeItem                 = 0x1,
+    kDexTypeStringDataItem           = 0x2,
+    kDexTypeDebugInfoItem            = 0x3,
+    kDexTypeAnnotationItem           = 0x4,
+    kDexTypeEncodedArrayItem         = 0x5,
+    kDexTypeAnnotationsDirectoryItem = 0x6,
+};
+```
+
+这里我们以上面的clsses.dex来分析，DexHeader结构的mapOff字段为f8 02 00 00，根据小端序，他的值为0x2f8,读取0x290出的双字节值为0e 00（0e）,表示接下来有13个DexMapItem结构
+
 
 
 
