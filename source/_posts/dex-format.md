@@ -355,12 +355,7 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 | b8            | 242      | toString                  |
 | bc            | 24c      |                           |
 
-上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的。
-
-MUTF-8是指modified UTF-8，即修改过的utf-8和普通的utf-8有以下区别：
-
-1. 使用1~3字节编码长度
-2. 大于16位
+上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的，[更详细的介绍参考这篇文章](http://i.woblog.cn/2016/07/25/mutf-8/)
 
 ## dex文件结构分析
 
