@@ -321,8 +321,10 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 在读取4个字节：74 01 00 00，0x174
 
 分别获取这个两个位置的字符串：
+```shell
 3c 69 6e 69 74 3e 00:值为<init>\0
 0b 48 65 6c 6c 6f 20 57 6f 72 6c 64:值为Hello World\0
+```
 
 我们发现每个字符串是使用“\0”分割的
 
