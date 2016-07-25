@@ -21,15 +21,15 @@ dex将原来class每个文件都有的共有信息合成一体，这样减少了
 
 # 数据结构
 
-|   类型  |   含义  |
-|:------:|:-------:|
-|   u1  |  unit8_t,1字节无符号数 |
-|   u2  |  unit16_t,2字节无符号数    |
-|   u4  |  unit32_t,4字节无符号数    |
-|   u8  |  unit64_t,8字节无符号数    |
-|sleb128|  有符号LEB128,可变长度1~5    |
-|uleb128|  无符号LEB128,               |
-|uleb128p1| 无符号LEB128值加1，          |
+|    类型     |        含义         |
+| :-------: | :---------------: |
+|    u1     |  unit8_t,1字节无符号数  |
+|    u2     | unit16_t,2字节无符号数  |
+|    u4     | unit32_t,4字节无符号数  |
+|    u8     | unit64_t,8字节无符号数  |
+|  sleb128  | 有符号LEB128,可变长度1~5 |
+|  uleb128  |    无符号LEB128,     |
+| uleb128p1 |   无符号LEB128值加1，   |
 
 其中u1~u8很好理解,[不理解的可以参考这里](http://blog.csdn.net/zklth/article/details/7978362)，表示1到8个字节的无符号数，后面三个是dex特有的数据类型，更详细的参考：(深入到源码解析leb128数据类型)[http://i.woblog.cn/2016/07/23/leb128-format/]
 
@@ -37,17 +37,17 @@ dex将原来class每个文件都有的共有信息合成一体，这样减少了
 
 首先从宏观上来说dex的文件结果很简单，实际上是由多个不同结构的数据体以首尾相接的方式拼接而成。如下图：
 
-|   数据名称    |   解释                                 |
-|:------------:|:------------------------------------:|
-|   header      |dex文件头部，记录整个dex文件的相关属性                         |
-|   string_ids  |字符串数据索引，记录了每个字符串在数据区的偏移量               |
-|   type_ids    |类似数据索引，记录了每个类型的字符串索引                       |
-|   proto_ids   |原型数据索引，记录了方法声明的字符串，返回类型字符串，参数列表    |
-|   field_ids   |字段数据索引，记录了所属类，类型以及方法名                      |
-|   method_ids  |类方法索引，记录方法所属类名，方法声明以及方法名等信息             |
-|   class_defs  |类定义数据索引，记录指定类各类信息，包括接口，超类，类数据偏移量   |
-|   data        |数据区，保存了各个类的真是数据                                |
-|   link_data   |连接数据区                                                  |
+|    数据名称    |                解释                |
+| :--------: | :------------------------------: |
+|   header   |      dex文件头部，记录整个dex文件的相关属性      |
+| string_ids |     字符串数据索引，记录了每个字符串在数据区的偏移量     |
+|  type_ids  |       类似数据索引，记录了每个类型的字符串索引       |
+| proto_ids  | 原型数据索引，记录了方法声明的字符串，返回类型字符串，参数列表  |
+| field_ids  |      字段数据索引，记录了所属类，类型以及方法名       |
+| method_ids |   类方法索引，记录方法所属类名，方法声明以及方法名等信息    |
+| class_defs | 类定义数据索引，记录指定类各类信息，包括接口，超类，类数据偏移量 |
+|    data    |         数据区，保存了各个类的真是数据          |
+| link_data  |              连接数据区               |
 
 
 /dalvik/libdex/DexFile.h
@@ -74,31 +74,31 @@ struct DexFile {
 
 简单记录了dex文件的一些基本信息，以及大致的数据分布。长度固定为0x70,其中每一项信息所占用的内存空间也是固定的，好处是虚拟机在处理dex时不用考虑dex文件的多样性
 
-|字段名称        |偏移值    |长度     |说明     |
-|:-------------:|:-------:|:------:|:----------------------------:|
-|magic          |0x0       |8       |魔数字段，值为"dex\n035\0"     |
-|checksum       |0x8       |4        |校验码                       |
-|signature      |0xc        |20     |sha-1签名                    |
-|file_size      |0x20       |4      |dex文件总长度                  |
-|header_size    |0x24       |4      |文件头长度，009版本=0x5c,035版本=0x70    |
-|endian_tag     |0x28       |4      |标示字节顺序的常量                      |
-|link_size      |0x2c       |4      |链接段的大小，如果为0就是静态链接          |
-|link_off       |0x30       |4      |链接段的开始位置                          |
-|map_off        |0x34       |4      |map数据基址                            |
-|string_ids_size|0x38       |4      |字符串列表中字符串个数                    |
-|string_ids_off |0x3c       |4      |字符串列表基址                            |
-|type_ids_size  |0x40       |4      |类列表里的类型个数                          |
-|type_ids_off   |0x44       |4      |类列表基址                      |
-|proto_ids_size |0x48       |4      |原型列表里面的原型个数            |
-|proto_ids_off  |0x4c       |4      |原型列表基址                     |
-|field_ids_size |0x50       |4      |字段个数                       |
-|field_ids_off  |0x54       |4      |字段列表基址                     |
-|method_ids_size|0x58       |4      |方法个数                       |
-|method_ids_off |0x5c       |4      |方法列表基址                     |
-|class_defs_size|0x60       |4      |类定义标中类的个数                 |
-|class_defs_off |0x64       |4      |类定义列表基址                    |
-|data_size      |0x68       |4      |数据段的大小，必须4k对齐          |
-|data_off       |0x6c       |4      |数据段基址                      |
+|      字段名称       | 偏移值  |  长度  |             说明              |
+| :-------------: | :--: | :--: | :-------------------------: |
+|      magic      | 0x0  |  8   |     魔数字段，值为"dex\n035\0"     |
+|    checksum     | 0x8  |  4   |             校验码             |
+|    signature    | 0xc  |  20  |           sha-1签名           |
+|    file_size    | 0x20 |  4   |          dex文件总长度           |
+|   header_size   | 0x24 |  4   | 文件头长度，009版本=0x5c,035版本=0x70 |
+|   endian_tag    | 0x28 |  4   |          标示字节顺序的常量          |
+|    link_size    | 0x2c |  4   |      链接段的大小，如果为0就是静态链接      |
+|    link_off     | 0x30 |  4   |          链接段的开始位置           |
+|     map_off     | 0x34 |  4   |           map数据基址           |
+| string_ids_size | 0x38 |  4   |         字符串列表中字符串个数         |
+| string_ids_off  | 0x3c |  4   |           字符串列表基址           |
+|  type_ids_size  | 0x40 |  4   |          类列表里的类型个数          |
+|  type_ids_off   | 0x44 |  4   |            类列表基址            |
+| proto_ids_size  | 0x48 |  4   |         原型列表里面的原型个数         |
+|  proto_ids_off  | 0x4c |  4   |           原型列表基址            |
+| field_ids_size  | 0x50 |  4   |            字段个数             |
+|  field_ids_off  | 0x54 |  4   |           字段列表基址            |
+| method_ids_size | 0x58 |  4   |            方法个数             |
+| method_ids_off  | 0x5c |  4   |           方法列表基址            |
+| class_defs_size | 0x60 |  4   |          类定义标中类的个数          |
+| class_defs_off  | 0x64 |  4   |           类定义列表基址           |
+|    data_size    | 0x68 |  4   |        数据段的大小，必须4k对齐        |
+|    data_off     | 0x6c |  4   |            数据段基址            |
 
 
 /dalvik/libdex/DexFile.h
@@ -321,12 +321,46 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 在读取4个字节：74 01 00 00，0x174
 
 分别获取这个两个位置的字符串：
-```shell
-3c 69 6e 69 74 3e 00:值为<init>\0
-0b 48 65 6c 6c 6f 20 57 6f 72 6c 64:值为Hello World\0
-```
+
+06 3c 69 6e 69 74 3e 00:值为`<init>\0`,其中06表示后面有6个字符(不包括\0)
+0b 48 65 6c 6c 6f 20 57 6f 72 6c 64:值为Hello World\0,0b表示有11个字符
+
 
 我们发现每个字符串是使用“\0”分割的
+
+首先他的开始位置0x70,我们根据stringIdsSize的值得知接下来有20个字符，首先我们计算DexStringId的地址截止到:0x70+0x14(20)*4=0xc0(不包括0xc0)
+
+先获取DexStringId，然后在获取地址位置的值
+
+| DexStringId偏移 | String偏移 | 值                         |
+| ------------- | -------- | ------------------------- |
+| 0x70          | 0x16c    | <init>                    |
+| 74            | 174      | Hello World               |
+| 78            | 181      | L                         |
+| 7c            | 184      | LHelloWorld;              |
+| 80            | 192      | LL                        |
+| 84            | 196      | Ljava/io/PrintStream;     |
+| 88            | 1ad      | Ljava/lang/Object;        |
+| 8c            | 1c1      | Ljava/lang/String;        |
+| 90            | 1d5      | Ljava/lang/StringBuilder; |
+| 94            | 1f0      | Ljava/lang/System;        |
+| 98            | 204      | V                         |
+| 9c            | 207      | VL                        |
+| a0            | 20b      | [Ljava/lang/String;       |
+| a4            | 220      | append                    |
+| a8            | 228      | args                      |
+| ac            | 22e      | main                      |
+| b0            | 234      | out                       |
+| b4            | 239      | println                   |
+| b8            | 242      | toString                  |
+| bc            | 24c      |                           |
+
+上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的。
+
+MUTF-8是指modified UTF-8，即修改过的utf-8和普通的utf-8有以下区别：
+
+1. 使用1~3字节编码长度
+2. 大于16位
 
 ## dex文件结构分析
 
