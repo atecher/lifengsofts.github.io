@@ -334,7 +334,7 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 
 | DexStringId偏移 | String偏移 | 值                         |
 | ------------- | -------- | ------------------------- |
-| 0x70          | 0x16c    | <init>                    |
+| 0x70          | 0x16c    | `<init>`                  |
 | 74            | 174      | Hello World               |
 | 78            | 181      | L                         |
 | 7c            | 184      | LHelloWorld;              |
