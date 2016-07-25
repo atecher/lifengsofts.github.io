@@ -357,6 +357,16 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 
 上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的，[更详细的介绍参考这篇文章](http://i.woblog.cn/2016/07/25/mutf-8/)
 
+## type_ids
+
+我们根据上面分析字符串的经验来分析下。首先通过type_ids_size分析出有多少个type_ids
+
+08 00 00 00：有8个
+
+
+
+
+
 ## dex文件结构分析
 
 我们采用前面的classes.dex文件作为演示对象
