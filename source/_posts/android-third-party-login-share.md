@@ -339,8 +339,8 @@ public class QQActivity extends AppCompatActivity {
 
 在集成微博SDK前，有两种方式来集成微博SDK：
 
- - 直接导入weibosdkcore.jar：适用于只需要授权、分享、网络请求框架功能的项目
- - 引用WeiboSDK工程（Library）：适用于微博授权、分享，以及需要登陆按钮、调用OpenAPI的项目
+- 直接导入weibosdkcore.jar：适用于只需要授权、分享、网络请求框架功能的项目
+- 引用WeiboSDK工程（Library）：适用于微博授权、分享，以及需要登陆按钮、调用OpenAPI的项目
 
 在这里我采用方式1，因为我不需要登录按钮和直接调用OpenAPI
 
@@ -556,7 +556,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
 
 创建实例，并注册到微信
 
- ```java
+```java
  @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -576,7 +576,7 @@ protected void onNewIntent(Intent intent) {
 
 ```
 
-## 分享图片
+### 分享图片
 
 ```java
 /**
@@ -694,6 +694,16 @@ public class WxActivity extends AppCompatActivity {
 另外说点题外话，鉴于我是有点强迫症的人，所以在代码以及文字的组织和代码的格式化都保持良好的风格，特别是代码的格式，我都是每次先自己写一遍，然后在从开发工具里拷贝出来，有时还得按tad一点一点点缩进（如果哪位大神有更好的方法，希望指教下），才贴到这上面了，以为我觉得既然要写博客就要写好，这要才对别人有帮助，在我觉得如果文字排版或者代码格式乱乱的，就是耍流氓。
 
 ![这里写图片描述](http://img.blog.csdn.net/20160408195341890)
+
+### 混淆
+
+这里是个坑，相信很多朋友都在这里遇到了"虽然弹出了选择好友，但点击没反应的问题"这个是没有在混淆里面排除微信的相关包，感谢[@Bemyself](http://t.qq.com/q844258542)同学的评论，在你的混淆文件中添加：
+
+```
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
+```
 
 以上测试的代码我放到[github](https://github.com/lifengsofts/TestThirdPartyFunction/tree/master)了，有什么问题可以直接评论或者在github上创建issure
 
