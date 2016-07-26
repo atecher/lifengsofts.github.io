@@ -307,13 +307,17 @@ hexdump -C classes.dex
 string_ids_off存放string区段的实际偏移量，单位字节。他可以帮助编译器和虚拟机直接跳到这个区段，而不必从前读到后，一直读取到该位置。
 type,prototype,method,class,data id的大小(size)和偏移量(offset)和string的作用一样
 
-每个字符串都对应一个DexStringId数据结构，大小为4B,同时虚拟机可以通过头文件中的string_ids_size知道当前dex文件中字符串的总数，也就是string_ids区域中DexStringId数据结构的总数，所以虚拟机可以通过简单的乘法运算即可实现对字符串资源的索引,我们举个例子来根据header里面的字符串信息索引字符串，还是以上面的classes.dex文件来分析：
+每个字符串都对应一个DexStringId数据结构，大小为4B,同时虚拟机可以通过头文件中的string_ids_size知道当前dex文件中字符串的总数，也就是string_ids区域中DexStringId数据结构的总数，所以虚拟机可以通过简单的乘法运算即可实现对字符串资源的索引，也可以根据kDexTypeStringIdItem获取字符串
 
-### 根据stringIdsSize找到有多少个DexStringId（也就是有多少个字符串）
+
+
+我们举个例子来根据header里面的字符串信息索引字符串，还是以上面的classes.dex文件来分析：
+
+根据stringIdsSize找到有多少个DexStringId（也就是有多少个字符串）:
 
 0x38：0x14,说明有20个字符串
 
-### 根据stringIdsOff查看DexStringId的偏移量
+根据stringIdsOff查看DexStringId的偏移量:
 
 0x3c：0x70,说明DexStringId的开始位置在0x70
 
@@ -409,15 +413,65 @@ enum {
 };
 ```
 
-这里我们以上面的clsses.dex来分析，DexHeader结构的mapOff字段为f8 02 00 00，根据小端序，他的值为0x2f8,读取0x290出的双字节值为0e 00（0e）,表示接下来有13个DexMapItem结构
+这里我们以上面的clsses.dex来分析，DexHeader结构的mapOff字段为f8 02 00 00，根据小端序，他的值为0x2f8,读取出的双字值为0e 00 00 00（0x0e）,表示接下来有14个DexMapItem结构,接着在读取0x2fc值为：0x00表示这个DexMapItem类型是kDexTypeHeaderItem，在读取0x2fe值为：0x00这个字段没有使用。在读取0x300值为：01 00 00 00表示有一个，在0x304读取:00 00 00 00表示偏移为0x0
 
+根据上面的规则我们整理除了14个Item
 
+| 类型                        | 个数   | 偏移    |
+| ------------------------- | ---- | ----- |
+| kDexTypeHeaderItem        | 0x1  | 0x0   |
+| kDexTypeStringIdItem      | 0x14 | 0x70  |
+| kDexTypeTypeIdItem        | 0x8  | 0xc0  |
+| kDexTypeProtoIdItem       | 0x5  | 0xe0  |
+| kDexTypeFieldIdItem       | 0x1  | 0x11c |
+| kDexTypeMethodIdItem      | 0x5  | 0x124 |
+| kDexTypeClassDefItem      | 0x1  | 0x14c |
+| kDexTypeStringDataItem    | 0x14 | 0x16c |
+| kDexTypeTypeList          | 0x2  | 0x270 |
+| kDexTypeAnnotationSetItem | 0x2  | 0x280 |
+| kDexTypeDubInfoItem       | 0x1  | 0x288 |
+| kDexTypeCodeItem          | 0x1  | 0x290 |
+| kDexTypeClassDataItem     | 0x1  | 0x2f0 |
+| kDexTypeMapList           | 0x1  | 0x2f8 |
 
+对比文件我们发下DexHeader就是kDexTypeHeaderItem描述的结构，他占用了文件前0x70个字节空间，接下来的kDexTypeStringIdItem~kDexTypeClassDefItem与DexHeader中对应字段值是一样的
 
+### kDexTypeStringIdItem
 
+对应DexHeader中的stringIdsSize与stringIdsOff字段，表示从0x70位置起有连续0x14个DexStringId:
 
+````c++
+struct DexStringId {
+    u4 stringDataOff;      /* file offset to string_data_item */
+};
+````
 
+他只有一个stringDataOff字段，指向字符串数据的偏移位置，开始地址为0x70+(14*4)=0xc0,所以我们最后一个dexStringId的偏移为：0xbc，我们根据此信息整理了所以字符串:
 
+| dexStringId偏移 | 真实字符串偏移 | 字符串  |
+| ------------- | ------- | ---- |
+| 0x70          | 0x16c   |      |
+| 74            | 174     |      |
+| 78            | 181     |      |
+| 7c            | 184     |      |
+| 80            | 192     |      |
+| 84            | 196     |      |
+| 88            | 1ad     |      |
+| 8c            | 1c1     |      |
+| 90            | 1d5     |      |
+| 94            | 1f0     |      |
+| 98            | 204     | 204  |
+| 9c            | 207     |      |
+| a0            | 20b     |      |
+| a4            | 220     |      |
+| a8            | 282     |      |
+| ac            | 22e     |      |
+| b0            | 234     |      |
+| b4            | 239     |      |
+| b8            | 242     |      |
+| bc            | 24c     |      |
+
+在0x16c我们读取到：06 3c 69 6e 69 74 3e
 
 
 
