@@ -361,7 +361,7 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 
 上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的，[更详细的介绍参考这篇文章](http://i.woblog.cn/2016/07/25/mutf-8/)
 
-## dex文件结构分析
+# dex文件结构分析
 
 我们采用前面的classes.dex文件作为演示对象
 
