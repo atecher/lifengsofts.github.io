@@ -361,7 +361,7 @@ type,prototype,method,class,data id的大小(size)和偏移量(offset)和string�
 
 上面的字符串并非普通的ASCII字符串，他们是由MUTF-8编码来表示的，[更详细的介绍参考这篇文章](http://i.woblog.cn/2016/07/25/mutf-8/)
 
-## dex文件结构分析
+# dex文件结构分析
 
 我们采用前面的classes.dex文件作为演示对象
 
@@ -436,7 +436,7 @@ enum {
 
 对比文件我们发下DexHeader就是kDexTypeHeaderItem描述的结构，他占用了文件前0x70个字节空间，接下来的kDexTypeStringIdItem~kDexTypeClassDefItem与DexHeader中对应字段值是一样的
 
-### kDexTypeStringIdItem
+## kDexTypeStringIdItem
 
 对应DexHeader中的stringIdsSize与stringIdsOff字段，表示从0x70位置起有连续0x14个DexStringId:
 
@@ -448,30 +448,40 @@ struct DexStringId {
 
 他只有一个stringDataOff字段，指向字符串数据的偏移位置，开始地址为0x70+(14*4)=0xc0,所以我们最后一个dexStringId的偏移为：0xbc，我们根据此信息整理了所以字符串:
 
-| dexStringId偏移 | 真实字符串偏移 | 字符串  |
-| ------------- | ------- | ---- |
-| 0x70          | 0x16c   |      |
-| 74            | 174     |      |
-| 78            | 181     |      |
-| 7c            | 184     |      |
-| 80            | 192     |      |
-| 84            | 196     |      |
-| 88            | 1ad     |      |
-| 8c            | 1c1     |      |
-| 90            | 1d5     |      |
-| 94            | 1f0     |      |
-| 98            | 204     | 204  |
-| 9c            | 207     |      |
-| a0            | 20b     |      |
-| a4            | 220     |      |
-| a8            | 282     |      |
-| ac            | 22e     |      |
-| b0            | 234     |      |
-| b4            | 239     |      |
-| b8            | 242     |      |
-| bc            | 24c     |      |
+| dexStringId偏移 | 真实字符串偏移 | 字符串                       |
+| ------------- | ------- | ------------------------- |
+| 0x70          | 0x16c   | `<init>`                  |
+| 74            | 174     | Hello World               |
+| 78            | 181     | L                         |
+| 7c            | 184     | LHelloWorld;              |
+| 80            | 192     | LL                        |
+| 84            | 196     | Ljava/io/PrintStream;     |
+| 88            | 1ad     | Ljava/lang/Object;        |
+| 8c            | 1c1     | Ljava/lang/String;        |
+| 90            | 1d5     | Ljava/lang/StringBuilder; |
+| 94            | 1f0     | Ljava/lang/System;        |
+| 98            | 204     | V                         |
+| 9c            | 207     | VL                        |
+| a0            | 20b     | [Ljava/lang/String;       |
+| a4            | 220     | append                    |
+| a8            | 282     | args                      |
+| ac            | 22e     | main                      |
+| b0            | 234     | out                       |
+| b4            | 239     | println                   |
+| b8            | 242     | toString                  |
+| bc            | 24c     | 这是一个手写的smali实例            |
 
-在0x16c我们读取到：06 3c 69 6e 69 74 3e
+## kDexTypeStringIdItem
+
+他对应DexHeader中的typeIdsSize和typeIdsOff字段，指向的结构体为：
+
+```c++
+struct DexTypeId {
+    u4  descriptorIdx;      /* 指向DexStringId列表的索引 */
+};
+```
+
+对应的字符串代表具体的类型，我们根据上面字段可知：从0xc0起有0x8个DexTypeId结构：
 
 
 
