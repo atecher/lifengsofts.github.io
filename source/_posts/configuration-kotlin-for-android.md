@@ -49,3 +49,61 @@ class MainActivity : AppCompatActivity() {
 ```
 
 然后运行，如果不出意外，就可以看见主界面了
+
+# 注意
+
+如果在xml里面使用了事件绑定，如：onClick
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="cn.woblog.testkotlindatabinding.ItemInput"/>
+
+        <variable
+            name="actionHandler"
+            type="cn.woblog.testkotlindatabinding.ActionHandler"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="cn.woblog.testkotlindatabinding.MainActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->actionHandler.onClick(item)}"
+            android:text="click me"/>
+    </LinearLayout>
+</layout>
+```
+
+需要在app的build.gradle的dependencies
+
+```groovy
+kapt 'com.android.databinding:compiler:+'
+```
+
+并且还要在在最外层添加
+
+```groovy
+kapt {
+    generateStubs = true
+}
+```
