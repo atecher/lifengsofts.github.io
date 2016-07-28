@@ -50,9 +50,17 @@ class MainActivity : AppCompatActivity() {
 
 然后运行，如果不出意外，就可以看见主界面了
 
-# 注意
+# databinding
 
-如果在xml里面使用了事件绑定，如：onClick
+在app的build.gradle中android中添加
+
+```groovy
+dataBinding {
+    enabled = true
+}
+```
+
+还需要做如下处理，如果在xml里面使用了事件绑定，如：onClick
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
