@@ -50,6 +50,14 @@ class MainActivity : AppCompatActivity() {
 
 然后运行，如果不出意外，就可以看见主界面了
 
+# 使用kotlin-android-extensions插件
+
+使用了这个插件我们可以直接在代码中使用布局中写的id访问这个空间，不需要findViewById，直接在app的build.gradle中添加
+
+```groovy
+apply plugin: 'kotlin-android-extensions'
+```
+
 # databinding
 
 在app的build.gradle中android中添加

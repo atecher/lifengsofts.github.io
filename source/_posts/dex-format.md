@@ -448,28 +448,28 @@ struct DexStringId {
 
 他只有一个stringDataOff字段，指向字符串数据的偏移位置，开始地址为0x70+(14*4)=0xc0,所以我们最后一个dexStringId的偏移为：0xbc，我们根据此信息整理了所以字符串:
 
-| dexStringId偏移 | 真实字符串偏移 | 字符串                       |
-| ------------- | ------- | ------------------------- |
-| 0x70          | 0x16c   | `<init>`                  |
-| 74            | 174     | Hello World               |
-| 78            | 181     | L                         |
-| 7c            | 184     | LHelloWorld;              |
-| 80            | 192     | LL                        |
-| 84            | 196     | Ljava/io/PrintStream;     |
-| 88            | 1ad     | Ljava/lang/Object;        |
-| 8c            | 1c1     | Ljava/lang/String;        |
-| 90            | 1d5     | Ljava/lang/StringBuilder; |
-| 94            | 1f0     | Ljava/lang/System;        |
-| 98            | 204     | V                         |
-| 9c            | 207     | VL                        |
-| a0            | 20b     | [Ljava/lang/String;       |
-| a4            | 220     | append                    |
-| a8            | 282     | args                      |
-| ac            | 22e     | main                      |
-| b0            | 234     | out                       |
-| b4            | 239     | println                   |
-| b8            | 242     | toString                  |
-| bc            | 24c     | 这是一个手写的smali实例            |
+| dexStringId偏移 | 真实字符串偏移 | 字符串                       | 索引   |
+| ------------- | ------- | ------------------------- | ---- |
+| 0x70          | 0x16c   | `<init>`                  | 0x0  |
+| 74            | 174     | Hello World               | 1    |
+| 78            | 181     | L                         | 2    |
+| 7c            | 184     | LHelloWorld;              | 3    |
+| 80            | 192     | LL                        | 4    |
+| 84            | 196     | Ljava/io/PrintStream;     | 5    |
+| 88            | 1ad     | Ljava/lang/Object;        | 6    |
+| 8c            | 1c1     | Ljava/lang/String;        | 7    |
+| 90            | 1d5     | Ljava/lang/StringBuilder; | 8    |
+| 94            | 1f0     | Ljava/lang/System;        | 9    |
+| 98            | 204     | V                         | a    |
+| 9c            | 207     | VL                        | b    |
+| a0            | 20b     | [Ljava/lang/String;       | c    |
+| a4            | 220     | append                    | d    |
+| a8            | 282     | args                      | e    |
+| ac            | 22e     | main                      | f    |
+| b0            | 234     | out                       | 10   |
+| b4            | 239     | println                   | 11   |
+| b8            | 242     | toString                  | 12   |
+| bc            | 24c     | 这是一个手写的smali实例            | 13   |
 
 ## kDexTypeStringIdItem
 
@@ -483,27 +483,87 @@ struct DexTypeId {
 
 对应的字符串代表具体的类型，我们根据上面字段可知：从0xc0起有0x8个DexTypeId结构：
 
+| 类型索引 | 字符串索引 | 字符串                       | DexTypeId偏移 |
+| :--- | ----- | ------------------------- | ----------- |
+| 0    | 0x3   | LHelloWorld;              | 0xc0        |
+| 1    | 0x5   | Ljava/io/PrintStream;     | 0xc4        |
+| 2    | 0x6   | Ljava/lang/Object;        | 0xc8        |
+| 3    | 0x7   | Ljava/lang/String;        | 0xcc        |
+| 4    | 0x8   | Ljava/lang/StringBuilder; | 0xd0        |
+| 5    | 0x9   | Ljava/lang/System;        | 0xd4        |
+| 6    | 0xa   | L                         | 0xd8        |
+| 7    | 0xc   | [Ljava/lang/String;       | 0xdc        |
 
+## kDexTypeProtoIdItem
 
+对应DexHeader中的protoIdsSize与protoIdsOff字段，声明如果：
 
+```c++
+struct DexProtoId {
+    u4  shortyIdx;          /* 指向DexStringId列表的索引 */
+    u4  returnTypeIdx;      /* 指向DexTypeId列表的索引 */
+    u4  parametersOff;      /* 指向DexTypeList的偏移 */
+};
+```
 
+他是一个方法的声明结构体，shortyIdx为方法声明字符串，returnTypeIdx为方法返回类型字符串，parametersOff指向一个DexTypeList的结构体存放了方法的参数列表
 
+```c++
+struct  {
+    u4  size;               /* 接下来DexTypeItem的个数 */
+    DexTypeItem list[1];    /* DexTypeItem结构 */
+};
+```
 
+DexTypeItem声明：
 
+```c++
+struct DexTypeItem {
+    u2  typeIdx;            /* 指向DexTypeId列表的索引 */
+};
+```
 
+根据上面的信息我们得知从0xe0开始有0x5个DexProtoId对象
 
+| 索引   | 方法声明 | 返回类型                      | 参数列表                | paramOff偏移 |
+| ---- | ---- | ------------------------- | ------------------- | ---------- |
+| 0    | L    | Ljava/lang/String;        | 无参数                 | 0          |
+| 1    | LL   | Ljava/lang/StringBuilder; | Ljava/lang/String;  | 0x278      |
+| 2    | V    | L                         | 无参数                 |            |
+| 3    | VL   | L                         | Ljava/lang/String;  | 0x278      |
+| 4    | VL   | L                         | [Ljava/lang/String; | 0x270      |
 
+## kDexTypeFieldIdItem
 
+对应DexHeader中的fieldIdsSize和fieldIdsOff字段，指向DexFieldId结构体
 
+```c++
+struct DexFieldId {
+    u2  classIdx;           /* 类的类型，指向DexTypeId列表索引 */
+    u2  typeIdx;            /* 字段类型，指向DexTypeId列表索引 */
+    u4  nameIdx;            /* 字段名，指向DexStringId列表 */
+};
+```
 
+可以看见这个结构的数据全部是索引信息，指明了字段所在的类，字段类型，字段名，通过上面的信息我们发现从0x11c有一个kDexTypeFieldIdItem
 
+| 类类型                | 字段类型                  | 字段名  |
+| ------------------ | --------------------- | ---- |
+| Ljava/lang/System; | Ljava/io/PrintStream; | out  |
 
+### kDexTypeMethodIdItem
 
+它对应DexHeader中的methodIdsSize与methodIdsOff字段，指向的结构体DexMethodId
 
+```c++
+struct DexMethodId {
+    u2  classIdx;           /* 类的类型，指向DexTypeId列表的索引 */
+    u2  protoIdx;           /* 声明类型，指向DexProtoId列表索引 */
+    u4  nameIdx;            /* 方法名，指向DexStringId列表的索引 */
+};
+```
 
-
-
-
+数据也是索引，指明了方法所在的类，方法声明和方法名。从0x124有0x5个kDexTypeMethodIdItem
 
 
 
