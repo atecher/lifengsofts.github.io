@@ -429,7 +429,7 @@ enum {
 | kDexTypeStringDataItem    | 0x14 | 0x16c |
 | kDexTypeTypeList          | 0x2  | 0x270 |
 | kDexTypeAnnotationSetItem | 0x2  | 0x280 |
-| kDexTypeDubInfoItem       | 0x1  | 0x288 |
+| kDexTypeDebugsssInfoItem  | 0x1  | 0x288 |
 | kDexTypeCodeItem          | 0x1  | 0x290 |
 | kDexTypeClassDataItem     | 0x1  | 0x2f0 |
 | kDexTypeMapList           | 0x1  | 0x2f8 |
@@ -471,7 +471,7 @@ struct DexStringId {
 | b8            | 242     | toString                  | 12   |
 | bc            | 24c     | 这是一个手写的smali实例            | 13   |
 
-## kDexTypeStringIdItem
+## kDexTypeTypeIdItem
 
 他对应DexHeader中的typeIdsSize和typeIdsOff字段，指向的结构体为：
 
@@ -551,7 +551,7 @@ struct DexFieldId {
 | ------------------ | --------------------- | ---- |
 | Ljava/lang/System; | Ljava/io/PrintStream; | out  |
 
-### kDexTypeMethodIdItem
+## kDexTypeMethodIdItem
 
 它对应DexHeader中的methodIdsSize与methodIdsOff字段，指向的结构体DexMethodId
 
@@ -564,6 +564,210 @@ struct DexMethodId {
 ```
 
 数据也是索引，指明了方法所在的类，方法声明和方法名。从0x124有0x5个kDexTypeMethodIdItem
+
+| 类类型                       | 方法声明 | 方法名      |
+| ------------------------- | ---- | -------- |
+| LHelloWorld;              | VL   | main     |
+| Ljava/io/PrintStream;     | VL   | println  |
+| Ljava/lang/StringBuilder; | V    | `<init>` |
+| Ljava/lang/StringBuilder; | LL   | append   |
+| Ljava/lang/StringBuilder; | L    | toString |
+
+## kDexTypeClassDefItem
+
+对应DexHeader中的classDefsSize和classDefsOff字段，指向结构体DexClassDef
+
+```c++
+struct DexClassDef {
+    u4  classIdx;           /* 类的类型，指向DexTypeId列表索引 */
+    u4  accessFlags;        /* 访问标志 */
+    u4  superclassIdx;      /* 父类的类型，指向DexTypeId列表的索引 */
+    u4  interfacesOff;      /* 实现了哪些接口，指向DexTypeList结构的偏移 */
+    u4  sourceFileIdx;      /* 源文件名，指向DexStringId列表的索引 */
+    u4  annotationsOff;     /* 注解，指向DexAnnotationsDirectoryItem结构的偏移 */
+    u4  classDataOff;       /* 指向DexClassData结构的偏移 */
+    u4  staticValuesOff;    /* 指向DexEncodedArray结构的偏移 */
+};
+```
+
+classIdx是一个索引值，表示类的类型
+
+accessFlags是类的访问标志，他是以ACC_开头的枚举值
+
+superclassIdx是父类的类型
+
+interfacesOff如果类含有接口声明或实现，他就会指向一个DexTypeList结构，否则为0
+
+sourceFileIdx是类所在源文件名称
+
+annotationsOff字段指向注解目录结构，根据类型不同有注解类，注解方法，注解字段，注解参数。如果没有注解，值为0
+
+classDataOff指向DexClassData结构，是类的数据部分
+
+staticValuesOff记录了类中的静态数据
+
+### DexClassData
+
+声明在DexClass.h中
+
+```c++
+struct DexClassData {
+    DexClassDataHeader header; //指向DexClassDataHeader，字段和方法个数
+    DexField*          staticFields; //静态字段
+    DexField*          instanceFields; //实例字段
+    DexMethod*         directMethods; //直接方法
+    DexMethod*         virtualMethods;//虚方法
+};
+```
+
+#### DexClassDataHeader
+
+记录了当前类中的字段和方法的数目，声明如下：
+
+```c++
+struct DexClassDataHeader {
+    u4 staticFieldsSize; //静态字段个数
+    u4 instanceFieldsSize;//实例字段个数
+    u4 directMethodsSize;//直接方法个数
+    u4 virtualMethodsSize;//虚方法个数
+};
+```
+
+#### DexField
+
+描述了字段类型与访问标志，声明如下:
+
+```c++
+struct DexField {
+    u4 fieldIdx;    /* 指向DexFieldId列表的索引 */
+    u4 accessFlags; //访问标志
+};
+```
+
+#### DexMethod
+
+描述了方法的原型，名称，访问标志和代码数据块，声明如下：
+
+```c++
+struct DexMethod {
+    u4 methodIdx;    /* 指向DexMethodId列表的索引 */
+    u4 accessFlags;
+    u4 codeOff;      /* 指向DexCode结构的偏移 */
+};
+```
+
+codeOff字段指向一个DexCode结构体，声明如下：
+
+/dalvik/libdex/DexFile.h
+
+```c++
+struct DexCode {
+    u2  registersSize;//使用寄存器个数
+    u2  insSize;//参数个数
+    u2  outsSize;//调用其他方法时使用的寄存器个数
+    u2  triesSize;//try/catch个数
+    u4  debugInfoOff;//指向调试信息的偏移
+    u4  insnsSize;//指令集个数，以2字节为单位
+    u2  insns[1];//指令集
+    /* followed by optional u2 padding */
+    /* followed by try_item[triesSize] */
+    /* followed by uleb handlersSize */
+    /* followed by catch_handler_item[handlersSize] */
+};
+```
+
+registersSize指令了方法使用的寄存器个数，对应smali中的.locals 2
+
+insSize指定了方法的参数个数，对应.param p1, "noteId"    # Ljava/lang/String;
+
+如果一个方法使用5个寄存器，其中2有两个参数寄存器，而该方法调用另一个方法使用了20个寄存器，那么虚拟机在分配该方法寄存器是会在分配20个寄存器
+
+triesSize指定了方法中Try/Catch格式
+
+debugInfoOff指向调试信息偏移，如果有，解析函数为dexDecodoDebugInfo在DexDebugInfo.cpp文件
+
+insnsSize接下来指令个数
+
+insns真正的代码部分
+
+根据上面的信息，我们发现从0x14c有0x1个DexClassData
+
+第一个字段值为0x0,表示对应DexType中的索引为0，值为LHelloWorld;，表示类名为HelloWorld
+
+第二个字段值为0x1表示访问标识符为ACC_PUBLIC
+
+第三个字段值0x2表示父类，表示指向DexType的索引，值为Ljava/lang/Object;，表示父类为java/lang/Object;
+
+第四个字段值0x0,表示没有接口
+
+第五个字段值
+
+第六个字段值0x0表示没有注解
+
+第七个字段值0x2f0表示DexClassData的偏移
+
+第八个字段值0x0表示没有静态值
+
+
+
+我们继续分析DexClassData
+
+DexClassDataHeader为4个uleb128数据类型，值为：0，0，1，0，表示静态字段为0个，实例字段为0个，1个直接方法，0个虚方法
+
+由于没有静态字段，实例字段，虚方法，所以我们直接分析DexMethod
+
+从0x2f4开始为一个直接方法相关数据，第一个字段为0，指向的DexMethod列表第0个，也就是main方法。第二个值09，表示public+static，具体的看下面表：
+
+现在来说下accessFlags在字节码中的计算方式：
+access_flags的计算公式为：access_flags = flagA | flagB | flagB ...
+
+| 标志名称          | 标志值    | 含义          |
+| ------------- | ------ | ----------- |
+| ACC_PUBLIC    | 0x0001 | public      |
+| ACC_PRIVATE   | 0x0002 | private     |
+| ACC_PROTECTED | 0x0004 | protected   |
+| ACC_STATIC    | 0x0008 | static      |
+| ACC_FINAL     | 0x0010 | final       |
+| ACC_VOLATILE  | 0x0040 | volatile    |
+| ACC_TRANSIENT | 0x0080 | transient   |
+| ACC_SYNTHETIC | 0x1000 | 是否是编译器自动生成的 |
+| ACC_ENUM      | 0x4000 | enum        |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
