@@ -795,6 +795,8 @@ BBBBlo BBBB BBBB BBBBhi
 从低位到高位排列
 0000 0000 0010 0000
 
+最后这条指令为：
+
 const-wide v4, 0x100000
 
 
