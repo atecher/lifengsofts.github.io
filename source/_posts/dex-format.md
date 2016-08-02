@@ -749,11 +749,53 @@ access_flags的计算公式为：access_flags = flagA | flagB | flagB ...
 
 28 00 00 00=0x28,insnsSize，指令个数，以2字节为单位
 
+我们先读取一个两个字节6200，查看[dalvik bytecode](https://source.android.com/devices/tech/dalvik/dalvik-bytecode.html)发现为sget-object,指令格式为21c,查询[instruction formats](https://source.android.com/devices/tech/dalvik/instruction-formats.html)可以看到指令格式为：
 
+AA|op BBBB
 
+可以看出他需要两个16位，21C对应有以下几种格式：
 
+| op vAA, type@BBBB   | check-cast   |
+| ------------------- | ------------ |
+| op vAA, field@BBBB  | const-class  |
+| op vAA, string@BBBB | const-string |
 
+由于我们的指令是sget，所有这条指令格式为op vAA, field@BBBB
 
+在读取两个字节0000，表示在字段索引0，所以这条指令为
+
+sget-object v0, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+继续从0x2a4分析：
+
+00 00，查看bytecode为10x,在查询指令格式为：
+
+ØØ|op	10x	op，可以看出只需要两个字节，所以这条指令为：nop
+
+00 00：nop
+
+00 00：nop
+
+12 32:op=12,A=2,B=3查询字节码代码格式，const/4 vA, #+B，格式为11n，最终翻译为：const/4 v2, 0x3
+
+13 03：op=13,const/16 vAA, #+BBBB,格式21s，格式为AA|op BBBB，所以需要两个字节，在读取两个字节，ff ff，最终指令格式为：const/16 v3, -0x1
+
+剩下的指令可以按照上面的步骤翻译完
+
+18 04：
+
+const-wide vAA, #+BBBBBBBBBBBBBBBB
+
+AA|op 
+BBBBlo BBBB BBBB BBBBhi
+
+0000 0100 0000 0000
+每两位调换位置：
+0000 0010 0000 0000
+从低位到高位排列
+0000 0000 0010 0000
+
+const-wide v4, 0x100000
 
 
 
