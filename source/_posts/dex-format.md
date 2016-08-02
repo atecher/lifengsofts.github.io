@@ -690,7 +690,7 @@ insnsSize接下来指令个数
 
 insns真正的代码部分
 
-根据上面的信息，我们发现从0x14c有0x1个DexClassData
+根据上面的信息，我们发现从0x14c有0x1个kDexTypeClassDefItem：
 
 第一个字段值为0x0,表示对应DexType中的索引为0，值为LHelloWorld;，表示类名为HelloWorld
 
@@ -712,7 +712,7 @@ insns真正的代码部分
 
 我们继续分析DexClassData
 
-DexClassDataHeader为4个uleb128数据类型，值为：0，0，1，0，表示静态字段为0个，实例字段为0个，1个直接方法，0个虚方法
+DexClassDataHeader为4个uleb128数据类型，从0x2f0开始值为：0，0，1，0，表示静态字段为0个，实例字段为0个，1个直接方法，0个虚方法
 
 由于没有静态字段，实例字段，虚方法，所以我们直接分析DexMethod
 
@@ -733,7 +733,21 @@ access_flags的计算公式为：access_flags = flagA | flagB | flagB ...
 | ACC_SYNTHETIC | 0x1000 | 是否是编译器自动生成的 |
 | ACC_ENUM      | 0x4000 | enum        |
 
+第三个字段为90 05，值为0x290，我们从0x290开始分析DexCode，值为：
 
+0b 00=11
+
+01 00=1
+
+02 00=2
+
+00 00=0
+
+表示使用了11个寄存器，1个参数寄存器，调用其他方法使用了2个寄存器，没有Try/Catch
+
+88 02 00 00=0x288,debugInfoOff
+
+28 00 00 00=0x28,insnsSize，指令个数，以2字节为单位
 
 
 
