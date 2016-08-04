@@ -1,0 +1,277 @@
+# 如何生成odex文件
+
+他有两种存在方式：
+
+一种是从apk程序提取出来了的与apk放在同一目录且后缀为odex,这类odex多事Android ROM的程序
+
+另一种是保存在/data/dalvik-cache/目录下的缓存文件，这类odex文件仍然以dex作为后缀，文件名为apk路径@apk名称@classes.dex,如：
+
+system@app@Email.apk@classes.dex：安装在system/app目录下面的Email.apk
+
+> 上面说的都是由系统自动生成的，我们下面说说怎么手动生成
+
+首先在Android的源码里面提供了一个dexopt-wrapper，在build/tools/dexpreopt/dexopt-wrapper/目录下，查看了DexOptWrapper.cpp文件发现他最终调用的是/system/bin/dexopt命令。所以说我们可以自己编译或者下载一个dexopt-wrapper到手机，就可以手动将dex转为odex了
+
+```shell
+adb push dexopt-wrapper /data/local/
+adb shell chmod 777 /data/local/dexopt-wrapper
+```
+
+接下来把我们前面写的HelloWorld.smali编译成dex为classes.dex在打包为HelloWorld.zip，并push到手机
+
+```shell
+adb push HelloWorld.zip /data/local/
+```
+
+下面我们进入到/data/local/目录下面执行
+
+```
+./dexopt-wrapper HelloWorld.zip HelloWorld.odex
+```
+
+不出意外的话会输出：
+
+```
+--- BEGIN 'HelloWorld.zip' (bootstrap=0) ---
+--- waiting for verify+opt, pid=2535
+--- would reduce privs here
+--- END 'HelloWorld.zip' (success) ---
+```
+
+说明转换成功了，我们将HelloWorld.odex下载到本地，以便后面的分析
+
+```
+adb pull /data/local/HelloWorld.odex .
+```
+
+# 为什么有odex
+
+因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+
+# odex文件结构分析
+
+## DexOptHeader
+
+他的定义在DexFile.h中
+
+```c++
+struct DexOptHeader {
+    u1  magic[8]; /* 标识是一个odex文件，包含版本号 */
+
+    u4  dexOffset; /* dex文件的偏移 */
+    u4  dexLength; /* dex文件长度 */
+    u4  depsOffset; /* odex依赖库的偏移 */
+    u4  depsLength; /* 依赖库长度 */
+    u4  optOffset; /* 辅助数据偏移 */
+    u4  optLength; /* 辅助数据长度 */
+
+    u4  flags; /* 标志位 */
+    u4  checksum; /* 依赖库和辅助数据的校验值 */
+};
+```
+
+mgic：和DexHeader结构中的magic字段类似，标识一个特定类型的文件，当前(Android 4.4,api19)的固定值为64 65 79 0a 30 33 36 00，转为字符串为d   e   y  \n   0   3   6  \0
+
+dexOffset：为dex文件头的偏移，当前的值为DexOptHeader结构大小0x28
+
+flag:取值为DexoptFlags中的常量值，标识了虚拟机加载odex时的优化与验证选项
+
+| 字段名        | 偏移值  | 长度   |
+| ---------- | ---- | ---- |
+| magic      | 0x0  | 8    |
+| dexOffset  | 8    | 4    |
+| dexLength  | c    | 4    |
+| depsOffset | 10   | 4    |
+| depsLength | 14   | 4    |
+| optOffset  | 18   | 4    |
+| optLength  | 20   | 4    |
+| flags      | 24   | 4    |
+| checksum   | 28   | 4    |
+
+## DexFile
+
+这一部分和上一篇文章将的格式是一样的
+
+##Dependences
+
+这一部分没有在源码中明确的定义，他不会被加载进内存，只能通过源码分析他的结构
+
+```c++
+struct Dependences{
+	u4 modWhen; //时间戳
+	u4 crc; //校验值
+	u4 DALVIK_VM_BUILD; //Dalvik虚拟机版本号
+	U4 numDeps; //依赖库个数
+	struct{
+		u4 len; //name字符串长度
+		u1 name[len]; //依赖库名称
+		kSHA1DigestLen signature; //sha-1值
+	} table[numDeps];
+}
+```
+
+下面我们从源码分析生成Dependences结构的代码，是由/dalvik/vm/analysis/DexPrepare.cpp#writeDependencies中完成的
+
+```c++
+static int writeDependencies(int fd, u4 modWhen, u4 crc)
+{
+    u1* buf = NULL;
+    int result = -1;
+    ssize_t bufLen;
+    ClassPathEntry* cpe;
+    int numDeps;
+
+    /*
+     * Count up the number of completed entries in the bootclasspath.
+     */
+    numDeps = 0;
+    bufLen = 0;
+    for (cpe = gDvm.bootClassPath; cpe->ptr != NULL; cpe++) { //计算依赖库个数
+        const char* cacheFileName =
+            dvmPathToAbsolutePortion(getCacheFileName(cpe));
+        assert(cacheFileName != NULL); /* guaranteed by Class.c */
+
+        ALOGV("+++ DexOpt: found dep '%s'", cacheFileName);
+
+        numDeps++; //依赖库格式
+        bufLen += strlen(cacheFileName) +1;
+    }
+
+    bufLen += 4*4 + numDeps * (4+kSHA1DigestLen);
+
+    buf = (u1*)malloc(bufLen); //动态开辟Dependencies结构的长度
+
+    set4LE(buf+0, modWhen); //写入时间戳
+    set4LE(buf+4, crc); //写入crc
+    set4LE(buf+8, DALVIK_VM_BUILD); //写入虚拟机版本
+    set4LE(buf+12, numDeps); //写入依赖库的个数
+
+    // TODO: do we want to add dvmGetInlineOpsTableLength() here?  Won't
+    // help us if somebody replaces an existing entry, but it'd catch
+    // additions/removals.
+
+    u1* ptr = buf + 4*4;
+    for (cpe = gDvm.bootClassPath; cpe->ptr != NULL; cpe++) { //循环写入所有依赖库
+        const char* cacheFileName =
+            dvmPathToAbsolutePortion(getCacheFileName(cpe));
+        assert(cacheFileName != NULL); /* guaranteed by Class.c */
+
+        const u1* signature = getSignature(cpe);//计算sha1值
+        int len = strlen(cacheFileName) +1;
+
+        if (ptr + 4 + len + kSHA1DigestLen > buf + bufLen) {
+            ALOGE("DexOpt: overran buffer");
+            dvmAbort();
+        }
+
+        set4LE(ptr, len);
+        ptr += 4;
+        memcpy(ptr, cacheFileName, len); //写入依赖库的名词
+        ptr += len;
+        memcpy(ptr, signature, kSHA1DigestLen); //写入依赖库的sha1值
+        ptr += kSHA1DigestLen;
+    }
+
+    assert(ptr == buf + bufLen);
+
+    result = sysWriteFully(fd, buf, bufLen, "DexOpt dep info");
+
+    free(buf);
+    return result;
+}
+```
+
+modWhen:记录优化前classes.dex的时间戳
+
+crc:优化前classes.dex的校验值
+
+他们是通过/dalvik/libdex/ZipArchive.cpp#dexZipGetEntryInfo函数来获取的
+
+
+
+DALVIK_VM_BUILD：是虚拟机版本号，定义在/dalvik/vm/DalvikVersion.h
+
+```c++
+#define DALVIK_VM_BUILD         27
+```
+
+2.2.3 = 19
+
+2.3~2.3.7 = 23
+
+4.0~5.1.1 = 27
+
+6.0.0~后面没有这个常量了
+
+
+
+numDeps:依赖库个数
+
+table：为连续numDeps个真实依赖信息结构组成
+
+​	len:指定第2个字段name暂用的字节数
+
+​	name:依赖库的完整路径名
+
+​	signature:依赖库的sha1值
+
+
+
+下面我们就用上次的HelloWorld.odex来分析Dependences结构并验证上述是否正确：
+
+首先我们读取depsOffset字段值：0x3d0，depsLength值为：0x373，所以我们计算可知，依赖结构暂用的偏移为0x3d0~0x743
+
+
+
+继续从0x3d0分析：
+
+读取4个字节：
+
+modWhen=55 67 f9 48
+
+crc=ec 48 c7 05
+
+DALVIK_VM_BUILD=1b 00 00 00=27
+
+numDeps=0f 00 00 00=15
+
+
+
+根据上面的信息我们分析所以得依赖如下：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
