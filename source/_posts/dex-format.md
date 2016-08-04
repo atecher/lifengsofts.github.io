@@ -390,26 +390,28 @@ struct DexMapItem {
 
 type字段为一个枚举常量，可以通过类型名称很容易判断他的具体类型：
 
+DexFile.h(6.0.1)
+
 ```c++
 enum {
-    kDexTypeHeaderItem               = 0x0,
-    kDexTypeStringIdItem             = 0x1,
-    kDexTypeTypeIdItem               = 0x2,
-    kDexTypeProtoIdItem              = 0x3,
-    kDexTypeFieldIdItem              = 0x4,
-    kDexTypeMethodIdItem             = 0x5,
-    kDexTypeClassDefItem             = 0x6,
-    kDexTypeMapList                  = 0x0,
-    kDexTypeTypeList                 = 0x1,
-    kDexTypeAnnotationSetRefList     = 0x2,
-    kDexTypeAnnotationSetItem        = 0x3,
-    kDexTypeClassDataItem            = 0x0,
-    kDexTypeCodeItem                 = 0x1,
-    kDexTypeStringDataItem           = 0x2,
-    kDexTypeDebugInfoItem            = 0x3,
-    kDexTypeAnnotationItem           = 0x4,
-    kDexTypeEncodedArrayItem         = 0x5,
-    kDexTypeAnnotationsDirectoryItem = 0x6,
+    kDexTypeHeaderItem               = 0x0000,
+    kDexTypeStringIdItem             = 0x0001,
+    kDexTypeTypeIdItem               = 0x0002,
+    kDexTypeProtoIdItem              = 0x0003,
+    kDexTypeFieldIdItem              = 0x0004,
+    kDexTypeMethodIdItem             = 0x0005,
+    kDexTypeClassDefItem             = 0x0006,
+    kDexTypeMapList                  = 0x1000,
+    kDexTypeTypeList                 = 0x1001,
+    kDexTypeAnnotationSetRefList     = 0x1002,
+    kDexTypeAnnotationSetItem        = 0x1003,
+    kDexTypeClassDataItem            = 0x2000,
+    kDexTypeCodeItem                 = 0x2001,
+    kDexTypeStringDataItem           = 0x2002,
+    kDexTypeDebugInfoItem            = 0x2003,
+    kDexTypeAnnotationItem           = 0x2004,
+    kDexTypeEncodedArrayItem         = 0x2005,
+    kDexTypeAnnotationsDirectoryItem = 0x2006,
 };
 ```
 
