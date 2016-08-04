@@ -105,7 +105,7 @@ struct Dependences{
 	struct{
 		u4 len; //name字符串长度
 		u1 name[len]; //依赖库名称
-		kSHA1DigestLen signature; //sha-1值
+		kSHA1DigestLen signature; //sha-1值,20，在DexFile.h中定义
 	} table[numDeps];
 }
 ```
@@ -239,11 +239,116 @@ numDeps=0f 00 00 00=15
 
 根据上面的信息我们分析所以得依赖如下：
 
+我们手动分析一个依赖
 
+读取0x3e0 ，值为：1c 00 00 00，表示文件吗长度为0x1c,我们读取28个字符值为/system/framework/core.odex，这就是完整文件名，从0x400读取20位，值为d6 bb 96 dc 78 1a 55 38  f2 6d b5 d5 84 5a 6e 64 87 a6 35 72，这就是依赖库的sha-1值，根据上面的步骤，我们分析出所有的依赖信息
 
+| 序号   | 文件吗长度 | 依赖库名称                                   | sha1                                     |
+| ---- | ----- | --------------------------------------- | ---------------------------------------- |
+| 0    | 0x1c  | /system/framework/core.odex             | d6bb96dc781a5538f26db5d5845a6e6487a63572 |
+| 1    | 0x21  | /system/framework/conscrypt.odex        | 1f33546e3ca68e8c3ba1c111a47e1b08ee4854cd |
+| 2    | 1e    | /system/framework/okhttp.odex           | 30372c6bfffddac82b262ccd85bbbe00fe119a35 |
+| 3    | 22    | /system/framework/core-junit.odex       | 468e68afd635b716c77a1ade97e6ac906f995057 |
+| 4    | 24    | /system/framework/bouncycastle.odex     | 7b93bde38862bf719b9f4054b91522d8d3647d91 |
+| 5    | 1b    | /system/framework/ext.odex              | 65d2a8066071edff6d5c67eef0fac632cfef23b0 |
+| 6    | 21    | /system/framework/framework.odex        | 4b43246e783414fa0537c9a3560874dad17467b6 |
+| 7    | 22    | /system/framework/framework2.odex       | 4d752b219a4b4309ca154ed7135cc76857fde3aa |
+| 8    | 28    | /system/framework/telephony-common.odex | 3011022a0fd5bd01b45f47927410f116d3fb7eac |
+| 9    | 23    | /system/framework/voip-common.odex      | c4e5082b04e40b8a63f4fcb03c5e65c5b0ac632a |
+| 10   | 22    | /system/framework/mms-common.odex       | 4c2d0a0b65dd9a8cc7d68474076588356b16fbab |
+| 11   | 26    | /system/framework/android.policy.odex   | 659f32295f35fbbdd88db6019fec7313000c3ece |
+| 12   | 20    | /system/framework/services.odex         | 7534cc6d79d1d9464bd45dfe0a976ceb94b3ceae |
+| 13   | 22    | /system/framework/apache-xml.odex       | 289e934d21ca9a5c99d6e52dd6024274cbebfdce |
+| 14   | 27    | /system/framework/webviewchromium.odex  | 1305e97aaf378db3d94acdc88beddec0aa9feed8 |
 
+## 辅助数据
 
+ChunkDexClassLookup，ChunkRegisterMapPool,ChunkEnd这个三个Chunk快，他们被Dalvik虚拟机加载到一个称为auxiliary的端中，他们都是由DexPrepare.cpp#writeOptData
 
+```c++
+static bool writeOptData(int fd, const DexClassLookup* pClassLookup,
+    const RegisterMapBuilder* pRegMapBuilder)
+{
+    /* 写入DexChunkClassLookup数据库 */
+    if (!writeChunk(fd, (u4) kDexChunkClassLookup,
+            pClassLookup, pClassLookup->size))
+    {
+        return false;
+    }
+
+    /* 写入DexChunkRegisterMaps(可选) */
+    if (pRegMapBuilder != NULL) {
+        if (!writeChunk(fd, (u4) kDexChunkRegisterMaps,
+                pRegMapBuilder->data, pRegMapBuilder->size))
+        {
+            return false;
+        }
+    }
+
+    /* 写入DexChunkEnd */
+    if (!writeChunk(fd, (u4) kDexChunkEnd, NULL, 0)) {
+        return false;
+    }
+
+    return true;
+}
+```
+
+可以看到数据其实是通过writeChunk函数写入的
+
+```c++
+static bool writeChunk(int fd, u4 type, const void* data, size_t size)
+{
+    union {             /* save a syscall by grouping these together */
+        char raw[8];
+        struct {
+            u4 type;
+            u4 size;
+        } ts;
+    } header;
+
+    assert(sizeof(header) == 8);
+
+    ALOGV("Writing chunk, type=%.4s size=%d", (char*) &type, size);
+
+    header.ts.type = type;
+    header.ts.size = (u4) size;
+    if (sysWriteFully(fd, &header, sizeof(header),
+            "DexOpt opt chunk header write") != 0)
+    {
+        return false;
+    }
+
+    if (size > 0) {
+        if (sysWriteFully(fd, data, size, "DexOpt opt chunk write") != 0)
+            return false;
+    }
+
+    /* if necessary, pad to 64-bit alignment */
+    if ((size & 7) != 0) {
+        int padSize = 8 - (size & 7);
+        ALOGV("size was %d, inserting %d pad bytes", size, padSize);
+        lseek(fd, padSize, SEEK_CUR);
+    }
+
+    assert( ((int)lseek(fd, 0, SEEK_CUR) & 7) == 0);
+
+    return true;
+}
+```
+
+可以看到函数中定义了一个共同体Header，共暂用8字节，写入时会根据具体的结构填充这个结构，type字段为1一个以KDexChunk开头的枚举，在DexFile.h中定义如下
+
+```c++
+enum {
+    kDexChunkClassLookup            = 0x434c4b50,   /* CLKP */
+    kDexChunkRegisterMaps           = 0x524d4150,   /* RMAP */
+
+    kDexChunkEnd                    = 0x41454e44,   /* AEND */
+};
+```
+
+size是要填充的数据的字节数，
 
 
 
