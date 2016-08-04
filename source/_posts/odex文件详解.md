@@ -1,3 +1,15 @@
+---
+title: odex文件详解
+date: 2016-08-04 22:19:25
+categories: Dalvik
+tags: 
+    - odex
+---
+
+# 为什么有odex
+
+因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+
 # 如何生成odex文件
 
 他有两种存在方式：
@@ -44,11 +56,55 @@ adb push HelloWorld.zip /data/local/
 adb pull /data/local/HelloWorld.odex .
 ```
 
-# 为什么有odex
+# odex文件整体结构
 
-因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+odex可以理解为一个dex文件的超集，因为他包含完整的dex数据，不过他文件的写入和读取并没有像dex文件哪有定义全部的数据结构，只能通过查看源码分析，dalvik虚拟机最终将dex文件映射到内存中后是DexFile格式，我们查看他的定义：
 
-# odex文件结构分析
+```c++
+struct DexFile {
+    /* directly-mapped "opt" header */
+    const DexOptHeader* pOptHeader;
+
+    /* pointers to directly-mapped structs and arrays in base DEX */
+    const DexHeader*    pHeader;
+    const DexStringId*  pStringIds;
+    const DexTypeId*    pTypeIds;
+    const DexFieldId*   pFieldIds;
+    const DexMethodId*  pMethodIds;
+    const DexProtoId*   pProtoIds;
+    const DexClassDef*  pClassDefs;
+    const DexLink*      pLinkData;
+
+    /*
+     * These are mapped out of the "auxillary" section, and may not be
+     * included in the file.
+     */
+    const DexClassLookup* pClassLookup;
+    const void*         pRegisterMapPool;       // RegisterMapClassPool
+
+    /* points to start of DEX file data */
+    const u1*           baseAddr;
+
+    /* track memory overhead for auxillary structures */
+    int                 overhead;
+
+    /* additional app-specific data structures associated with the DEX */
+    //void*               auxData;
+};
+```
+
+他存入的多位其他结构的指针。DexOptHeader就是odex的头，DexLink以下的是辅助数据段，也就是dex优化后的添加的数据，dexFile中有些是不会加载进内存的，所以下面就是odex定义个结构：
+
+```c++
+struct ODEXFile {
+    DexOptHeader header; //文件头
+    DEXFile dexfile; //dex文件
+    Dependences deps; //依赖库列表
+    ChunkDexClassLookup lookup; //类索引结构
+    ChunkRegisterMapPool mappool; //映射池
+    ChunkEnd end; //结束标志位
+}
+```
 
 ## DexOptHeader
 
