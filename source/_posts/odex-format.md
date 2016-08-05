@@ -95,6 +95,8 @@ struct DexFile {
 
 他存入的多位其他结构的指针。DexOptHeader就是odex的头，DexLink以下的是辅助数据段，也就是dex优化后的添加的数据，dexFile中有些是不会加载进内存的，所以下面就是odex定义个结构：
 
+## ODEXFile
+
 ```c++
 struct ODEXFile {
     DexOptHeader header; //文件头
@@ -404,9 +406,73 @@ enum {
 };
 ```
 
-size是要填充的数据的字节数，
+size是要填充的数据的字节数。
 
+### ChunkClassLookup
 
+写入DexChunkClassLookup时向writeChunk函数传递了一个DexClassLookup结构指针，在DexFile.h定义如下：
+
+```c++
+struct DexClassLookup {
+    int     size;                       // total size, including "size"
+    int     numEntries;                 // size of table[]; always power of 2
+    struct {
+        u4      classDescriptorHash;    // class descriptor hash code
+        int     classDescriptorOffset;  // in bytes, from start of DEX
+        int     classDefOffset;         // in bytes, from start of DEX
+    } table[1];
+};
+```
+
+虚拟机通过DexClassLookup结构来检索所有类
+
+size:为本结构体的字节数
+
+numEntries：接下来table结构的项数，值为2
+
+table:是用来描述类的信息
+
+​	classDescriptorHash：为类的hash值
+
+​	classDescriptorOffset：类的描述
+
+​	classDefOffset：为指向DexClassDef结构体的指针的偏移
+
+根据上面我们可以分析出ChunkDexClassLookup的结构为
+
+```c++
+struct ChunkDexClassLookup {
+	Header header; //这个就是writeChunk函数中定义的header
+	DexClassLoopup lookup;
+}
+```
+
+### ChunkRegisterMapPool
+
+写入他时像writeChunk函数传递了一个RegisterMapBuilder结构，定义在/dalvik/vm/analysis/RegisterMap.h中
+
+```c++
+struct RegisterMapBuilder {
+    /* public */
+    void*       data;
+    size_t      size;
+
+    /* private */
+    MemMapping  memMap;
+};
+```
+
+//TODO
+
+### ChunkEnd
+
+写入他时向writeChunk函数传递了一个NULL指针，并且传递了kDexChunkEnd类型，所以他只有一个header，最后得出结构如下：
+
+```c++
+struct ChunkEnd {
+   	Header header;
+};
+```
 
 
 
