@@ -203,6 +203,54 @@ virtual methods:虚方法
 .end method
 ```
 
+### 抛出异常
+
+如果方法的声明中使用throws关键字抛出异常，就会生成Throws注解
+
+```
+# virtual methods
+.method public throw1()V
+    .locals 1
+    .annotation system Ldalvik/annotation/Throws;
+        value = {
+            Ljava/lang/Exception;
+        }
+    .end annotation
+
+    .prologue
+    .line 5
+    new-instance v0, Ljava/lang/Exception;
+
+    invoke-direct {v0}, Ljava/lang/Exception;-><init>()V
+
+    throw v0
+.end method
+
+.method public throw2()V
+    .locals 1
+
+    .prologue
+    .line 9
+    new-instance v0, Ljava/lang/RuntimeException;
+
+    invoke-direct {v0}, Ljava/lang/RuntimeException;-><init>()V
+
+    throw v0
+.end method
+```
+
+```
+public class ThrowClass {
+    public void throw1() throws Exception {
+        throw new Exception();
+    }
+
+    public void throw2() {
+        throw new RuntimeException();
+    }
+}
+```
+
 ## 类实现了接口
 
 ```
@@ -755,7 +803,272 @@ Button bt2 = (Button) findViewById(R.id.bt2);
 bt2.setOnClickListener(this);
 ```
 
+## for
 
+```
+Iterator<对象> <对象名> = <方法返回一个对象列表>;
+for (<对象> <对象名>:<对象列表>) {
+	[code]
+}
+```
+
+```
+Iterator<对象> <对象名> = <方法返回一个对象列表>;
+while(<对象名>.hasNext()) {
+	<对象> <对象名> = <对象名>.next();
+	[code]
+}
+```
+
+```
+public class Loop {
+
+    public void for1(){
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("d");
+
+        for (String s:strings) {
+            Log.d("TAG",s);
+        }
+    }
+    
+    public void for2(){
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("d");
+
+        for (int i = 0; i < strings.size(); i++) {
+            Log.d("TAG",strings.get(i));
+        }
+    }
+
+    public void while1(){
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("d");
+
+
+        Iterator<String> iterator = strings.iterator();
+        while (iterator.hasNext()) {
+            Log.d("TAG",iterator.next());
+        }
+    }
+}
+```
+
+```
+.class public Lcn/woblog/testsmali/smali/Loop;
+.super Ljava/lang/Object;
+.source "Loop.java"
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    .prologue
+    .line 8
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public for1()V
+    .locals 4
+
+    .prologue
+    .line 11
+    new-instance v1, Ljava/util/ArrayList;
+
+    invoke-direct {v1}, Ljava/util/ArrayList;-><init>()V
+
+    .line 12
+    .local v1, "strings":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/lang/String;>;"
+    const-string v2, "a"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 13
+    const-string v2, "b"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 14
+    const-string v2, "c"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 15
+    const-string v2, "d"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 17
+    invoke-virtual {v1}, Ljava/util/ArrayList;->iterator()Ljava/util/Iterator;
+
+    move-result-object v2
+
+    :goto_0
+    invoke-interface {v2}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v3
+
+    if-eqz v3, :cond_0
+
+    invoke-interface {v2}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/lang/String;
+
+    .line 18
+    .local v0, "s":Ljava/lang/String;
+    const-string v3, "TAG"
+
+    invoke-static {v3, v0}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 20
+    .end local v0    # "s":Ljava/lang/String;
+    :cond_0
+    return-void
+.end method
+
+.method public for2()V
+    .locals 4
+
+    .prologue
+    .line 23
+    new-instance v1, Ljava/util/ArrayList;
+
+    invoke-direct {v1}, Ljava/util/ArrayList;-><init>()V
+
+    .line 24
+    .local v1, "strings":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/lang/String;>;"
+    const-string v2, "a"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 25
+    const-string v2, "b"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 26
+    const-string v2, "c"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 27
+    const-string v2, "d"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 29
+    const/4 v0, 0x0
+
+    .local v0, "i":I
+    :goto_0
+    invoke-virtual {v1}, Ljava/util/ArrayList;->size()I
+
+    move-result v2
+
+    if-ge v0, v2, :cond_0
+
+    .line 30
+    const-string v3, "TAG"
+
+    invoke-virtual {v1, v0}, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
+
+    move-result-object v2
+
+    check-cast v2, Ljava/lang/String;
+
+    invoke-static {v3, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 29
+    add-int/lit8 v0, v0, 0x1
+
+    goto :goto_0
+
+    .line 32
+    :cond_0
+    return-void
+.end method
+
+.method public while1()V
+    .locals 4
+
+    .prologue
+    .line 35
+    new-instance v1, Ljava/util/ArrayList;
+
+    invoke-direct {v1}, Ljava/util/ArrayList;-><init>()V
+
+    .line 36
+    .local v1, "strings":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/lang/String;>;"
+    const-string v2, "a"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 37
+    const-string v2, "b"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 38
+    const-string v2, "c"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 39
+    const-string v2, "d"
+
+    invoke-virtual {v1, v2}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+
+    .line 42
+    invoke-virtual {v1}, Ljava/util/ArrayList;->iterator()Ljava/util/Iterator;
+
+    move-result-object v0
+
+    .line 43
+    .local v0, "iterator":Ljava/util/Iterator;, "Ljava/util/Iterator<Ljava/lang/String;>;"
+    :goto_0
+    invoke-interface {v0}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v2
+
+    if-eqz v2, :cond_0
+
+    .line 44
+    const-string v3, "TAG"
+
+    invoke-interface {v0}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v2
+
+    check-cast v2, Ljava/lang/String;
+
+    invoke-static {v3, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 46
+    :cond_0
+    return-void
+.end method
+
+```
 
 
 
