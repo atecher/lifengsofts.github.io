@@ -1496,5 +1496,249 @@ keys_and_targets：这是一个数组，先存储的是key,后面接着是每个
 
 接下来我们就可以按照另一篇文章来分析下面的指令了
 
+# try/catch
 
+```java
+public void try1() {
+    int a = 0;
+    int b = 10;
 
+    try {
+
+        b = Integer.valueOf("20");
+
+        try {
+            int i = b / a;
+            Log.d(TAG, "yes");
+        } catch (ArithmeticException e) {
+            e.printStackTrace();
+            Log.d(TAG, "除数不能为0");
+        } finally {
+            Log.d(TAG, "finally1");
+        }
+    } catch (NumberFormatException e) {
+        e.printStackTrace();
+        Log.d(TAG, "数字格式化失败");
+    } catch (Exception e) {
+        e.printStackTrace();
+        Log.d(TAG, "其他异常");
+    } finally {
+        Log.d(TAG, "finally2");
+    }
+}
+```
+
+```
+.method public try1()V
+    .locals 7
+
+    .prologue
+    .line 12
+    const/4 v0, 0x0
+
+    .line 13
+    .local v0, "a":I
+    const/16 v1, 0xa
+
+    .line 17
+    .local v1, "b":I
+    :try_start_0
+    const-string v4, "20"
+
+    invoke-static {v4}, Ljava/lang/Integer;->valueOf(Ljava/lang/String;)Ljava/lang/Integer;
+
+    move-result-object v4
+
+    invoke-virtual {v4}, Ljava/lang/Integer;->intValue()I
+    :try_end_0
+    .catch Ljava/lang/NumberFormatException; {:try_start_0 .. :try_end_0} :catch_1
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_2
+    .catchall {:try_start_0 .. :try_end_0} :catchall_1
+
+    move-result v1
+
+    .line 20
+    :try_start_1
+    div-int v3, v1, v0
+
+    .line 21
+    .local v3, "i":I
+    const-string v4, "TAG"
+
+    const-string v5, "yes"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_1
+    .catch Ljava/lang/ArithmeticException; {:try_start_1 .. :try_end_1} :catch_0
+    .catchall {:try_start_1 .. :try_end_1} :catchall_0
+
+    .line 26
+    :try_start_2
+    const-string v4, "TAG"
+
+    const-string v5, "finally1"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_2
+    .catch Ljava/lang/NumberFormatException; {:try_start_2 .. :try_end_2} :catch_1
+    .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_2
+    .catchall {:try_start_2 .. :try_end_2} :catchall_1
+
+    .line 35
+    .end local v3    # "i":I
+    :goto_0
+    const-string v4, "TAG"
+
+    const-string v5, "finally2"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 37
+    :goto_1
+    return-void
+
+    .line 22
+    :catch_0
+    move-exception v2
+
+    .line 23
+    .local v2, "e":Ljava/lang/ArithmeticException;
+    :try_start_3
+    invoke-virtual {v2}, Ljava/lang/ArithmeticException;->printStackTrace()V
+
+    .line 24
+    const-string v4, "TAG"
+
+    const-string v5, "\u9664\u6570\u4e0d\u80fd\u4e3a0"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_3
+    .catchall {:try_start_3 .. :try_end_3} :catchall_0
+
+    .line 26
+    :try_start_4
+    const-string v4, "TAG"
+
+    const-string v5, "finally1"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_4
+    .catch Ljava/lang/NumberFormatException; {:try_start_4 .. :try_end_4} :catch_1
+    .catch Ljava/lang/Exception; {:try_start_4 .. :try_end_4} :catch_2
+    .catchall {:try_start_4 .. :try_end_4} :catchall_1
+
+    goto :goto_0
+
+    .line 28
+    .end local v2    # "e":Ljava/lang/ArithmeticException;
+    :catch_1
+    move-exception v2
+
+    .line 29
+    .local v2, "e":Ljava/lang/NumberFormatException;
+    :try_start_5
+    invoke-virtual {v2}, Ljava/lang/NumberFormatException;->printStackTrace()V
+
+    .line 30
+    const-string v4, "TAG"
+
+    const-string v5, "\u6570\u5b57\u683c\u5f0f\u5316\u5931\u8d25"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_5
+    .catchall {:try_start_5 .. :try_end_5} :catchall_1
+
+    .line 35
+    const-string v4, "TAG"
+
+    const-string v5, "finally2"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_1
+
+    .line 26
+    .end local v2    # "e":Ljava/lang/NumberFormatException;
+    :catchall_0
+    move-exception v4
+
+    :try_start_6
+    const-string v5, "TAG"
+
+    const-string v6, "finally1"
+
+    invoke-static {v5, v6}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    throw v4
+    :try_end_6
+    .catch Ljava/lang/NumberFormatException; {:try_start_6 .. :try_end_6} :catch_1
+    .catch Ljava/lang/Exception; {:try_start_6 .. :try_end_6} :catch_2
+    .catchall {:try_start_6 .. :try_end_6} :catchall_1
+
+    .line 31
+    :catch_2
+    move-exception v2
+
+    .line 32
+    .local v2, "e":Ljava/lang/Exception;
+    :try_start_7
+    invoke-virtual {v2}, Ljava/lang/Exception;->printStackTrace()V
+
+    .line 33
+    const-string v4, "TAG"
+
+    const-string v5, "\u5176\u4ed6\u5f02\u5e38"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_7
+    .catchall {:try_start_7 .. :try_end_7} :catchall_1
+
+    .line 35
+    const-string v4, "TAG"
+
+    const-string v5, "finally2"
+
+    invoke-static {v4, v5}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_1
+
+    .end local v2    # "e":Ljava/lang/Exception;
+    :catchall_1
+    move-exception v4
+
+    const-string v5, "TAG"
+
+    const-string v6, "finally2"
+
+    invoke-static {v5, v6}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    throw v4
+.end method
+```
+
+通过上面的代码发现try/catch的代码基本格式为
+
+```
+:try_start_<数字>
+[有可能发生异常的代码]
+:try_end_<数字>
+.catch <异常类型> {<try语句起始标号> .. <try语句结束标号>} <catch标号(真正处理这个异常的代码)>
+.catch(可能有多个catch)
+.catchall {<try语句起始标号> .. <try语句结束标号>} <catch标号>(finally代码块)
+```
+
+也可以发现如果是try/catch嵌套，他会这样排列指令
+
+```
+异常1开始
+
+异常1结束
+异常1处理指令 处理指令标号
+
+异常2开始
+
+异常2结束
+异常2处理指令 处理指令标号
+```
+
+从上面的伪指令可以看出如果异常1里面发生了异常，就会跳转到异常1处理指令，所以异常2的部分也就不会执行，也就实现了上面的try嵌套语句
