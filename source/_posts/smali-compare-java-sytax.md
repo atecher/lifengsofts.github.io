@@ -36,15 +36,15 @@ tags:
 .source "StaticFinalClass.java"
 ```
 
-## 字段
+# 字段
 
 使用.field 声明
 
-### 实例字段
+## 实例字段
 
 .field <权限修饰符> [修饰关键字] <字段名>:<字段类型>
 
-### 静态字段
+## 静态字段
 
 .field <权限修饰符> static [修饰关键字] <字段名>:<字段类型>
 
@@ -72,7 +72,7 @@ private final int age = 25;
 private Integer price = 888888;
 ```
 
-## 方法
+# 方法
 
 使用.method指令声明
 
@@ -203,7 +203,7 @@ virtual methods:虚方法
 .end method
 ```
 
-### 抛出异常
+## 抛出异常
 
 如果方法的声明中使用throws关键字抛出异常，就会生成Throws注解
 
@@ -251,7 +251,7 @@ public class ThrowClass {
 }
 ```
 
-## 类实现了接口
+# 类实现了接口
 
 ```
 # interfcase
@@ -278,11 +278,11 @@ public class Callback implements ICallback,ICallbackTwo {
 }
 ```
 
-## 注解
+# 注解
 
 注解可以作用到类，方法和字段，但他们的表现形式是不一样的
 
-### 类
+## 类
 
 类的注解是直接添加到smali文件上面的
 
@@ -312,7 +312,7 @@ public class Callback{
 }
 ```
 
-### 字段
+## 字段
 
 如果注解在字段上，他会被包含在field里面
 
@@ -358,7 +358,7 @@ private String password;
 private boolean vip;
 ```
 
-## 类
+# 类
 
 ```
 .class public Lcn/woblog/testsmali/Callback;
@@ -374,7 +374,7 @@ public final class StaticFinalClass {
 }
 ```
 
-## 内部类
+# 内部类
 
 内部类可分为，内部类，静态嵌套类，方法内部类，匿名内部类，他为每个内部类生成一个独立的文件，格式为：[外部类]$[内部类].smali
 
@@ -666,7 +666,7 @@ OuterClass$InnerStatic$1.smali
 .end method
 ```
 
-## 监听器
+# 监听器
 
 ```
 const v2, 0x7f0b0054
@@ -803,7 +803,7 @@ Button bt2 = (Button) findViewById(R.id.bt2);
 bt2.setOnClickListener(this);
 ```
 
-## for
+# for
 
 ```
 Iterator<对象> <对象名> = <方法返回一个对象列表>;
@@ -1067,20 +1067,434 @@ public class Loop {
     :cond_0
     return-void
 .end method
-
 ```
 
+# switch
 
+反编译过来的switch代码分有序和无序
 
+## 有序
 
+```java
+public void switch1(int type) {
+    switch (type) {
+        case 5:
+            Log.d("TAG", String.valueOf(type));
+            break;
 
+        case 6:
+            Log.d("TAG", String.valueOf(type));
+            break;
 
+        case 7:
+            Log.d("TAG", String.valueOf(type));
+            break;
 
+        case 8:
+            Log.d("TAG", String.valueOf(type));
+            break;
+        case 9:
+            Log.d("TAG", String.valueOf(type));
+            break;
+        default:
+            Log.d("TAG", "default");
+            break;
+    }
+}
+```
 
+```
+# virtual methods
+.method public switch1(I)V
+    .locals 2
+    .param p1, "type"    # I
 
+    .prologue
+    .line 10
+    packed-switch p1, :pswitch_data_0
 
+    .line 30
+    const-string v0, "TAG"
 
+    const-string v1, "default"
 
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 33
+    :goto_0
+    return-void
+
+    .line 12
+    :pswitch_0
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 16
+    :pswitch_1
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 20
+    :pswitch_2
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 24
+    :pswitch_3
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 27
+    :pswitch_4
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 10
+    nop
+
+    :pswitch_data_0
+    .packed-switch 0x5
+        :pswitch_0
+        :pswitch_1
+        :pswitch_2
+        :pswitch_3
+        :pswitch_4
+    .end packed-switch
+.end method
+```
+
+有序使用的是packed-switch指令，使用有序switch他会生成packed-switch p1, :pswitch_data_0指令，我们可以从上面看到p1是传递进来的type参数，其中```pswitch_data_0```为switch的case指令区域，我们看case部分
+
+```
+:pswitch_data_0
+.packed-switch 0x5
+    :pswitch_0
+    :pswitch_1
+    :pswitch_2
+    :pswitch_3
+    :pswitch_4
+.end packed-switch
+```
+
+其中packed-switch后面的0x5表示从0x5开始递增，里面的pswitch_0就是真实的分支名，后面的0，1是case的值，真是的代码就是分支名地方的代码
+
+```
+:pswitch_0
+const-string v0, "TAG"
+
+invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+move-result-object v1
+
+invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+goto :goto_0
+```
+
+我们手动分析有序switch指令,他的指令格式为packed-switch vAA, +BBBBBBBB，我们用ida定位到这条指令，方法偏移为f59cc，他的格式为：
+
+/art/runtime/dex_instruction.h
+
+```c++
+struct PACKED(4) PackedSwitchPayload {
+	const uint16_t ident;
+	const uint16_t case_count;
+	const int32_t first_key;
+	const int32_t targets[];
+
+	private:
+	DISALLOW_COPY_AND_ASSIGN(PackedSwitchPayload);
+};
+```
+
+ident:这是固定值，有序为0x100
+
+case_count:case的个数
+
+first_key：初始case值
+
+targets：这是一个数组，对应每个case相对switch指令偏移的偏移
+
+我们发现switch指令格式为31t，op vAA, +BBBBBBBB，查看表前面的Format(AA|op BBBBlo BBBBhi)表示需要3个字节，所以我们读取3个字节2b 03 3e 00 00 00，根据小端序交换位置后03 2b 00 3e 00 00
+
+其中2b为opcode
+
+03为寄存器p1
+
+3e为case的相对偏移
+
+虚拟机计算偏移是以2个字节单位的，所以case得结构的偏移为：00f59cc+3e*2=f5a48，我们用ida查看该位置值为
+
+第一个字段00 01真实值为0x100,表示是packed-switch的case区域，也就是上面的ident
+
+第二个字节05 00真实值为0x5，表示有个case块
+
+第三个字节05 00 00 00 真实值为0x5,表示初始case值
+
+第四个字节0b 00 00 00真实值为0xb表示caes的相对偏移位置，所以我们可以计算出这个5个case位置
+
+0:00f59cc+2*0b=f59e2
+
+1:00f59cc+2*15=f59f6
+
+2:00f59cc+2*1f=f5a0a
+
+3:00f59cc+2*29=f5a1e
+
+4:00f59cc+2*33=f5a32
+
+接下来我们就可以按照另一篇文章来分析下面的指令了
+
+## 无序
+
+```java
+public void switch2(int type) {
+    switch (type) {
+        case 100:
+            Log.d("TAG", String.valueOf(type));
+            break;
+
+        case 20:
+            Log.d("TAG", String.valueOf(type));
+            break;
+
+        case 3:
+            Log.d("TAG", String.valueOf(type));
+            break;
+
+        case 6:
+            Log.d("TAG", String.valueOf(type));
+            break;
+        case 9:
+            Log.d("TAG", String.valueOf(type));
+            break;
+
+        default:
+            Log.d("TAG", "default");
+            break;
+    }
+}
+```
+
+```
+.method public switch2(I)V
+    .locals 2
+    .param p1, "type"    # I
+
+    .prologue
+    .line 36
+    sparse-switch p1, :sswitch_data_0
+
+    .line 57
+    const-string v0, "TAG"
+
+    const-string v1, "default"
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 60
+    :goto_0
+    return-void
+
+    .line 38
+    :sswitch_0
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 42
+    :sswitch_1
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 46
+    :sswitch_2
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 50
+    :sswitch_3
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 53
+    :sswitch_4
+    const-string v0, "TAG"
+
+    invoke-static {p1}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+    goto :goto_0
+
+    .line 36
+    nop
+
+    :sswitch_data_0
+    .sparse-switch
+        0x3 -> :sswitch_2
+        0x6 -> :sswitch_3
+        0x9 -> :sswitch_4
+        0x14 -> :sswitch_1
+        0x64 -> :sswitch_0
+    .end sparse-switch
+.end method
+```
+
+如果代码中使用了无序switch，它会使用sparse-switch指令，如：sparse-switch p1, :sswitch_data_0，其中p1还是传递进来的type，后面是case的标号，我们查看case部分
+
+```
+:sswitch_data_0
+.sparse-switch
+    0x3 -> :sswitch_2
+    0x6 -> :sswitch_3
+    0x9 -> :sswitch_4
+    0x14 -> :sswitch_1
+    0x64 -> :sswitch_0
+.end sparse-switch
+```
+
+可以看见他讲值排序了，前面是值，后面是当前值所对应的代码。在switch中default分支直接附在switch指令后面，如下：
+
+```
+sparse-switch p1, :sswitch_data_0
+
+.line 57
+const-string v0, "TAG"
+
+const-string v1, "default"
+
+invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+
+.line 60
+:goto_0
+return-void
+```
+
+我们手动分析无序switch指令,他的指令格式为sparse-switch vAA, +BBBBBBBB，我们用ida定位到这条指令，方法偏移为f5a74，他的格式为：
+
+/art/runtime/dex_instruction.h
+
+```c++
+struct PACKED(4) SparseSwitchPayload {
+	const uint16_t ident;
+	const uint16_t case_count;
+	const int32_t keys_and_targets[];
+	public:
+	const int32_t* GetKeys() const {
+	 return keys_and_targets;
+	}
+	const int32_t* GetTargets() const {
+	 return keys_and_targets + case_count;
+	}
+	private:
+	DISALLOW_COPY_AND_ASSIGN(SparseSwitchPayload);
+};
+```
+
+ident:这是固定值，无序为0x200
+
+case_count:case的个数
+
+first_key：初始case值
+
+keys_and_targets：这是一个数组，先存储的是key,后面接着是每个case相对switch指令偏移的偏移
+
+我们发现switch指令格式为31t，op vAA, +BBBBBBBB，查看表前面的Format(AA|op BBBBlo BBBBhi)表示需要3个字节，所以我们读取3个字节2c 03 3e 00 00 00，根据小端序交换位置后03 2c 00 3e 00 00
+
+其中2c为opcode
+
+03为寄存器p1
+
+3e为case的相对偏移
+
+虚拟机计算偏移是以2个字节单位的，所以case得结构的偏移为：f5a74+3e*2=f5af0，我们用ida查看该位置值为
+
+第一个字段00 02真实值为0x200,表示是packed-switch的case区域，也就是上面的ident
+
+第二个字节05 00真实值为0x5，表示有个case块
+
+第三个字节05 00 00 00 真实值为0x5,表示初始case值
+
+第四个字节03 00 00 00真实值为0x3表示第一个case的值为0x3，偏移为key的偏移量+case_count(f5a74+5)所以我们可以计算出这个5个case位置
+
+0:3:f5a74+2*1f=f5ab2
+
+1:6:f5a74+2*29=f5ac6
+
+2:9:f5a74+2*33=f5ada
+
+3:14:f5a74+2*15=f5a9e
+
+4:64:f5a74+2*0b=f5a8a
+
+序列:值:代码偏移地址
+
+接下来我们就可以按照另一篇文章来分析下面的指令了
 
 
 
