@@ -32,13 +32,17 @@ tags:
 
 首先我们按ctrl+s打开段选择对话框，然后双击STRINGS就跳到了字符串段区，然后按alt+t出现搜索字符串对话框，输入register success，过一会儿就会跳转到关键代码点了，然后选择graph view，可以看到如下图：
 
-![http://7qnc6h.com1.z0.glb.clouddn.com/po-dex.png]()
+![](http://7qnc6h.com1.z0.glb.clouddn.com/po-dex.png)
 
 可以从上图发现register success字符串，并且可以看见两条线，红线表示条件不成立执行，绿线表示满足执行，可以发现关键点就是if-eqz代码了，接下来我们来的当前代码的为止，用16进制编辑器将38改为39，然后保存，使用dex签名修复完成后，然后和原来的代码打包成ask，然后签名，在安装，发现成功了
 
+## 关键api
 
+关键api的意思是，我们不管输入正确或错误他都会弹出toast提示，这就是我们的关键api，我们打开code段，还是搜索text,输入toast.make，如果有个调用的地方我们需要搜索下一个(ctrl+t)，直到搜索到我们需要的代码，然后就可以根据上面说的方法来修改关键代码了
 
+# 签名并测试
 
+签名后并安装到手机查看是否破解成功
 
 
 
