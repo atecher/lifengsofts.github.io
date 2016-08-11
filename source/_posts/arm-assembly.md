@@ -623,15 +623,137 @@ reglist:用来存储数据的寄存器列表，用大括号括起来，可以用
 
 ldm R0!, {r1-r3} @依次加载r0指向的存储单元的数据到r1,r2,r3
 
+## stm
 
+将一个寄存器列表数据存储到指定的存储单元
 
+stm{addr_mode}{cond} rn{!} reglist
 
+stmdb r1!, {r3-r6, r11} @将r3-r6,r11寄存器的内容存储到r1指向的存储单元
 
+stmfd sp!, {r3-r7} @r3-r7寄存器压入堆栈，等价于stmdb sp!, {r3-r7}
 
+## push
 
+将寄存器的值推入满减堆栈
 
+push{cond} reglist
 
+push {r0, r4-r7} @r0,r4-r7寄存器内容入栈
 
+## pop
+
+从满递减堆栈中弹出数据到寄存器
+
+pop{cond} reglist
+
+pop {r0, r4-r7} @将r0,r4-r7寄存器从堆栈中弹出
+
+## swp
+
+寄存器之间交换数据
+
+swp{b}{cond} rd, rm, [rn]
+
+b：可选，交换字节，否则交换32位字
+
+rd:
+
+//TODO
+
+## 数据处理指令
+
+包括传送，算术，逻辑，比较。除了比较指令其他的都可以选用s后缀，来决定是否影响标志位
+
+### mov
+
+将8位立即数或寄存器的内容传送到目标寄存器
+
+mov{cond}{s} rd,operand2
+
+mov r0, #8 @r0=8
+
+mov r1, r0 @r1=r0
+
+movs r2, r1, lsl #2 @r2=r1*4，影响状态标志位
+
+### mvn
+
+将8位的立即数或寄存器的值按位取反后传递到目标
+
+mvn r0, #0xff @r0=ffffff00
+
+mvn r1, r2 @将寄存器数据取反后存入r1
+
+### add
+
+加法
+
+add r0, r1 #2 @r0=r1+2
+
+adds r0, r1,r2 @r0=r1+r2,影响标志位
+
+add r0,r1,lsl #3 @r0=r1*8
+
+### adc
+
+带进位加法指令，功能为rn+operand2+cpsr寄存器c条件标志位的值，存入rd
+
+adc{cond}{s} rd,rn,operand2
+
+add r0,r0,r2
+
+add r1,r1,r3 @两条指令完成64位加法，r1,r0=r1,r0+r3,r2
+
+### sub
+
+减法，rn-operand2值，结果保存到rd
+
+sub r0,r1,#4 @r0=r1-4
+
+sub r0,r1,r2 @r0=r1-r2，影响标志位
+
+### rsb
+
+逆向减法指令，operand2-rn，结果保存到rd
+
+rsb{cond}{s}rd,rn,opearand2
+
+rsb r0,r1 #0x1234 @r0=0x1234-r1
+
+rub r0,r1 @r0=-r1
+
+#### sbc
+
+带进位减法，rn-opearnad2,在减去cpsr寄存器c值
+
+sbc{cond}{s} rd,rn,operand2
+
+subs r0,r0,r2
+
+sbc r1,r1,r3 @64位减法，r1,r0=r1,r0-r2,r3
+
+### rsc
+
+带进位逆向减法指令，operand2-rn-c=rd
+
+rsc{cond} rd,rn,operand2
+
+rsbs r2,r0,#0
+
+rsc r3,r1,#0 @64为数取反，r3,r2=r1,r0
+
+### mul
+
+32位乘法，rm*rn，结果低32位保存到rd
+
+mul{cond}{s} rd,rm ,rn
+
+mum r0,r1,r2 @r0=r1*r2
+
+muls r0,r2,r3 @r0=r2*r3,影响n和z
+
+### mls
 
 
 
