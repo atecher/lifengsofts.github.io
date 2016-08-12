@@ -755,6 +755,255 @@ muls r0,r2,r3 @r0=r2*r3,影响n和z
 
 ### mls
 
+mls{cond}{s} rd,rm,rn,ra
+
+rm寄存器的值*rn寄存器的值，然后在从ra寄存器的值中减去上一步的乘积
+
+mls r0,r1,r2,r3 @r0=r3-r1*r2
+
+### mla
+
+mla{cond}{s} rd,rm,rn,ra
+
+将rm*rn在加ra
+
+mla r0,r1,r2,r3 @r0=r1*r2+r3
+
+### umull
+
+umull{cond}{s} rdLo,rdHi,rm,rn
+
+将无符号rm寄存器的值和无符号寄存器rn的值相乘，然后将结果的低32位存入rdLo,高32位存入rdHi寄存器
+
+umull r0,r1,r2,r3 @r1,r0=r2*r3
+
+### umlal
+
+umlal{cond}{s} rdLo,rdHi,rm,rn
+
+将无符号rm寄存器的值和无符号寄存器rn的值相乘,然后将64位的结果与rdHi,rdLo组成的64位数相加，然后在按顺序放入寄存器
+
+umlal r0,r1,r2,r3 @r1,r0=r2*r3+(r1,r0)
+
+### smull
+
+smull{cond}{s} rdLo,rdHi,rm,rn
+
+将rm寄存器的值和寄存器rn的值做为有符号数相乘，结果低32位放入rdLo,高32位存入rdHi
+
+smull r0,r1,r2,r3 @r1,r0=r2*r3
+
+### smlal
+
+将rm寄存器的值和寄存器rn的值做为有符号数相乘，然后将结果加上rdHi,rdLo组成的64位数，结果低32位放入rdLo,高32位存入rdHi
+
+smlal r0,r1,r2,r3 @r1,r0=r2*r3+(r1,r0)
+
+### smlad
+
+smlad{cond}{s} rd,rm,rn,ra
+
+将rm寄存器低半字节和rn寄存器低半字节相乘，然后将rm寄存器的高半字节和rn的高半字节相乘，最后将两个乘积//TODO
+
+### smlsd
+
+### sdiv
+
+有符号除法指令
+
+sdiv{cond}rd,rm,rn
+
+sdiv r0,r1,r2 @r0=r1/r2
+
+### udiv
+
+无符号除法
+
+udiv{cond} rd,rm,rn
+
+udiv r0,r1,r2 @r0=r1/r2
+
+### asr
+
+asr{cond}{s} rd,rm,opearnd2
+
+算术右移指令。rm寄存器算术右移opearnd2位，高位用符号位填充，结果保存到rd
+
+asr r0,r1,#2
+
+### and
+
+逻辑与
+
+and{cond}{s} rd,rn,operand2
+
+and r0,r0,#1 @取r0得最低1位
+
+### orr
+
+逻辑或
+
+orr{cond}{s} rd,rn,operand2
+
+orr r0,r0,#0xf @保留r0低4位，其余位清0
+
+### eor
+
+异或
+
+eor{cond}{s} rd,rn,opearnd2
+
+eor r0,r1,r2 @r0=r1^r2
+
+### bic
+
+位清除指令。功能是讲operand2得值取反，然后与rn的值，结果保存到rd
+
+bic{cond}{s} rd,rn,operand2
+
+bic r0,r0,#0x0f @清除r0低4位
+
+### lsl
+
+逻辑左移，rm的值左移operand2,空位补0
+
+lsl{cond}{s} rd,rm,operand2
+
+lsl r0,r1,#2 @r0=r1*2^2
+
+### lsr
+
+逻辑右移指令。rm逻辑右移operand2位，空位补0
+
+lsr{cond}{s} rd,rm,operand2
+
+lsr r0,r1#2 @r0=r1/(2^2)
+
+#### ror
+
+循环右移，rm的值循环右移operand2位，右边移除的值放回左边
+
+ror{cond}{s} rd,rm,operand2
+
+ror r1,r1,#1
+
+### rrx
+
+带扩展位的循环右移，将rm寄存器右移1位，最高位用标志位填充
+
+rrx r1,r1
+
+### cmp
+
+cmp{cond} rn,operand2
+
+rn-operand2和subs指令差不多，但是他不保存计算结果只设置标志位
+
+cmp r0,#0 @判断r0寄存器的值是否为0
+
+### cmn
+
+cmn{cond} rn,operand2
+
+rn+operand2和adds差不多，但不保存计算结果，只设置标志位
+
+cmn r0,r1
+
+### tst
+
+tst{cond} rn,operand2
+
+rn&operand2和ands差不多，但不保存结果，只设置标志位
+
+tst r0,#1 @判断r0寄存器最低位是否为1
+
+### teq
+
+teq{cond} rn,operand2
+
+rn^operand2和eors差不多，但不保存结果，只设置标志位
+
+teq r0,r1 @判断r0和r1是否相等
+
+## 其他指令
+
+### swi
+
+软中断指令，用于产生中断，可以从用户模式切换的管理模式
+
+swi{cond},immed_24
+
+immed_24:24位的中断号，在Android中，系统调用为0号中断，使用r7寄存器存放系统调用，使用r0-r3传递前4个参数，对应大于4个参数的调用，剩余的采用堆栈传递，如：exit(0)
+
+```
+mov r0,#0
+mov r7,#1
+swi #0
+```
+
+### nop
+
+空操作，一般用于字节码对齐
+
+### mrs
+
+读状态寄存器
+
+msr rd,psr
+
+psr取值可以是cpsr,spsr
+
+msr r0,cpsr @读取cpsr寄存器到r0寄存器中
+
+### msr
+
+写状态寄存器
+
+msr rd,psr_fields,operand2
+
+psr取值cpsr,spsr
+
+| field | 含义         |
+| ----- | ---------- |
+| c     | 控制域[7:0]   |
+| x     | 扩展域[15:8]  |
+| s     | 状态域[23:16] |
+| f     | 标志位[31:24] |
+
+```assembly
+mrs r0,cpsr @读取cpsr值到r0
+
+bic r0,r0,#0x80 @清除r0寄存器第7位
+
+msr cpsr_c,r0 @开启irq中断
+
+mov pc,lr @子程序返回
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
