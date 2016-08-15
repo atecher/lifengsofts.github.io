@@ -11,7 +11,10 @@ tags:
 alias gcp='git add . && git commit -m "init" && git push'
 ```
 
+# 设置方法
 
+## zsh
+添加到~/.zshrc文件末尾
 
 
 
