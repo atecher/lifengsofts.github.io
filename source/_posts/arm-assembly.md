@@ -980,6 +980,65 @@ msr cpsr_c,r0 @开启irq中断
 mov pc,lr @子程序返回
 ```
 
+# hello world
+
+这里我写一个arm版的hello world
+
+```
+	.arch armv5te
+	.fpu softvfp
+	.file	"hello.c"
+	.section	.rodata //只读数据段
+	.align	2 //4字节对齐
+.LC0:
+	.ascii	"hello ARM!\000" //字符串，一定要以\0结尾，不然他会一直读取直到\0才结束
+.LC1:
+	.ascii	"hello world!\0"
+.LC2:
+	.ascii	"ha!"
+
+	.text //指令段
+	.align	2
+	.global	main //申明为全局
+	.type	main, %function //类型为函数
+main:
+	@ args = 0, pretend = 0, frame = 8
+	@ frame_needed = 1, uses_anonymous_args = 0
+	stmfd	sp!, {fp, lr} //将fp,lr压栈
+	add	fp, sp, #4 @初始化fp寄存器，设置栈帧
+	sub	sp, sp, #8 @开辟栈控件
+	str	r0, [fp, #-8] @保存第一个参数
+	str	r1, [fp, #-12] @保存第二个参数
+	ldr	r3, .L3 @从l3标号加载一个字地址
+.LPIC0:
+	add r3, pc, r3 @把字符串的相对位置+pc地址就是这个字符串的绝对地址 
+	mov	r0, r3 @设置第一个参数
+	bl	puts(PLT) @调用puts函数
+	ldr	r3, .L3+4
+.LPIC1:
+	add	r3, pc, r3
+	mov	r0, r3
+	bl	puts(PLT)
+	ldr	r3, .L3+8
+.LPIC2:
+	add	r3, pc, r3
+	mov	r0, r3
+	bl	puts(PLT)
+	mov	r3, #0
+	mov	r0, r3
+	sub	sp, fp, #4
+	@ sp needed
+	ldmfd	sp!, {fp, pc}
+
+.L3:
+	.word	.LC0-(.LPIC0+8)
+	.word	.LC1-(.LPIC1+8)
+	.word	.LC2-(.LPIC2+8)
+	.size	main, .-main
+	.ident	"GCC: (GNU) 4.9 20150123 (prerelease)"
+	.section	.note.GNU-stack,"",%progbits
+```
+
 
 
 
