@@ -264,7 +264,7 @@ typedef struct elf32_hdr{
 | e_entry     | 0x18 | 4    | 程序入口点,动态链接文件没有入口，为0                      |
 | e_phoff     | 0x1c | 4    | 程序头表(program header table)偏移量,如果没有为0     |
 | e_shoff     | 0x20 | 4    | section头表(section header table)偏移,如果没有为0 |
-| e_flags     | 0x24 | 4    | //TODO                                   |
+| e_flags     | 0x24 | 4    | 特定处理器标志,采用EF_machine_flag格式              |
 | e_ehsize    | 0x28 | 2    | elf头的大小,Size of this header就是这个字段        |
 | e_phentsize | 0x2a | 2    | 程序头表(program header table)大小,Size of program headers |
 | e_phnum     | 0x2c | 2    | 程序头表(program header table)个数, Number of program headers |
@@ -272,7 +272,7 @@ typedef struct elf32_hdr{
 | e_shnum     | 0x30 | 2    | section header table中的入口数目               |
 | e_shstrndx  | 0x32 | 2    | 跟section名字字符表相关入口的section头表(section header table)索引,//TODO |
 
-e_type表
+### e_type
 
 | 名称        | 值      | 解释                 |
 | --------- | ------ | ------------------ |
@@ -288,7 +288,7 @@ e_type表
 
 ET_LOPROC-ET_HIPROC是为特殊处理器保留的
 
-e_machine表
+### e_machine
 
 | 名称       | 值    | 解释             |
 | -------- | ---- | -------------- |
@@ -302,9 +302,18 @@ e_machine表
 | EM_MIPS  | 8    | MIPS RS3000    |
 |          | 28   | ARM            |
 
+## Section
+
+节，它包含了目标文件中除了elf头部，程序头部表格，节区头部表格外所有内容。他们有如下特点：
+
+1. 目标文件中每个节区都有对应的头部描述他，返回来则不成立
+2. 每个节区占用文件中一个连续的位置(可能为0)
+3. 节区不允许重叠
+4. 目标文件可能包含分活动空间(inactive space)，这些区域不属于任何头部和节区，他们没实际作用
+
 ## Section Header
 
-只有文件是链接格式才有效，Section Header是对每一个section进行了一些描述，包括名称，类型，大小，在整个文件的整体偏移位置，他的定义如下
+只有文件是链接格式才有效，elf头中e_shoff指出了节区的偏移，e_shnum指出了表格条目数，e_shentsize给出了每项的字节数，所以根据这些信息我们就可以定位所以节信息。Section Header是对每一个section进行了一些描述，包括名称，类型，大小，在整个文件的整体偏移位置，他的定义如下
 
 ```c++
 struct Elf32_Shdr {
@@ -331,18 +340,10 @@ struct Elf32_Shdr {
 | sh_addr      | 4    | 如果该section加载到内存为内存地址，否则为0                |
 | sh_offset    | 4    | 该section的真实偏移位置，SHT_NOBITS类的section不暂用空间 |
 | sh_size      | 4    | section的字节大小，如果类型为SHT_NOBITS为0           |
-| sh_link      | 4    | section报头表的索引连接,具体的还得依据他的类型来解释这个值        |
+| sh_link      | 4    | section报头表的索引连接,具体的还得依据他的类型来解释这个值,见sh_link表 |
 | sh_info      | 4    | 额外的信息，解释依靠该section的类型                    |
-| sh_addralign | 4    | 地址对齐的约束,假如一个section保存着双字，系统就必须确定整个section是否双字对齐。所以sh_addr的值以sh_addralign的值 |
-| sh_entsize   | 4    | 保存着一张固定大小入口的表，就象符号表。对于这样一个               |
-
-sh_name：section的名字值是section报头字符表section的索引。[看以下的“String Table”], 以NULL空字符结束
-
-off:该section从开始位置的偏移
-
-size:表示section的大小
-
-flg:表示当前section的标志，如：text只有可执行
+| sh_addralign | 4    | 地址对齐的约束,假如一个section保存着双字，系统就必须确定整个section是否双字对齐。所以sh_addr的值以sh_addralign的值取模结果必须为0，目前取值为0和2的幂次数。如果是值为0和1表示没有对齐约束 |
+| sh_entsize   | 4    | 保存着一张固定大小入口的表，就象符号表。对于这类节区，这个值为表每项的长度(字节)，如果不包含值为0 |
 
 根据上面的信息我们总结出21个section
 
@@ -371,21 +372,59 @@ flg:表示当前section的标志，如：text只有可执行
 | b0      | 70000003 | 0        | 0       | 305c      | 2b      | 0       | 0       | 1            | 0          |
 | 1       | 3        | 0        | 0       | 3087      | c0      | 0       | 0       | 1            | 0          |
 
+### sh_type
 
+指示改section的意义
 
+| 值            | 名称         | 解释                                       |
+| ------------ | ---------- | ---------------------------------------- |
+| SHT_NULL     | 0          | section无效,其他成员的值也是未定义的                   |
+| SHT_PROGBITS | 1          | 程序定义了一些信息,格式和意义取决于程序本身                   |
+| SHT_SYMTAB   | 2          | 他和SHT_DYNSYM(保存动态链接时所需最小标号集合),为连接器提供标号,也可以被动态链接器使用。SHT_SYMTAB他可能包含动态链接不需要的标号，见Symbol Table表 |
+| SHT_STRTAB   | 3          | 保存字符串列表，一个文件可能包含多个，见String Table         |
+| SHT_RELA     | 4          | 保存具有明确加数的重定位入口,一个object文件可能有多个重定位的sections,见Relocation |
+| SHT_HASH     | 5          | 保存一个hash表,所有参与动态链接的object一定包含一个标记哈希表,见Hash Table |
+| SHT_DYNAMIC  | 6          | 保存动态链接信息,当前(后面可能取消)一个文件只有一个,见Dynamic Section |
+| SHT_NOTE     | 7          | 保存其他的一些标志文件信息，见Note Section              |
+| SHT_NOBITS   | 8          | 在文件不暂用空间，类似SHT_PROGBITS,虽然不包含字节,但包含了概念的上文件偏移量 |
+| SHT_REL      | 9          | 保存着具有明确加数的重定位的入口,见Relocation             |
+| SHT_SHLIB    | 10         | 保留类型                                     |
+| SHT_DYNSYM   | 11         |                                          |
+| SHT_LOPROC   | 0x70000000 | 在这范围之间的值为特定处理器语意保留的                      |
+| SHT_HIPROC   | 0x7fffffff | 在这范围之间的值为特定处理器语意保留的                      |
+| SHT_LOUSER   | 0x80000000 | 应用程序保留的索引范围的最小边界,可能被应用程序使用               |
+| SHT_HIUSER   | 0xffffffff | 应用程序保留的索引范围的最大边界,可能被应用程序使用               |
 
+### Symbol Table
 
+### String Table
 
+### Relocation
 
+### Hash Table
 
+### sh_flags
 
+用来描述section的属性，下面是定义的值，其他的保留
 
+| 值          | 名称            | 解释                     |
+| ---------- | ------------- | ---------------------- |
+| 0x1        | ￼￼￼SHF_WRITE  | 可被写的数据                 |
+| 0x2        | SHF_ALLOC     | 在进程执行过程中占据着内存          |
+| 0x4        | SHF_EXECINSTR | 包含了可执行的机器指令            |
+| 0xf0000000 | SHF_MASKPROC  | 所有的包括在这掩码中的位为特定处理语意保留的 |
 
+### sh_link & sh_info
 
+根据节的类型不同，这两个字段的含义也不尽相同
 
-
-
-
+| sh_type     | sh_link              | sh_info |
+| ----------- | -------------------- | ------- |
+| SHT_DYNAMIC | 该节中条目所用到的字符串表格节区头部索引 | 0       |
+| SHT_HASH    |                      | 0       |
+|             |                      |         |
+|             |                      |         |
+|             |                      |         |
 
 
 
