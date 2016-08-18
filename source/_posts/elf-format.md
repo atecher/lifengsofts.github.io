@@ -418,13 +418,93 @@ struct Elf32_Shdr {
 
 根据节的类型不同，这两个字段的含义也不尽相同
 
-| sh_type     | sh_link              | sh_info |
-| ----------- | -------------------- | ------- |
-| SHT_DYNAMIC | 该节中条目所用到的字符串表格节区头部索引 | 0       |
-| SHT_HASH    |                      | 0       |
-|             |                      |         |
-|             |                      |         |
-|             |                      |         |
+| sh_type               | sh_link              | sh_info                           |
+| --------------------- | -------------------- | --------------------------------- |
+| SHT_DYNAMIC           | 该节中条目所用到的字符串表格节区头部索引 | 0                                 |
+| SHT_HASH              | 此哈希表所适用的符号表的节区头部索引   | 0                                 |
+| SHT_REL,SHT_RELA      | 相关符号表的节区头部索引         | 重定位所适用的节区的                        |
+| SHT_SYMTAB,SHT_DYNSYM | 相关联的字符串表的节区头部索引      | 最后一个局部符号(绑 定 STB_LOCAL)的符 号表索引值加一 |
+| 其它                    | SHN_UNDEF            | 0                                 |
+
+### 特殊节区(special sections)
+
+就是包含了程序和控制信息，由系统定义的，在运行程序时需要使用的节区
+
+| 节名称                       | 节类型          | 节属性                     | 意思                                       |
+| ------------------------- | ------------ | ----------------------- | ---------------------------------------- |
+| .bss                      | SHT_NOBITS   | SHF_ALLOC,SHF_WRITE     | 该sectiopn保存着未初始化的数据，这些数据存在于程序内存映象中。      |
+| .comment                  | SHT_PROGBITS | 无属性                     | 包含版本控制信息                                 |
+| .data                     | 同上           | SHF_ALLOC,SHF_WRITE     | 初始化了数据，将出现在程序内存映像中                       |
+| .data1                    | 同上           | 同上                      | 同上                                       |
+| .debug                    | 同上           | 无                       | 包含用于符号调试的信息                              |
+| .dynamic                  | SHT_DYNAMIC  |                         | 动态链接信息，节区属性包含SHF_ALLOC,是否设置SHF_WRITE位取决于处理器 |
+| .dynstr                   | SHT_STRTAB   | SHF_ALLOC               | 用于动态链接的字符串，大多数情况下这些字符串代表了与符号表现相关的名称      |
+| .dynsym                   | SHT_DYNSYM   | SHF_ALLOC               | 动态链接符号表                                  |
+| .fini                     | SHT_PROGBITS | SHF_ALLOC,SHF_EXECINSTR | 可执行指令,是进程终止代码的一部分,程序正常退出时，系统将执行这里的代码     |
+| .got                      | SHT_PROGBITS |                         | 全局偏移表                                    |
+| .hash                     | SHT_HASH     | SHF_ALLOC               | 包含一个符号hash表                              |
+| .init                     | SHT_PROGBITS | SHF_ALLOC,SHF_EXECINSTR | 可执行指令,是进程初始化代码的一部分,系统在调用入口之前执行这些代码       |
+| .interp                   | SHT_PROGBITS |                         | 该section保存了程序的解释程序(interpreter)的路径。假如在这个section中有一个可装载的段，那么该section的属性的SHF_ALLOC位将被设置；否则，该位不会被设置。看第二部分获得更多的信息 |
+| .line                     | SHT_PROGBITS | 无                       | 符号调试行号信息，描述源程序与机器指令之间的对应关系，其中内容是未定义的     |
+| .note                     | SHT_NOTE     | 无                       | 包含注释信息,有特定的格式,见Note Section              |
+| .plt                      | SHT_PROGBITS |                         | 该section保存着过程连接表(Procedure Linkage Table)看第一部分的Special Sections''和第二部分的“Procedure Linkage Table” |
+| `.rel<name> ,.rela<name>` | SHT_REL      |                         | 这些section保存着重定位的信息，看下面的``Relocation''描述。假如文件包含了一个可装载的段，并且这个段是重定位的，那么该section的属性将设置SHF_ALLOC位；否则该位被关闭。按照惯例，<name>由重定位适用的section来提供。因此，一个重定位的section适用的是.text，那么该名字就为.rel.text或者是.rela.text。 |
+| .rodata,.rodata11         | SHT_PROGBITS | SHF_ALLOC               | 保存着只读数据，在进程映象中构造不可写的段                    |
+| .shstrtab                 | SHT_STRTAB   |                         | 保存着section名称                             |
+| .strtab                   | SHT_STRTAB   |                         | 保存着字符串，一般地，描述名字的字符串和一个标号的入口相关联。假如文件有一个可装载的段，并且该段包括了符号字符串表，那么section的SHF_ALLOC属性将被设置为1 |
+| .symtab                   | SHT_SYMTAB   |                         | 包含一个符号表,假如文件有一个可装载的段，并且该段包含了符号表，那么section的SHF_ALLOC属性将被设置为1 |
+| .text                     | SHT_PROGBITS | SHF_ALLOC,SHF_EXECINSTR | 可执行指令                                    |
+
+> 注意：
+>
+> 1. 以.开头的节区名称是系统保留的，应用程序可以定义没有.前缀的节区名称，避免与系统节区冲突
+> 2. 目标文件格式允许我们定义自己的节区
+> 3. 可以包含多个名称相同的节区
+> 4. 保留给处理器体系结构的节区名称一般为:处理器体系结构简写(与e_machine相同)+节区名称,如:.arm.other,意思是arm处理器的other区
+
+有些编译器扩展了节区,如下：
+
+.sdata
+
+.tdesc
+
+.sbss
+
+.lit4
+
+.lit8
+
+.reginfo
+
+.gptab
+
+.liblist
+
+.conflict
+
+#### Hash Table
+
+### 字符串表(String Table)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
