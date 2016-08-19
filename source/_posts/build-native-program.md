@@ -309,7 +309,7 @@ android.useDeprecatedNdk=true
 
 ### 关闭自动编译
 
-有时候我们想关闭自动as的自动编译，我们注释掉build.gradle的ndk配置，然后添加Android.mk，在jni上层目录执行ndk-build，但是他生成默认在libs目录下，我们需要手动创建jniLibs然后将libs下面的拷贝到当前目录
+有时候我们想关闭自动as的自动编译，我们注释掉build.gradle的ndk配置，然后添加Android.mk，在jni上层目录执行ndk-build，但是他生成默认在libs目录下，我们需要手动创建jniLibs然后将libs下面的拷贝到当前目录。[以上测试代码在这里](https://github.com/lifengsofts/BuildNativeCodeSimple)
 
 
 
