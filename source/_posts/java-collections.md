@@ -268,11 +268,56 @@ strings.forEach(e -> System.out.println(e));
 
 # Java集合简介
 
+![](http://7qnc6h.com1.z0.glb.clouddn.com/java-collection-interface)
+
 可以看到有两个大家族接口Collection和Map。
 
 Collection用了表示抽象的集合
 
-map表示键值对的集合
+Map表示键值对的集合
+
+
+
+## Iterable
+
+实现了这个接口的对象允许使用for-each来循环每个元素，当然也可以直接使用它的iterator获取一个迭代器，同时还能直接使用forEach来遍历元素。如:我们自定义了一个MyList类，他只是实现了Iterable接口：
+
+```java
+public class MyList<T> implements Iterable<T>{
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return null;
+    }
+}
+```
+
+那么现在我们就可以通过Iterable的接口来操作这个集合了：
+
+```java
+MyList<String> strings = new MyList<>();
+for (String s :strings
+        ) {
+
+}
+
+strings.forEach(e-> System.out.println(e));
+```
+
+其中还有个spliterator的方法，适用于获取一个可将元素分成多份的迭代器，主要用于并发编程。
+
+## Collection
+
+该接口定义了一个通用的集合接口，包含一些通用的方法比如添加一个元素，删除一个元素，是否包含某个元素。但是JDK没有提供这个接口的直接显示类，而是提供了有序集合List，无序集合Set。
 
 ## List
 
@@ -353,6 +398,8 @@ if (strings instanceof RandomAccess) {
 ## NavigableSet和NavigableMap
 
 # 具体的集合
+
+ArrayList:
 
 
 
