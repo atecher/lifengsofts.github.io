@@ -386,6 +386,148 @@ e
 
 ## 队列和双端队列
 
+### 优先级队列
+
+可以按照任意顺序插入，却总是按照排序的顺序进行检索，也就说无论何时调用remove方法，总会获得当前优先级队列中数字最小的元素，如果使用迭代器方式处理这些元素，并不需要排序，他使用一个优雅且高效的堆(heap)结构(是一个可以自我调整的二叉树，对树执行添加(add)和删除(remore)操作，可以让最小的元素移动到跟，而不必话费时间对元素排序)。
+
+典型的优先队列使用场景是任务调用。每一个任务都有一个优先级，任务以随机添加到队列中，每当启动一个新任务时，都将优先级最高的任务从队列中删除，通常1为最高，所以也说将最小的元素删除。
+
+```java
+PriorityQueue<String> strings = new PriorityQueue<>();
+strings.add("c");
+strings.add("d4");
+strings.add("a123234324");
+strings.add("b34");
+strings.add("e");
+
+strings.forEach(e-> System.out.println(e));
+
+System.out.println("-------");
+System.out.println(strings.remove());
+System.out.println("-------");
+
+strings.forEach(e-> System.out.println(e));
+```
+
+输出：
+
+```
+a123234324
+b34
+c
+d4
+e
+-------
+a123234324
+-------
+b34
+d4
+c
+e
+```
+
+可以看到删除的其实是最小的元素。
+
+# 映射
+
+## HashMap
+
+```java
+HashMap<String, String> strings = new HashMap<>();
+strings.put("3","c");
+strings.put("4","d4");
+strings.put("5","e");
+strings.put("1","a123234324");
+strings.put("2","b34");
+
+
+strings.forEach((k,v)-> System.out.println(k+":"+v));
+
+
+System.out.println("--------");
+
+HashMap<Integer, String> hashMap = new HashMap<>();
+hashMap.put(10,"d");
+hashMap.put(2,"c");
+hashMap.put(1,"a");
+hashMap.put(3,"b");
+
+hashMap.forEach((k,v)-> System.out.println(k+":"+v));
+```
+
+输出：
+
+```
+1:a123234324
+2:b34
+3:c
+4:d4
+5:e
+--------
+1:a
+2:c
+3:b
+10:d
+```
+
+可以发现默认按照key排序的。
+
+### 更新值
+
+如我们需要使用某个Map统计某个单词出现的次数，可以这样做：
+
+```java
+private static void testWordCount() {
+    String[] strings = {"a", "c", "d", "d", "c", "c", "a", "e"};
+    HashMap<String, Integer> map = new HashMap<>();
+
+    for (int i = 0; i < strings.length; i++) {
+        countWord(map, strings[i]);
+    }
+
+    map.forEach((k, v) -> System.out.println(k + ":" + v));
+
+}
+
+private static void countWord(Map<String, Integer> map, String word) {
+//        map.put(word,hashMap.get(word)+1); //第一次会空指针,可以通过下面的方式避免
+
+//        map.put(word,hashMap.getOrDefault(word,0)+1); //可以这样
+
+    //也可以这样
+//        map.putIfAbsent(word,0); //当键不存在时才添加
+//        map.put(word,hashMap.get(word)+1);
+
+    //当然还有更好的方式
+    map.merge(word, 1, Integer::sum); //如果不存在key word时，装入1，存在时将原来的值加1
+}
+```
+
+输出：
+
+```
+a:2
+c:3
+d:2
+e:1
+```
+
+## 弱散列映射
+
+设计WeakHashMap是为了解决一个很特别的问题。
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
