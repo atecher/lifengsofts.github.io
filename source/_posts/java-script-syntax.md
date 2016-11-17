@@ -256,17 +256,192 @@ function showLoveJS () {
 <input type="button" onclick="showLoveJS()" value="你喜欢js吗">
 ```
 
+## 提问对话框
+
+通过prompt弹出的对话框还可以让用户输入一些信息。语法：
+
+prompt(str1,str2)
+
+参数解释：
+
+str1:显示在对话框的标题
+
+str2:对话框中文本中的内容，可以修改
 
 
 
+返回值
+
+点击确定返回文本框中的内容
+
+点击取消返回null
+
+```javascript
+function inputName () {
+	var name=prompt('请输入你的名字：')
+	if (name==null) {
+		alert('请输入名字')
+	} else{
+		alert('你好,'+name)
+	}
+}
+```
+
+```javascript
+<input type="button" onclick="inputName()" value="请输入用户名"></input>
+```
+
+## 打开新浏览器窗口
+
+通过open方法可以从已有的窗口打开网页或新建一个浏览器窗口。
+
+语法：
+
+window.open([url地址],[窗口名称],[参数字符串])
 
 
 
+参数解释：
+
+```
+url地址：可选参数，在窗口中显示的路径，如果省略窗口就不显示任何文档。
+
+窗口名：可选参数，被打开窗口的名称。取值如下：
+
+  _top:在框架页面中，上传窗口显示目标网页
+
+  _blank:在新窗口中显示
+
+  _self:在当前窗口显示
+
+窗口名称：相同的name只能创建一个。不能包含空格。
+
+参数字符串：设置窗口的参数，多个用逗号分隔开
+
+```
 
 
 
+窗口参数列表：
+
+![](http://img.mukewang.com/52e3677900013d6a05020261.jpg)
 
 
+
+例如打开百度，窗口大小为300px*200px，没有菜单，无工具栏，无状态栏，有滚动条。
+
+```javascript
+window.open('http://www.baidu.com','_blank','width=300,height=200,menubar=no,toolbar=no, status=no,scrollbars=yes')
+```
+
+## 关闭窗口
+
+可是使用window.close()关闭当前窗口，或者使用窗口对象.close()关闭指定窗口。
+
+```javascript
+var win = window.open('http://www.baidu.com','_blank','width=300,height=200,menubar=no,toolbar=no, status=no,scrollbars=yes')
+win.close()
+```
+
+打开一个窗口马上又关闭它。
+
+## 实例：打开用户输入的网址
+
+```javascript
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+
+		<script>
+			function openWindow() {
+				var url = prompt("请输入你想打开的网址：")
+				if(url == null) {
+					alert('请输入网址')
+				} else {
+					open(url, '_blank', 'width=300,height=200,menubar=no,toolbar=no, status=no,scrollbars=yes')
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+
+		<input type="button" value="打开窗口" onclick="openWindow()" />
+	</body>
+
+</html>
+```
+
+# Dom操作
+
+## 什么是DOM
+
+全称为Document Object Model也就是文档对象模型，他定义了访问和处理HTML文档的标准方法。DOM将HTML文档呈现为代有元素，属性和文本的树结构，也称节点树。
+
+1. 元素节点：像html,body,p标签
+2. 文本节点：内显示内容的节点，li，span
+3. 属性节点：如a标签有href属性可以指向一个网址
+
+## 通过ID找元素
+
+id是标签的唯一属性，所以说在网页中可以通过id找到一个确定的元素。
+
+```javascript
+document.getElementById('d1').innerText = '我是动态添加的'
+```
+
+## innerText属性
+
+用于获取或替换该对象里面的html标签。区分大小写。
+
+```javascript
+document.getElementById('d2').innerHTML = '<h1>标题1</h1>'
+```
+
+## 改变HTML样式
+
+可以通过js动态的改变html的样式。语法是Object.style.property=new style。
+
+下面列取了常见的属性：
+
+![](http://img.mukewang.com/52e4d4240001dd6c04850229.jpg)
+
+我们来写个实例代码：
+
+```javascript
+var d3 = document.getElementById('d3')
+d3.style.color='red'
+d3.style.fontSize='28'
+d3.style.backgroundColor='blue'
+```
+
+## 显示和隐藏标签
+
+在网页中，有时候可能某个标签一开始是隐藏的，当一定条件后就显示了。可以通过style.display来设置。
+
+取值：
+
+none：隐藏元素
+
+block:显示元素
+
+```javascript
+document.getElementById('d4').style.display='none'
+```
+
+## 控制类属性
+
+可以通过className获取或替换class属性值。
+
+```javascript
+document.getElementById('d5').className='a'
+
+//添加多个样式
+document.getElementById('d5').className='a'
+```
 
 
 
