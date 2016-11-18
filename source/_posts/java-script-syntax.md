@@ -8,11 +8,12 @@ tags:
 
 # 概述
 
-## 有什么优势
+## 他能做什么
 
 1. 他可以制作交互性极强的网页效果
 2. 全世界大部分网页基本上都是用它
 3. 所有的主流浏览器基本都支持
+4. 数据验证，比如：用户名，邮箱格式验证
 
 # Hello JS
 
@@ -162,6 +163,46 @@ if (age>=18) {
 	alert("你还没用成年")
 }
 ```
+
+## if else
+
+```javascript
+var myage = 99; //赵红的年龄为99
+if(myage <= 44) {
+	document.write("青年");
+} else if(myage <= 59) {
+	document.write("中年人");
+} else if(myage <= 89) {
+	document.write("老年人");
+} else {
+	document.write("长寿老年人");
+}
+```
+
+## switch
+
+```javascript
+var myweek = 10; //myweek表示星期几变量
+switch(myweek) {
+	case 1:
+	case 2:
+		document.write("学习理念知识");
+		break;
+	case 3:
+	case 4:
+		document.write("到企业实践");
+		break;
+
+	default:
+		document.write("周六、日休息和娱乐");
+		break;
+
+	case 5:
+		document.write("总结经验");
+}
+```
+
+一定要写break，default不用一定要放到最后。
 
 # 函数
 
@@ -443,9 +484,149 @@ document.getElementById('d5').className='a'
 document.getElementById('d5').className='a'
 ```
 
+# 数组
 
+数组是用来存储多个数组，比如：一个班的同学。
 
+## 定义数组
 
+```javascript
+var myarr = new Array();
+myarr[0]=80;
+myarr[1]=70;
+myarr[2]=90;
+
+document.write(myarr[0])
+```
+
+创建数组的时候也可以指定长度，但是实际上数组是可以边长的，所有没什么意思。
+
+```javascript
+var myarr = new Array(2);
+
+myarr[4]=10;
+
+document.write(myarr.length)
+
+document.write(myarr[0]) //undefined
+```
+
+## 创建数组时赋值
+
+```javascript
+var myarr = new Array(140,1324);
+```
+
+## 字面数组
+
+```javascript
+var myarr = [120,34,5];
+```
+
+数组里可以是任何类型(数字，字符，布尔值)
+
+## 数组属性
+
+长度：length
+
+## 二维数组
+
+```javascript
+var myarr = new Array();
+for (var i = 0; i < 10; i++) {
+	myarr[i] = new Array();
+	
+	for (var j = 0; j < 3; j++) {
+		myarr[i][j] = i+j;
+	}
+}
+
+//打印数组
+for (var i = 0; i < myarr.length; i++) {
+	for (var j = 0; j < myarr[i].length; j++) {
+		document.write(myarr[i][j]+' ');
+	}
+	
+	document.write('<br />');
+}
+```
+
+### 字面常量方式
+
+```javascript
+var myarr = [[2,4,5],[2,4]]
+for (var i = 0; i < myarr.length; i++) {
+	for (var j = 0; j < myarr[i].length; j++) {
+		document.write(myarr[i][j]+' ');
+	}
+	
+	document.write('<br />');
+}
+```
+
+# 附录
+
+## 关键字
+
+break
+case
+catch
+continue
+default
+delete
+do
+else
+finally
+for
+function
+if
+in
+instanceof
+new
+return
+switch
+this
+throw
+try
+typeof
+var
+void
+while
+with
+
+## 保留字
+
+abstract
+boolean
+byte
+char
+class
+const
+debugger
+double
+enum
+export
+extends
+fimal
+float
+goto
+implements
+import
+int
+interface
+long
+mative
+package
+private
+protected
+public
+short
+static
+super
+synchronized
+throws
+transient
+volatile
 
 
 
