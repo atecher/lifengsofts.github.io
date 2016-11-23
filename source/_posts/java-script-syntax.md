@@ -1057,6 +1057,294 @@ HTML文档可以说由节点构成的集合，DOM节点有:
 </html>
 ```
 
+添加一个li标签
+
+```javascript
+var otest = document.getElementById("test");
+var newNode = document.createElement("li");
+newNode.innerText = 'PHP';
+otest.appendChild(newNode);
+```
+
+移除所以的子节点
+
+```javascript
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>无标题文档</title>
+	</head>
+
+	<body>
+		<div id="content">
+			<h1>html</h1>
+			<h1>php</h1>
+			<h1>javascript</h1>
+			<h1>jquery</h1>
+			<h1>java</h1>
+		</div>
+
+		<script type="text/javascript">
+			function clearText() {
+				var content = document.getElementById("content");
+				var nodes = content.childNodes;
+				// 在此完成该函数
+
+				while(content.firstChild) {
+					content.removeChild(content.firstChild);
+				}
+
+			}
+		</script>
+
+		<button onclick="clearText()">清除节点内容</button>
+
+	</body>
+
+</html>
+```
+
+替换子节点
+
+```javascript
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>无标题文档</title>
+	</head>
+
+	<body>
+
+		<div><b id="oldnode">JavaScript</b>是一个很常用的技术，为网页添加动态效果。</div>
+		<a href="javascript:replaceMessage()"> 将加粗改为斜体</a>
+
+		<script type="text/javascript">
+			function replaceMessage() {
+				var oldnode = document.getElementById('oldnode');
+				var newNode = document.createElement('i');
+				newNode.innerText = oldnode.innerText;
+				oldnode.parentNode.replaceChild(newNode, oldnode);
+			}
+		</script>
+
+	</body>
+
+</html>
+```
+
+动态创建一个标签
+
+```javascript
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>无标题文档</title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			var main = document.body;
+			//创建链接
+			function createa(url, text) {
+				var newNode = document.createElement('a');
+				newNode.setAttribute('href', url);
+				newNode.innerText = text;
+				return newNode;
+			}
+			// 调用函数创建链接
+
+			var newNode = createa("http://baidu.com", "百度");
+			main.appendChild(newNode);
+		</script>
+	</body>
+
+</html>
+```
+
+创建文本节点
+
+```javascript
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>无标题文档</title>
+		<style type="text/css">
+			.message {
+				width: 200px;
+				height: 100px;
+				background-color: #CCC;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			var divNode = document.createElement('div');
+			divNode.className = 'message';
+			var textNode = document.createTextNode('I love JavaScript!');
+			divNode.appendChild(textNode);
+			document.body.appendChild(divNode);
+		</script>
+
+	</body>
+
+</html>
+```
+
+浏览器窗口可视区域大小
+
+```javascript
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script>
+			var w = document.documentElement.clientWidth ||
+				document.body.clientWidth;
+			var h = document.documentElement.clientHeight ||
+				document.body.clientHeight;
+
+			alert(w);
+			alert(h);
+		</script>
+	</body>
+
+</html>
+```
+
+完整的节点操作案例：动态创建表格一行，删除一行，鼠标经过改变颜色。
+
+```javascript
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title> new document </title>
+		<script type="text/javascript">
+			window.onload = function() {
+
+				// 鼠标移动改变背景,可以通过给每行绑定鼠标移上事件和鼠标移除事件来改变所在行背景色。
+				var trs = document.getElementsByTagName('tr');
+				for(var i = 0; i < trs.length; i++) {
+
+					nodeChangeColor(trs[i]);
+					nodeResetColor(trs[i]);
+				}
+
+			}
+
+			function nodeChangeColor(n) {
+				n.onmouseover = function() {
+
+					this.style.backgroundColor = "red";
+
+				}
+			}
+
+			function nodeResetColor(n) {
+				n.onmouseout = function() {
+
+					this.style.backgroundColor = "";
+
+				}
+			}
+
+			// 编写一个函数，供添加按钮调用，动态在表格的最后一行添加子节点；
+
+			function add() {
+				var table = document.getElementById('table').lastChild; //tbody
+
+				var tr = document.createElement('tr');
+
+				nodeChangeColor(tr);
+				nodeResetColor(tr);
+
+				var td = document.createElement('td');
+				td.innerText = "你好";
+
+				var td1 = document.createElement('td');
+				td1.innerText = "哈哈";
+
+				var td2 = document.createElement('td');
+
+				//a
+				var a = document.createElement('a');
+				a.setAttribute('href', 'javascript:;');
+				a.setAttribute('onclick', "del(this)");
+
+				a.innerText = '删除';
+
+				td2.appendChild(a);
+
+				tr.appendChild(td);
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+
+				table.appendChild(tr);
+			}
+
+			// 创建删除函数
+			function del(obj) { //obj是外面传入的参数this，也就是删除字段的节点TD
+
+				var a = obj.parentNode.parentNode.parentNode; //获取最外层节点table
+
+				var b = obj.parentNode.parentNode; //获取第二层节点TR，TR里有3个TD，为一行
+
+				a.removeChild(b); //利用父节点table删除子节点TR
+
+			}
+		</script>
+	</head>
+
+	<body>
+		<table border="1" width="50%" id="table">
+			<tr>
+				<th>学号</th>
+				<th>姓名</th>
+				<th>操作</th>
+			</tr>
+
+			<tr>
+				<td>xh001</td>
+				<td>王小明</td>
+				<td>
+					<a href="javascript:;" onclick="del(this)">删除</a>
+				</td>
+				<!--在删除按钮上添加点击事件  -->
+			</tr>
+
+			<tr>
+				<td>xh002</td>
+				<td>刘小芳</td>
+				<td>
+					<a href="javascript:;" onclick="del(this)">删除</a>
+				</td>
+				<!--在删除按钮上添加点击事件  -->
+			</tr>
+
+		</table>
+		<input type="button" value="添加一行" onclick="add()" />
+		<!--在添加按钮上添加点击事件  -->
+	</body>
+
+</html>
+```
+
+
+
 节点类型
 
 | 元素类型 | 节点类型 |
