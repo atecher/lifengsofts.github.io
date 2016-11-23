@@ -107,6 +107,214 @@ var a=1;var b=2;var add=function(a,b){return a+b};console.log(add(a,b));
 
 使用模块：teacher.add('Li')
 
+# 常用API
+
+## URL
+
+### parse
+
+将一个url解析为host等
+
+```javascript
+url.parse('http://i.woblog.cn:8080/post/list?a=b&c=d#abc')
+```
+
+输出：
+
+```shell
+Url {
+  protocol: 'http:',
+  slashes: true,
+  auth: null,
+  host: 'i.woblog.cn:8080',
+  port: '8080',
+  hostname: 'i.woblog.cn',
+  hash: '#abc',
+  search: '?a=b&c=d',
+  query: 'a=b&c=d',
+  pathname: '/post/list',
+  path: '/post/list?a=b&c=d',
+  href: 'http://i.woblog.cn:8080/post/list?a=b&c=d#abc' }
+```
+
+将query解析为对象，只需要传递第二个参数位true
+
+```javascript
+url.parse('http://i.woblog.cn:8080/post/list?a=b&c=d#abc',true)
+```
+
+```shell
+Url {
+  protocol: 'http:',
+  slashes: true,
+  auth: null,
+  host: 'i.woblog.cn:8080',
+  port: '8080',
+  hostname: 'i.woblog.cn',
+  hash: '#abc',
+  search: '?a=b&c=d',
+  query: { a: 'b', c: 'd' }, //这里已经是对象了
+  pathname: '/post/list',
+  path: '/post/list?a=b&c=d',
+  href: 'http://i.woblog.cn:8080/post/list?a=b&c=d#abc' }
+```
+
+不知道url协议，也解析出host，不添加第三个参数，可以看到host为空
+
+```javascript
+url.parse('//i.woblog.cn:8080/post/list?a=b&c=d#abc',true)
+```
+
+```shell
+Url {
+  protocol: null,
+  slashes: null,
+  auth: null,
+  host: null,
+  port: null,
+  hostname: null,
+  hash: '#abc',
+  search: '?a=b&c=d',
+  query: { a: 'b', c: 'd' },
+  pathname: '//i.woblog.cn:8080/post/list',
+  path: '//i.woblog.cn:8080/post/list?a=b&c=d',
+  href: '//i.woblog.cn:8080/post/list?a=b&c=d#abc' }
+```
+
+第三个参数为true
+
+```javascript
+url.parse('//i.woblog.cn:8080/post/list?a=b&c=d#abc',true,true)
+```
+
+```shell
+Url {
+  protocol: null,
+  slashes: true,
+  auth: null,
+  host: 'i.woblog.cn:8080', //有值了
+  port: '8080',
+  hostname: 'i.woblog.cn',
+  hash: '#abc',
+  search: '?a=b&c=d',
+  query: { a: 'b', c: 'd' },
+  pathname: '/post/list',
+  path: '/post/list?a=b&c=d',
+  href: '//i.woblog.cn:8080/post/list?a=b&c=d#abc' }
+```
+
+## format
+
+将一个对象转为一个url,可以是上面的parse对象
+
+```javascript
+url.format({
+...   protocol: 'http:',
+...   slashes: true,
+...   auth: null,
+...   host: 'i.woblog.cn:8080',
+...   port: '8080',
+...   hostname: 'i.woblog.cn',
+...   hash: '#abc',
+...   search: '?a=b&c=d',
+...   query: 'a=b&c=d',
+...   pathname: '/post/list',
+...   path: '/post/list?a=b&c=d',
+...   href: 'http://i.woblog.cn:8080/post/list?a=b&c=d#abc' })
+```
+
+```shell
+http://i.woblog.cn:8080/post/list?a=b&c=d#abc
+```
+
+## resolve
+
+```javascript
+url.resolve('/one/two/three', 'four')         // '/one/two/four'
+url.resolve('http://example.com/', '/one')    // 'http://example.com/one'
+url.resolve('http://example.com/one', '/two') // 'http://example.com/two'
+```
+
+## queryString
+
+### 将对象转为参数字符串
+
+```javascript
+querystring.stringify({name:'li',age:10,course:['b',1],other:''})
+```
+
+```shell
+'name=li&age=10&course=b&course=1&other='
+```
+
+第二个参数表示多个参数间的连接符号，默认&
+
+```javascript
+querystring.stringify({name:'li',age:10,course:['b',1],other:''},',')
+```
+
+```shell
+'name=li,age=10,course=b,course=1,other='
+```
+
+第三个参数表示key和value之间的分隔符，默认=
+
+```javascript
+querystring.stringify({name:'li',age:10,course:['b',1],other:''},',',':')
+```
+
+```shell
+'name:li,age:10,course:b,course:1,other:'
+```
+
+### 将字符串解析为对象
+
+```javascript
+querystring.parse('name=li&age=10&course=b&course=1&other=')
+```
+
+```shell
+{ name: 'li', age: '10', course: [ 'b', '1' ], other: '' }
+```
+
+通用也可以指定多个参数间的连接符号
+
+```javascript
+querystring.parse('name=li,age=10,course=b,course=1,other=',',')
+```
+
+```shell
+{ name: 'li', age: '10', course: [ 'b', '1' ], other: '' }
+```
+
+指定key和value间的分隔符
+
+```javascript
+querystring.parse('name:li,age:10,course:b,course:1,other:',',',':')
+```
+
+```shell
+{ name: 'li', age: '10', course: [ 'b', '1' ], other: '' }
+```
+
+### 字符转义
+
+```javascript
+querystring.escape('<呵 护>')
+```
+
+```shell
+'%3C%E5%91%B5%20%E6%8A%A4%3E'
+```
+
+反转义
+
+```javascript
+querystring.unescape('%3C%E5%91%B5%20%E6%8A%A4%3E')
+```
+
+
+
 
 
 
