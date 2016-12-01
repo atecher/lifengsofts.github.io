@@ -222,9 +222,177 @@ AppRegistry.registerComponent('fistApp', () => fistApp);
 
 注册RN的入口代码。
 
+# 统计按钮点击次数
+
+现在项目已经跑起来了，我做一个统计屏幕点击次数的例子
+
+index.ios.js
+
+我们将render方法改为如下：
+
+```javascript
+render() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.welcome} onPress={this.timesPlus.bind(this)}>
+        你敢点击我吗
+      </Text>
+      <Text style={styles.instructions}>
+        点击了 {this.state.times} 次
+      </Text>
+    </View>
+  );
+}
+```
+
+并给第一个Text绑定了一个onPress事件，点击时就会调用timesPlus方法
+
+```javascript
+timesPlus(){
+  let times=this.state.times
+
+  times++
+
+  this.setState({
+    times:times
+  })
+}
+```
+
+逻辑就是拿到当前state里面的times加1，然后在赋值回去。完整代码
+
+```javascript
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ */
+
+import React, {
+  AppRegistry,
+  Component,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
+
+class dog extends Component {
+  constructor(props){
+    super(props)
+    this.state={times:0}
+  }
+
+  timesPlus(){
+    let times=this.state.times
+
+    times++
+
+    this.setState({
+      times:times
+    })
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome} onPress={this.timesPlus.bind(this)}>
+          你敢点击我吗
+        </Text>
+        <Text style={styles.instructions}>
+          点击了 {this.state.times} 次
+        </Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
+
+AppRegistry.registerComponent('dog', () => dog);
+```
+
+# 组件生命周期
+
+第一次组件
+
+```javascript
+componentWillMount
+render
+componentDidMount
+```
+
+状态改变
+
+```javascript
+shouldComponentUpdate
+componentWillUpdate
+render
+componentDidUpdate
+```
+
+# 调试和热加载
+
+按command+d，可以开启调试和热加载
+
+# 常见错误
+
+## "CFBundleIdentifier", Does Not Exist
+
+Command failed: /usr/libexec/PlistBuddy -c Print:CFBundleIdentifier build/Build/Products/Debug-iphonesimulator/imoocApp.app/Info.plist
+
+Print: Entry, ":CFBundleIdentifier", Does Not Exist
+
+## 用rninit创建指定版本的应用
+
+```javascript
+1. 安装
+npm i -g rninit
+2. 使用
+2.1 用最新的 react-native 版本创建工程：
+rninit init [Project Name]
+2.2 用特定的 react-native npm 版本创建工程：
+rninit init [Project Name] --source react-native@0.22.2
+```
 
 
 
+或者将依赖改为如下：
+
+```json
+"lodash": "^4.13.1",
+"mockjs": "^1.0.0",
+"query-string": "^4.2.0",
+"react": "^0.14.8",
+"react-native": "^0.22.2",
+"react-native-audio": "^1.2.1",
+"react-native-button": "^1.6.0",
+"react-native-cli": "^0.2.0",
+"react-native-image-picker": "^0.20.0",
+"react-native-progress": "^3.0.1",
+"react-native-sk-countdown": "^1.0.1",
+"react-native-swiper": "^1.4.6",
+"react-native-vector-icons": "^2.0.2",
+"react-native-video": "^0.8.0",
+"sha1": "^1.1.1"
+```
+
+http://coding.imooc.com/learn/questiondetail/1708
 
 
 
