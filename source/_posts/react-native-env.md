@@ -329,6 +329,10 @@ AppRegistry.registerComponent('dog', () => dog);
 
 # 组件生命周期
 
+先上一张图
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/Screen%20Shot%202016-12-01%20at%2011.09.48%20PM.png)
+
 第一次组件
 
 ```javascript
@@ -592,7 +596,6 @@ var styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('life', () => life);
-
 ```
 
 # ES5和ES6区别

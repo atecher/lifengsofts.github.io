@@ -1355,6 +1355,9 @@ otest.appendChild(newNode);
 | 注释   | 8    |
 | 文档   | 9    |
 
+# JavaScript版本
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/Screen%20Shot%202016-12-02%20at%2011.17.10%20PM.png)
 
 # 附录
 
