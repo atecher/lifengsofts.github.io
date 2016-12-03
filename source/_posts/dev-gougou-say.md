@@ -1,5 +1,5 @@
 ---
-title: 使用ReactNative开发狗狗说
+title: 使用ReactNative开发狗狗说应用流程
 date: 2016-12-03 10:58:58
 categories: React Native
 tags: 
@@ -619,6 +619,8 @@ fetch('http://rap.taobao.org/mockjs/11015/api/video')
 }
 ```
 
+### 重构网络模块
+
 这样写不好是因为几乎我们每个页面都要用到网络请求，通常的情况下是将网络请求封装成一个类，所以这里我们将网络请求封装到request.js中
 
 ```javascript
@@ -705,6 +707,106 @@ _fetchData(){
 ```
 
 这样就方便快捷多了,[代码变更地址为](https://git.oschina.net/lfsoft/ReactDog/commit/dd5f859537c13fdceeaec245d077e70221ea743f)
+
+## 上拉加载更多
+
+我们要在listview中添加一个onEndReached方法监测是否滑到了底部
+
+```javascript
+onEndReached={this._fetchMoreData}
+```
+
+然后实现_fetchMoreData方法
+
+```javascript
+_fetchMoreData(){
+	if (!this._hasMore() || this.state.isLoading) {
+	  //如果没有更多数据了，或者正在加载中，直接返回
+	  return
+	}
+
+	var page = cacheReuslts.nextPage
+
+	this._fetchData(page)
+}
+```
+
+当然回来的数据还是得和原来的数据追加
+
+```javascript
+_fetchData(page){
+	var that = this
+
+	this.setState({
+	  isLoading:true
+	})
+
+	request.get(config.api.base+config.api.videoList,{
+	  accessToken:'abbbb',
+	  page:page
+	})
+	  .then((data) => {
+	    console.log(data)
+	    if (data.success) {
+
+	      var items = cacheReuslts.items.slice()
+
+	      items=items.concat(data.data)
+
+	      cacheReuslts.items=items
+	      cacheReuslts.total=data.total
+
+	      console.log(cacheReuslts.items.length)
+
+	      //这里是为了有显示loading
+	      setTimeout(function () {
+	        that.setState({
+	          isLoading:false,
+	          dataSource:that.state.dataSource.cloneWithRows(cacheReuslts.items)
+	        })
+	      },2000)
+
+	      
+	    }
+	  })
+	  .catch((error) => {
+	    this.setState({
+	        isLoading:false
+	      })
+	    console.warn(error);
+	  });
+}
+```
+
+## 下拉刷新
+
+使用refreshControl
+
+```javascript
+refreshControl={
+	<RefreshControl
+	  refreshing={this.state.isRefreshing}
+	  onRefresh={this._onRefresh}
+	  tintColor="#ff6600"
+	  title="拼命加载中..."
+	  colors={['#ff0000', '#00ff00', '#0000ff']}
+	  progressBackgroundColor="#ffff00" />
+}
+```
+
+然后实现_onRefresh方法
+
+```javascript
+_onRefresh(){
+	if (this.state.isRefreshing) {
+	  return
+	}
+
+	this._fetchData(0)
+}
+```
+
+同时还得在fetchData方法里面通过判断page是否等于0来更改是刷新还是加载更多。
 
 ## 箭头函数
 
