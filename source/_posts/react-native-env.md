@@ -346,6 +346,464 @@ render
 componentDidUpdate
 ```
 
+## 嵌套组件
+
+### 第一次加载
+
+father getDefaultProps
+son getDefaultProps
+father getInitialState
+father componentWillMount
+father render
+son getInitialState
+son componentWillMount
+son render
+son componentDidMount
+father componentDidMount
+
+可以看到先渲染父组件，然后渲染子组件
+
+### 父组件状态变化
+
+father shouldComponentUpdate
+father componentWillUpdate
+father render
+son getInitialState
+son componentWillMount
+son render
+son componentDidMount
+father componentDidUpdate
+
+### 只有子组件变化
+
+son shouldComponentUpdate
+son componentWillUpdate
+son render
+son componentDidUpdate
+
+测试该组件生命周期的代码如下：
+
+```javascript
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ */
+var React=require('react-native')
+
+var {
+  AppRegistry,
+  Component,
+  StyleSheet,
+  Text,
+  View
+} = React;
+
+var life = React.createClass( {
+  getDefaultProps(){
+    console.log('father getDefaultProps')
+  },
+
+  getInitialState(){
+    console.log('father getInitialState')
+    return {
+      times:3,
+      hit:false
+    }
+  },
+
+  componentWillMount(){
+    console.log('father componentWillMount')
+  },
+
+  componentDidMount(){
+    console.log('father componentDidMount')
+  },
+
+  shouldComponentUpdate(){
+    console.log('father shouldComponentUpdate')
+
+    return true
+  },
+
+  componentWillUpdate(){
+    console.log('father componentWillUpdate')
+  },
+
+  componentDidUpdate(){
+    console.log('father componentDidUpdate')
+  },
+
+  timePlugs(){
+   var times= this.state.times
+
+   times+=3
+
+   this.setState({
+    times:times
+   })
+  },
+
+  timeReset(){
+   this.setState({
+    times:0
+   })
+  },
+
+  willHit(){
+   this.setState({
+    hit:!this.state.hit
+   })
+  },
+
+  render() {
+    console.log('father render')
+
+    return (
+      <View style={styles.container}>
+
+        {
+          this.state.hit 
+          ? 
+          <Son times={this.state.times} timeReset={this.timeReset}/> 
+          : null
+
+        }
+
+        
+        <Text style={styles.welcome} onPress={this.timeReset}>
+        老子说：心情好就放你一马
+        </Text>
+
+        <Text style={styles.instructions} onPress={this.willHit}>
+          到底揍不走
+        </Text>
+
+        <Text style={styles.instructions}>
+          就揍了你 {this.state.times} 次而已
+        </Text>
+
+        <Text style={styles.instructions} onPress={this.timePlugs}>
+          不听话在揍你 3 次
+        </Text>
+
+      </View>
+    );
+  }
+  ,
+})
+
+var Son = React.createClass( {
+  getDefaultProps(){
+    console.log('son getDefaultProps')
+  },
+
+  getInitialState(){
+    console.log('son getInitialState')
+    return {
+      times:this.props.times
+    }
+  },
+
+  componentWillMount(){
+    console.log('son componentWillMount')
+  },
+
+  componentDidMount(){
+    console.log('son componentDidMount')
+  },
+
+  componentWillReceiveProps(props){
+    console.log('son componentWillReceiveProps')
+    console.log(this.props)
+    console.log(props)
+    this.setState({
+      times:props.times
+    })
+  }
+  ,
+
+  shouldComponentUpdate(){
+    console.log('son shouldComponentUpdate')
+
+    return true
+  },
+
+  componentWillUpdate(){
+    console.log('son componentWillUpdate')
+  },
+
+  componentDidUpdate(){
+    console.log('son componentDidUpdate')
+  },
+
+  timeReset(){
+    this.props.timeReset()
+  },
+
+  //儿子自己的方法，心理暗示老子要揍他，但其实老子没有揍他
+  timePlugs(){
+   var times= this.state.times
+
+   times+=3
+
+   this.setState({
+    times:times
+   })
+  },
+
+  render() {
+    console.log('son render')
+
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome} onPress={this.timePlugs}>
+          儿子说：有本事揍我呀！
+        </Text>
+
+
+      <Text style={styles.instructions}>
+        你居然揍我 {this.state.times} 次
+      </Text>
+      <Text style={styles.instructions} onPress={this.timeReset} >
+        别揍我了，我给你买瓶酒
+      </Text>
+      </View>
+    );
+  }
+})
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
+
+AppRegistry.registerComponent('life', () => life);
+
+```
+
+# ES5和ES6区别
+
+## 导入模块方式
+
+```javascript
+ //ES5
+var ReactNative=require('react-native')
+var React=require('react')
+
+var Component=React.Component
+
+var AppRegistry=ReactNative.AppRegistry
+var StyleSheet=ReactNative.StyleSheet
+var Text=ReactNative.Text
+var View=ReactNative.View
+
+//ES6
+// import React,{Component} from 'react'
+// import {
+//   AppRegistry,
+//   StyleSheet,
+//   Text,
+//   View
+// } from 'react-native'
+```
+
+## 创建组件
+
+ES5使用React.createClass方法来创建一个组件，所以最后需要添加分号(但也有省略)
+
+```javascript
+var life = React.createClass( {
+  getInitialState(){
+    console.log('father getInitialState')
+    return {
+      times:3,
+      hit:false
+    }
+  },
+
+  timePlugs(){
+   var times= this.state.times
+
+   times+=3
+
+   this.setState({
+    times:times
+   })
+  },
+
+  timeReset(){
+   this.setState({
+    times:0
+   })
+  },
+
+  willHit(){
+   this.setState({
+    hit:!this.state.hit
+   })
+  },
+
+  render() {
+    console.log('father render')
+
+    return (
+      <View style={styles.container}>
+
+        {
+          this.state.hit 
+          ? 
+          <Son times={this.state.times} timeReset={this.timeReset}/> 
+          : null
+
+        }
+
+        
+        <Text style={styles.welcome} onPress={this.timeReset}>
+        老子说：心情好就放你一马
+        </Text>
+
+        <Text style={styles.instructions} onPress={this.willHit}>
+          到底揍不走
+        </Text>
+
+        <Text style={styles.instructions}>
+          就揍了你 {this.state.times} 次而已
+        </Text>
+
+        <Text style={styles.instructions} onPress={this.timePlugs}>
+          不听话在揍你 3 次
+        </Text>
+
+      </View>
+    );
+  }
+})
+```
+
+ES6使用class和extends关键字来实现，和Java这样的语言差不多了，更加面向对象了
+
+```javascript
+class Son extends Component {
+  constructor(props){
+    super(props)
+    this.state={times:0}
+
+    console.log('son constructor')
+  }
+
+  componentWillReceiveProps(props){
+    console.log('son componentWillReceiveProps')
+    console.log(this.props)
+    console.log(props)
+    this.setState({
+      times:props.times
+    })
+  }
+  
+  timeReset(){
+    this.props.timeReset()
+  }
+
+  //儿子自己的方法，心理暗示老子要揍他，但其实老子没有揍他
+  timePlugs(){
+   var times= this.state.times
+
+   times+=3
+
+   this.setState({
+    times:times
+   })
+  }
+
+  render() {
+    console.log('son render')
+
+    return (
+      <View style={sonStyles.container}>
+        <Text style={sonStyles.welcome} onPress={this.timePlugs.bind(this)}>
+          儿子说：有本事揍我呀！
+        </Text>
+
+
+      <Text style={sonStyles.instructions}>
+        你居然揍我 {this.state.times} 次
+      </Text>
+      <Text style={sonStyles.instructions} onPress={this.timeReset.bind(this)} >
+        别揍我了，我给你买瓶酒
+      </Text>
+      </View>
+    );
+  }
+}
+```
+
+## 获取初始属性
+
+ES5中使用getDefaultProps和getInitialState来初始化属性
+
+```javascript
+getDefaultProps(){
+	console.log('father getDefaultProps')
+},
+
+getInitialState(){
+	console.log('father getInitialState')
+	return {
+	  times:3,
+	  hit:false
+	}
+},
+```
+
+ES6中使用constructor构造方法来初始化
+
+```javascript
+constructor(props){
+  super(props)
+  this.state={times:0}
+
+  console.log('son constructor')
+}
+```
+
+## View中调用方法
+
+ES5
+
+```javascript
+<Text style={styles.instructions} onPress={this.timePlugs}>
+  不听话在揍你 3 次
+</Text>
+```
+
+ES6要调用bind(this)方法
+
+```javascript
+<Text style={sonStyles.welcome} onPress={this.timePlugs.bind(this)}>
+  儿子说：有本事揍我呀！
+</Text>
+```
+
+## 声明变量
+
+ES5中只能使用var
+
+ES6中可以使用const，let
+
 # 调试和热加载
 
 按command+d，可以开启调试和热加载
