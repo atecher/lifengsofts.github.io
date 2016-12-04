@@ -808,6 +808,199 @@ _onRefresh(){
 
 同时还得在fetchData方法里面通过判断page是否等于0来更改是刷新还是加载更多。
 
+## 列表页点赞
+
+这个功能分两部分，第一部分是在View中根据是否点赞显示不同的图标
+
+```javascript
+<View style={styles.handleBox}>
+  <Icon 
+    name={this.state.up ? 'ios-heart' : 'ios-heart-outline'}
+    size={28}
+    onPress={this._up}
+    style={[styles.up ,this.state.up ? null : styles.down ]}  />
+  <Text style={styles.handleText} onPress={this._up}>喜欢</Text>
+</View>
+```
+
+第二部分是当点击了按钮，发送点赞请求
+
+```javascript
+_up(){
+	var that=this
+
+	var up = !this.state.up
+	var row=this.state.row
+	var url=config.api.base+config.api.up
+
+	var body={
+	  id:row._id,
+	  up:up,
+	  accessToken:'ab'
+	}
+
+	console.log('up')
+
+	request.post(url,body)
+	.then(function (data) {
+	  if (data && data.success) {
+	    that.setState({
+	      up:up
+	    })
+	  } else{
+	    AlertIOS.alert('点赞失败，请稍后重试')
+	  }
+	})
+	.catch(function (err) {
+	  console.log(err)
+	  AlertIOS.alert('点赞失败，请稍后重试')
+	})
+}
+```
+
+请求回来了我们还得判断是否响应成功，然后改变状态，让界面刷新
+
+## 添加进入视频详情页面
+
+在这之前我们先要使用导航器包装
+
+```javascript
+<Navigator
+	initialRoute={{
+	  name:'list',
+	  component:List
+	}}
+	configureScene={(route)=>{
+	  return Navigator.SceneConfigs.FloatFromRight
+	}}
+	renderScene={(route,navigator)=>{
+	  var Component=route.component
+	  return <Component {...route.params} navigator={navigator} />
+	}} />
+```
+
+这样我们就可以在List组件里面通过navigator属性拿到外面的Navigator实例，从而进入一个页面。
+
+然后在TouchableHighlight控件上添加一个onPress方法
+
+```javascript
+_loadDetailPage(row){
+	this.props.navigator.push({
+	  name:'detail',
+	  component:Detail
+	})
+}
+```
+
+这样我们就能跳转到详情页面了，现在需要实现返回到列表
+
+```javascript
+_back(){
+	this.props.navigator.pop()
+}
+```
+
+还要将外面的id传入详情页，我们就可以拿着id去请求详情页数据了
+
+```javascript
+_loadDetailPage(row){
+	this.props.navigator.push({
+	  name:'detail',
+	  component:Detail,
+	  params:{
+	    _id:row._id
+	  }
+	})
+}
+```
+
+然后在详情界面就可以拿到这个id
+
+```javascript
+render:function(){
+	var _id = this.props._id
+
+	return (
+	  <View style={styles.container}>
+	    <Text onPress={this._back}>详情页面{_id}</Text>
+	  </View>
+	)
+}
+```
+
+那这个params是怎么传递过来了的呢，起始就是在我们包装List的时候的使用了
+
+```javascript
+<Component {...route.params} navigator={navigator} />
+```
+
+…的作用就是讲params中的所有属性展开依次传递给Component，所有我们在组件内部就能通过props拿到
+
+## 详情页播放视频
+
+这里使用一个第三方库
+
+```javascript
+npm i react-native-video --save
+
+//安装完后还需要链接，我这里链接又报错，所以只能手动链接
+rnpm link react-native-video
+```
+
+链接完成后，在详情界面写上Video组件
+
+```javascript
+<Video
+    style={styles.video}
+    ref='videoPlayer'
+    source={{uri:data.video}}
+    style={styles.video}
+    volume={3}
+    paused={false}
+    rate={this.state.rate}
+    muted={this.state.muted}
+    resizeMode={this.state.resizeMode}
+    repeat={this.state.repeat}
+
+    onLoadStart={this._onLoadStart}
+    onLoad={this._onLoad}
+    onProgress={this._onProgress}
+    onEnd={this._onEnd}
+    onError={this._onError} />
+```
+
+
+
+# 屏幕单位
+
+1英寸(inch)=2.54厘米(cm)
+
+首先我们看iphone6
+
+## 英寸
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/%E5%AF%B9%E8%A7%92%E7%BA%BF.png)
+
+## 点
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/%E7%82%B9.png)
+
+## 像素
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/%E5%83%8F%E7%B4%A0.png)
+
+## 缩放比ppi
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/ppi.png)
+
+## 总结
+
+![](http://7qnc6h.com1.z0.glb.clouddn.com/iphone6-screen.png)
+
+## iphone屏幕尺寸分布
+
+ ![](http://7qnc6h.com1.z0.glb.clouddn.com/iphone-screen.png)
+
 ## 箭头函数
 
 这里的箭头函数相当于java中的函数式编程
