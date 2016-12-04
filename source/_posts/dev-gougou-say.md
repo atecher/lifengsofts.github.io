@@ -969,6 +969,234 @@ rnpm link react-native-video
     onError={this._onError} />
 ```
 
+## 播放和暂停
+
+只需要控制Video组件的paused属性就行了
+
+## 添加返回和标题栏
+
+```javascript
+<View style={styles.header}>
+  <TouchableOpacity style={styles.backBox} onPress={this._pop}>
+    <Icon name='ios-arrow-back' style={styles.backIcon} />
+    <Text style={styles.backText} >返回</Text>
+  </TouchableOpacity>
+  <Text style={styles.headerTitle} numberOflines={1}>
+    视频详情页
+  </Text>
+</View>
+```
+
+对应的样式
+
+```javascript
+header:{
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+    width:width,
+    height:64,
+    paddingTop:20,
+    paddingLeft:10,
+    paddingRight:10,
+    borderBottomWidth:1,
+    borderColor:'rgba(0,0,0,0.1)',
+    backgroundColor:'#fff'
+  },
+  backBox:{
+    position:'absolute',
+    left:12,
+    top:32,
+    width:50,
+    flexDirection:'row',
+    alignItems:'center'
+  },
+  headerTitle:{
+    width:width-120,
+    textAlign:'center'
+  },
+  backIcon:{
+    color:'#999'
+  },
+  backText:{
+    color:'#999'
+  }
+```
+
+```javascript
+_pop(){
+	this.props.navigator.pop()
+}
+```
+
+## 视频制作者信息
+
+```javascript
+<View style={styles.infoBox} >
+	<Image style={styles.avatar} source={{uri:data.author.avatar}} />
+	<View style={styles.descBox}>
+	  <Text style={styles.nickname} > {data.author.nickname} </Text>
+	  <Text style={styles.title} > {data.title} </Text>
+	</View>
+</View>
+```
+
+样式
+
+```javascript
+infoBox:{
+    width:width,
+    flexDirection:'row',
+    justifyContent:'center',
+    marginTop:20
+  },
+  avatar:{
+    width:60,
+    height:60,
+    marginRight:10,
+    marginLeft:10,
+    borderRadius:30
+  },
+  descBox:{
+    flex:1
+  },
+  nickname:{
+    fontSize:18
+  },
+  title:{
+    marginTop:8,
+    fontSize:16,
+    color:'#666'
+  }
+```
+
+## 显示视频信息
+
+```javascript
+<View style={styles.infoBox} >
+	<Image style={styles.avatar} source={{uri:data.author.avatar}} />
+	<View style={styles.descBox}>
+	  <Text style={styles.nickname} > {data.author.nickname} </Text>
+	  <Text style={styles.title} > {data.title} </Text>
+	</View>
+</View>
+```
+
+## 显示评论内容
+
+
+
+### 小插曲
+
+1.像这种布局
+
+```javascript
+<View key={row._id} style={styles.replyBox} >
+	<Image style={styles.replyAvatar} source={{uri:row.replyBy.avatar}} />
+	<View style={styles.reply}>
+	  <Text style={styles.replyNickname} > {row.replyBy.nickname} </Text>
+	  <Text style={styles.replyContent} > {row.content} </Text>
+	</View>
+</View>
+```
+
+replyBox的样式一定要设置宽度，不然整个页面有可能一部分显示到了左边屏幕外面了
+
+```javascript
+replyBox:{
+	width:width,
+	flexDirection:'row',
+	justifyContent:'flex-start',
+	marginTop:10
+}
+```
+
+2.如果将ScrollView放到了VideoBox布局里面，将导致listview无法滚动，需要将他拿到和videoBox平级的布局中
+
+### 优化评论布局
+
+由于我们要显示视频信息和评论内容，所以用了ScrollView嵌套ListView
+
+```javascript
+<ScrollView
+      showVerticalScrollIndicator={false}
+      enableEmptySections={true}
+      automaticallyAdjustContentInsets={false}
+      style={styles.scrollView} >
+
+      <View style={styles.infoBox} >
+        <Image style={styles.avatar} source={{uri:data.author.avatar}} />
+        <View style={styles.descBox}>
+          <Text style={styles.nickname} > {data.author.nickname} </Text>
+          <Text style={styles.title} > {data.title} </Text>
+        </View>
+      </View>
+
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow}
+        onEndReached={this._fetchMoreData}
+        renderFooter={this._renderFooter}
+        onEndReachedThreshold={20}
+        showVerticalScrollIndicator={false}
+        enableEmptySections={true}
+        automaticallyAdjustContentInsets={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.isRefreshing}
+            onRefresh={this._onRefresh}
+            tintColor="#ff6600"
+            title="拼命加载中..."
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00" />
+        }
+      />
+</ScrollView>
+```
+
+显示需要去除ScrollView，这里使用renderHeader={this._renderHeader}，用法和renderFooter差不多,先返回布局
+
+```javascript
+_renderHeader(){
+	var data=this.state.data
+
+	return(
+	  <View style={styles.infoBox} >
+	    <Image style={styles.avatar} source={{uri:data.author.avatar}} />
+	    <View style={styles.descBox}>
+	      <Text style={styles.nickname} > {data.author.nickname} </Text>
+	      <Text style={styles.title} > {data.title} </Text>
+	    </View>
+	  </View>
+	)
+}
+```
+
+然后删除scrollview相关的代码
+
+```javascript
+<ListView
+	dataSource={this.state.dataSource}
+	renderRow={this._renderRow}
+	onEndReached={this._fetchMoreData}
+	renderHeader={this._renderHeader}
+	renderFooter={this._renderFooter}
+	onEndReachedThreshold={20}
+	showVerticalScrollIndicator={false}
+	enableEmptySections={true}
+	automaticallyAdjustContentInsets={false}
+	refreshControl={
+	  <RefreshControl
+	    refreshing={this.state.isRefreshing}
+	    onRefresh={this._onRefresh}
+	    tintColor="#ff6600"
+	    title="拼命加载中..."
+	    colors={['#ff0000', '#00ff00', '#0000ff']}
+	    progressBackgroundColor="#ffff00" />
+	}
+/>
+```
+
 
 
 # 屏幕单位
