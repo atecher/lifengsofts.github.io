@@ -1197,6 +1197,133 @@ _renderHeader(){
 />
 ```
 
+## 添加评论
+
+我们在视频页面添加了一个引导用户评论的输入框，但这个框起始只是一个点击层而已，目的是用户点击弹出一个浮层，在浮层里面评论
+
+```javascript
+_renderHeader(){
+  var data=this.state.data
+
+    return(
+      <View state={styles.listHeader}>
+        <View style={styles.infoBox} >
+          <Image style={styles.avatar} source={{uri:data.author.avatar}} />
+          <View style={styles.descBox}>
+            <Text style={styles.nickname} > {data.author.nickname} </Text>
+            <Text style={styles.title} > {data.title} </Text>
+          </View>
+        </View>
+
+        <View style={styles.commentBox}>
+          <View style={styles.comment}>
+            <TextInput
+              placeholder='敢不敢评论一个呀'
+              style={styles.content}
+              multiline={true}
+              onFocus={this._onFocus} />
+          </View>
+        </View>
+
+        <View style={styles.commentArea}>
+          <Text style={styles.commentTitle}>热门评论</Text>
+        </View>
+      </View>
+      
+    )
+}
+```
+
+### 提交组件
+
+```javascript
+npm i react-native-button --save
+```
+
+不需要链接,先导入
+
+```javascript
+//这种导入方式报错
+//var Button=require('react-native-button')
+import Button from 'react-native-button';
+```
+
+添加组件到布局
+
+```javascript
+<Button style={styles.submit} onPress={this._submit} >评论</Button>
+```
+
+添加一个_submit方法，在这里处理评论逻辑
+
+```javascript
+_submit(){
+    var that = this
+
+    if (!this.state.content) {
+      return AlertIOS.alert('请输入评论内容！')
+    }
+
+    if (this.state.isSending) {
+      return AlertIOS.alert('正在拼命评论中...')
+    }
+
+    //正在发送
+    this.setState({
+      isSending:true
+    },function () {
+      var body={
+        accessToken:'a',
+        videoId:'123',
+        content:this.state.content
+      }
+
+      var url = config.api.base+config.api.comment
+
+      request.post(url,body)
+      .then(function (data) {
+        if (data&&data.success) {
+          var items=cacheReuslts.items.slice()
+
+          var cotnent=that.state.content
+          items=[{
+            content:cotnent,
+            replyBy:{
+              avatar:'https://dummyimage.com/640x640/b108ca',
+              nickname:'你猜猜我是谁'
+            }
+          }].concat(items)
+
+          cacheReuslts.items=items
+          cacheReuslts.total=cacheReuslts.total+1
+
+          that.setState({
+            content:'',
+            isSending:false,
+            dataSource:that.state.dataSource.cloneWithRows(cacheReuslts.items)
+          })
+
+          that._setModalVisible(false)
+
+        }
+      })
+      .catch((err)=>{
+        console.log(err)
+        that.setState({
+          isSending:false
+        })
+
+        that._setModalVisible(false)
+
+        AlertIOS.alert('留言失败，稍后重试！')
+
+      })
+    })
+  }
+```
+
+
+
 
 
 # 屏幕单位
@@ -1246,3 +1373,12 @@ var newNumberArray = numberArray.map(item=>item+1)
 console.log(newNumberArray)
 ```
 
+# 常见错误
+
+## RCTSRWebSocket.m在xcode8.1下报错
+
+http://www.jianshu.com/p/175e820a1c51
+
+## CodeSign error: code signing is required for product type 'Unit Test Bundle' in SDK 'iOS 8.1'
+
+http://blog.csdn.net/skymingst/article/details/42489097
