@@ -807,6 +807,286 @@ ES5中只能使用var
 
 ES6中可以使用const，let
 
+# 常用组件
+
+首先我们clone react native的源码到本地，并切换到 0.22-stable版本，然后使用npm start安装依赖，如果这个版本安装出错
+
+```shell
+npm ERR! Darwin 15.6.0
+npm ERR! argv "/Users/renpingqing/.nvm/versions/node/v4.2.3/bin/node" "/Users/renpingqing/.nvm/versions/node/v4.2.3/bin/npm" "install"
+npm ERR! node v4.2.3
+npm ERR! npm  v2.14.7
+npm ERR! code EPEERINVALID
+
+npm ERR! peerinvalid The package eslint@2.13.1 does not satisfy its siblings' peerDependencies requirements!
+npm ERR! peerinvalid Peer babel-eslint@5.0.4 wants eslint@<2.3.0
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /Users/renpingqing/Documents/work/react/react-native/npm-debug.log
+```
+
+那我们切换到0.24-stable试试
+
+```shell
+rm -rf node_modules && npm install
+```
+
+我们当前的版本是xcode8.1,node是v4.2.3，react-native-cli: 0.2.0。
+
+我们可以在Examples目录找到多个实例代码，其中UIExplorer就是控件示例代码。
+
+## View
+
+相当于支持flex布局的div
+
+## Text
+
+用来显示文本的，可以设置显示的字体大小，颜色，显示几行
+
+## TextInput
+
+文本输入框，也可以用来输入密码
+
+## Image
+
+显示图片，可以加载网络，本地图片，还可以监听加载进度，也可以设置图片的拉伸方式
+
+## AlertIOS
+
+提示框
+
+## Modal
+
+模态对话框，浮层
+
+## ActivityIndicatorIOS
+
+loading
+
+## ProgressViewIOS
+
+进度条，提供0~1之间的值
+
+## ListView
+
+## PickerIOS
+
+## StatusBar
+
+可以控制IOS状态栏
+
+## Switch
+
+开关控件
+
+## Slider
+
+滑块
+
+## MapView
+
+## Navigator
+
+## TabBarIOS
+
+## SegmentedControllIOS
+
+## Touchable
+
+## WebView
+
+# flex布局
+
+伸缩，弹性容器布局
+
+> 注意：RN的flex跟css3里的flexbox属性名写法不同，RN全部使用驼峰标示
+>
+> RN对flex的支持有限是css3 flexbox的一个子集
+
+## 父容器
+
+### flexDirection
+
+可以控制字项目的排列方式通过flexDirection
+
+默认值是column,标示垂直，row标示水平
+
+### flex:1
+
+标示让当前这个容器的宽高都充满父容器
+
+### flexWrap
+
+定义如果在这个方向上放不下的其他元素显示方式
+
+noWrap:不包裹，就在屏幕外面去了
+
+wrap:包裹，换行显示
+
+### justifyContent
+
+设置在排列方向上的位置
+
+flex-start:左边
+
+center:居中
+
+flex-end:右边
+
+space-between:两段对齐
+
+space-around:将空间平分，并在平分的空间中在居中
+
+### alignItems
+
+控制在垂直于排列方式的内容位置
+
+stretch:在纵轴拉升
+
+## 子容器
+
+子容器可以使用alignSelf覆盖父类的设置
+
+子容器可是使用flex:1来指定平分父容器的空间，这个值相当于android中的weight属性
+
+# 如挑选第三方组件
+
+star个数
+
+fork
+
+close pr
+
+close issues
+
+stackoverflow
+
+文档全，代码规范，测试用例
+
+比如：我们搜索一个轮播组件，可以搜索关键词，react native carousel，react-native-swiper
+
+除了在github上搜索，也可以到https://react.parts/native上搜索
+
+# 本地存储
+
+RN提供了AsyncStorage，采用键值对存储
+
+```javascript
+var user=this.state.user
+
+AsyncStorage.setItem('user',JSON.stringify(user),function (err) {
+    if (err) {
+      console.log(err)
+      console.log('save fail')
+    } else{
+      console.log('save ok')
+    }
+})
+
+//或者
+var user=this.state.user
+
+AsyncStorage
+  .setItem('user',JSON.stringify(user))
+  .then(function(){
+    console.log('save ok')
+  })
+  .catch(function (err) {
+      console.log(err)
+      console.log('save fail')
+  })
+```
+
+统计重新载入的次数
+
+```javascript
+componentDidMount(){
+    var that = this
+      AsyncStorage
+      .getItem('user')
+      .then(function(data){
+        var userData=JSON.parse(data)
+        
+        userData.times++
+
+          that.setState({
+            user:userData
+          })
+
+          AsyncStorage
+            .setItem('user',JSON.stringify(userData))
+            .then(function(){
+              console.log('save ok')
+            })
+            .catch(function (err) {
+                console.log(err)
+                console.log('save fail')
+            })
+        console.log()
+      })
+      .catch(function (err) {
+          var user=that.state.user
+
+          AsyncStorage
+            .setItem('user',JSON.stringify(user))
+            .then(function(){
+              console.log('save ok')
+            })
+            .catch(function (err) {
+                console.log(err)
+                console.log('save fail')
+            })
+      })
+  }
+```
+
+key不存在会走到catch中
+
+删除,key不存在也不会报错
+
+```javascript
+AsyncStorage.removeItem('user')
+        .then(function () {
+          console.log('remove ok')
+        })
+```
+
+批量操作
+
+```javascript
+var that = this
+
+var user=this.state.user
+
+// AsyncStorage.multiSet([['user1','u1'],['user2','u2']])
+//   .then(function () {
+//     console.log('save ok')
+//   })
+
+// AsyncStorage.multiGet(['user1','user2','user'])
+//   .then(function (data) {
+//     console.log(data) //数组
+//   })
+
+  AsyncStorage.multiRemove(['user1','user2','user'])
+    .then(function (err) {
+      if (err) {
+        console.log('remove fail')
+      }else{
+        console.log('remove ok')
+        
+        //再次获取数据是，value是空，可以还在
+        AsyncStorage.multiGet(['user1','user2','user'])
+          .then(function (data) {
+            console.log(data)
+          })
+
+      }
+    })
+```
+
+## 
+
 # 调试和热加载
 
 按command+d，可以开启调试和热加载

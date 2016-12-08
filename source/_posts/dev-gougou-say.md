@@ -1322,6 +1322,12 @@ _submit(){
   }
 ```
 
+## 验证码倒计时
+
+```javascript
+npm i react-native-sk-countdown --save
+```
+
 
 
 
