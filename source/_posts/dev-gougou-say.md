@@ -1328,6 +1328,146 @@ _submit(){
 npm i react-native-sk-countdown --save
 ```
 
+我们在手机号旁边添加一个倒计时控件，先判断是否发送了验证码，在显示验证码输入框和倒计时按钮。
+
+```javascript
+{	
+	
+	this.state.codeSent
+	? <View style={styles.verifyCodeBox} >
+		<TextInput
+			placeholderTextColor='#444'
+			style={styles.inputField}
+			placeHolder='请输入验证码'
+			autoCaptialize={'none'}
+			autoCorrect={false}
+			keyboradType={'number-pad'}
+			onChangeText={(text)=>{
+				this.setState({
+					verifyCode:text
+				})
+			}} />
+
+		{
+			this.state.countingDone
+			? <Button 
+				style={styles.countBtn}
+				onPress={this._sendVerifyCode}> 获取验证码</Button>
+  		:  <CountDown
+  				style={styles.countBtn}
+  			  countType='seconds' // 计时类型：seconds / date
+  			  auto={true} // 自动开始
+  			  afterEnd={this._countingDone} // 结束回调
+  			  timeLeft={60} // 正向计时 时间起点为0秒
+  			  step={-1} // 计时步长，以秒为单位，正数则为正计时，负数为倒计时
+  			  startText='获取验证码' // 开始的文本
+  			  endText='获取验证码' // 结束的文本
+  			  intervalText={(sec) => sec + '秒重新获取'} />
+	
+		}
+
+		</View>
+		: null
+}
+```
+
+同时验证码倒计时完成了，在显示重新获取验证码按钮。
+
+## 启动切换到登陆或首页逻辑
+
+首先我们先在index.ios.js文件中获取是否有用户状态，如果有显示主界面，如果没有显示登陆界面
+
+```javascript
+componentDidMount(){
+	this._getAppStatus()
+},
+
+_getAppStatus(){
+	var that = this
+
+	AsyncStorage.getItem('user')
+	  .then((data)=>{
+	    var user
+	    var newStatus={}
+
+	    if (data) {
+	      newStatus.user=user
+	      newStatus.logined=true
+	    } else{
+	      newStatus.logined=false
+	    }
+
+	    that.setState(newStatus)
+	  })
+}
+```
+
+然后我们判断是否登陆，并渲染相应的界面
+
+```javascript
+render: function() {
+	if (!this.state.logined) {
+	  return <Login afterLogin={this._afterLogin}/>
+	}
+
+	return (
+	  <TabBarIOS
+	    tintColor="#ee735c">
+	    <Icon.TabBarItem
+	      title="视频"
+	      iconName='ios-videocam-outline'
+	      selectedIconName='ios-videocam'
+	      selected={this.state.selectedTab === 'list'}
+	      onPress={() => {
+	        this.setState({
+	          selectedTab: 'list',
+	        });
+	      }}>
+
+	      <Navigator
+	        initialRoute={{
+	          name:'list',
+	          component:List
+	        }}
+	        configureScene={(route)=>{
+	          return Navigator.SceneConfigs.FloatFromRight
+	        }}
+	        renderScene={(route,navigator)=>{
+	          var Component=route.component
+	          return <Component {...route.params} navigator={navigator} />
+	        }} />
+	    </Icon.TabBarItem>
+	    <Icon.TabBarItem
+	      title="录制"
+	      iconName='ios-recording-outline'
+	      selectedIconName='ios-recording'
+	      selected={this.state.selectedTab === 'edit'}
+	      onPress={() => {
+	        this.setState({
+	          selectedTab: 'edit'
+	        });
+	      }}>
+	      <Edit/>
+	    </Icon.TabBarItem>
+	    <Icon.TabBarItem
+	      title="更多"
+	      iconName='ios-more-outline'
+	      selectedIconName='ios-more'
+	      selected={this.state.selectedTab === 'account'}
+	      onPress={() => {
+	        this.setState({
+	          selectedTab: 'account'
+	        });
+	      }}>
+	      <Account/>
+	    </Icon.TabBarItem>
+	  </TabBarIOS>
+	);
+}
+```
+
+
+
 
 
 
