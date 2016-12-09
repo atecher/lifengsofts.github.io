@@ -1466,9 +1466,255 @@ render: function() {
 }
 ```
 
+## 显示用户头像
+
+首先我们判断用户是否有头像然后显示不同的布局
+
+```javascript
+{
+  user.avatar
+  ? <TouchableOpacity style={styles.avatarContainer}>
+      <Image source={{uri:user.avatar}} style={styles.avatarContainer}>
+        <View style={styles.avatarBox} >
+          <Image
+            source={{uri:user.avatar}}
+            style={styles.avatar} />
+        </View>
+        <Text style={styles.avatarTip}>添加头像</Text>
+      </Image>
+    </TouchableOpacity>
+  :
+    <View style={styles.avatarContainer}>
+      <Text style={styles.avatarTip}>添加头像</Text>
+      <TouchableOpacity style={styles.avatarBox} >
+        <Icon
+          name='ios-cloud-upload-outline'
+          style={styles.plusIcon} />
+      </TouchableOpacity>
+    </View>
+}
+```
+
+### 选择图片
+
+使用一个模块
+
+```shell
+npm i react-native-image-picker@0.20.0 --save
+```
+
+链接
+
+```javascript
+npm link react-native-image-picker
+```
+
+如果你的系统是iOS10,需要添加权限：http://www.jianshu.com/p/c212cde86877
+
+如果链接完不能用，请手动链接，并导入
+
+```javascript
+var ImagePicker = require('react-native-image-picker');
+```
+
+然后配置一些设置
+
+```javascript
+var options = {
+  title: '选择头像',
+  cancelButtonTitle:'取消',
+  takePhotoButtonTitle:'拍照',
+  chooseFromLibraryButtonTitle:'从相册选择',
+  quality:0.75,
+  allowsEditing:true,
+  noData:false,
+  storageOptions: {
+    skipBackup: true,
+    path: 'images'
+  }
+}
+```
+
+然后就可以选择图片了
+
+```javascript
+_pickPhoto(){
+  var that=this
+
+  console.log(ImagePicker)
+
+  ImagePicker.showImagePicker(options, (response) => {
+    console.log('Response = ', response);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+      return
+    }
+
+    var avatarData='data:image/png;base64,'+response.data
+
+    var user=that.state.user
+
+    user.avatar=avatarData
+
+    that.setState({
+      user:user
+    })
+
+    // else if (response.error) {
+    //   console.log('ImagePicker Error: ', response.error);
+    // }
+    // else if (response.customButton) {
+    //   console.log('User tapped custom button: ', response.customButton);
+    // }
+    // else {
+    //   // You can display the image using either data...
+    //   const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+
+    //   // or a reference to the platform specific asset location
+    //   if (Platform.OS === 'ios') {
+    //     const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+    //   } else {
+    //     const source = {uri: response.uri, isStatic: true};
+    //   }
+
+    //   this.setState({
+    //     avatarSource: source
+    //   });
+    // }
+  });
+}
+```
 
 
 
+### 上传图片到图床
+
+我们这里选用https://cloudinary.com，首先选择一个账号，然后将一些配置信息写到程序中
+
+```javascript
+var CLOUDINARY = {
+  cloud_name: 'dawlcb8jj',  
+  api_key: '6368311532331937597',  
+  api_secret: 'N4rXJImMfxZq03454fSosbZFfOhfHR8', 
+  base:'http://res.cloudinary.com/daw454lcb8jj',
+  image:'https://api.cloudinary.com/v1_1/daw454lcb8jj/image/upload',
+  video:'https://api.cloudinary.com/v1_1/daw454lcb8jj/video/upload',
+  audio: 'https://api.cloudinary.com/v1_1/daw454lcb8jj/raw/upload'
+}
+```
+
+然后就是上传逻辑了，首先我们需要将一些参数传递到服务端签名(因为本地签名不安全)
+
+```javascript
+ImagePicker.showImagePicker(options, (response) => {
+  console.log('Response = ', response);
+
+  if (response.didCancel) {
+    console.log('User cancelled image picker');
+    return
+  }
+
+  var avatarData='data:image/png;base64,'+response.data
+
+  //先显示出头像
+  var user=that.state.user
+
+  user.avatar=avatarData
+
+  that.setState({
+    user:user
+  })
+
+  var timestamp=Date.now()
+  var tags='app,avatar'
+  var folder='avatar'
+  var signatureUrl=config.api.base+config.api.signature
+
+  var accessToken=this.state.user.accessToken
+
+  request.post(signatureUrl,{
+    accessToken:accessToken,
+    timestamp:timestamp,
+    folder:folder,
+    tags,tags,
+    type:'avatar'
+  })
+  .catch((e)=>{
+    console.log('upload image fail')
+    console.log(e)
+  })
+  .then((data)=>{
+    if (data&&data.success) {
+      var signature= 'folder='+folder+'&tags='+tags+'&timestamp='+timestamp+CLOUDINARY.api_secret
+      signature=sha1(signature)
+
+      var body=new FormData()
+
+      body.append('folder',folder)
+      body.append('signature',signature)
+      body.append('timestamp',timestamp)
+      body.append('tags',tags)
+      body.append('api_key',CLOUDINARY.api_key)
+      body.append('resource_type','image')
+      body.append('file',avatarData)
+
+      this._upload(body)
+    }
+  })
+})
+```
+
+然后就上传图片
+
+```javascript
+_upload(body){
+  console.log('_upload')
+  var that = this
+
+  var xhr=new XMLHttpRequest()
+  var url=CLOUDINARY.image
+
+  xhr.open('POST',url)
+  xhr.onload=()=>{
+     console.log('upload image onload')
+    if (xhr.status!==200) {
+      AlertIOS('请求失败')
+      console.log(xhr.responseText)
+      return
+    }
+
+    if (!xhr.responseText) {
+      AlertIOS('请求失败')
+      console.log(xhr.responseText)
+      return
+    }
+
+    var response
+
+    try{
+      response=JSON.parse(xhr.response)
+    }catch(e){
+      console.log(e)
+      console.log('parse fails')
+    }
+
+    console.log('upload success')
+
+    if (response&&response.public_id) {
+      var user=that.state.user
+
+      user.avatar=avatar(response.public_id,'image')
+
+      that.setState({
+        user:user
+      })
+    }
+  }
+
+  xhr.send(body)
+}
+```
 
 
 
