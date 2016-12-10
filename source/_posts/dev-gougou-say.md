@@ -1716,6 +1716,14 @@ _upload(body){
 }
 ```
 
+### 上传进度
+
+首先安装一个进度组件
+
+```shell
+npm i react-native-progress --save
+```
+
 
 
 # 屏幕单位
