@@ -1724,6 +1724,346 @@ _upload(body){
 npm i react-native-progress --save
 ```
 
+# 服务端开发过程
+
+## 初始化项目
+
+新建一个目录，然后输入npm init填写一些基本信息，就初始化完了一个项目，然后安装一些依赖
+
+```javascript
+//初始化项目
+npm init
+
+//安装依赖
+npm i koa koa-logger koa-session koa-bodyparse koa-router mongoose sha1 lodash uuid xss bluebird speaksasy --save
+```
+
+## 使用koa搭建一个小型服务器
+
+```javascript
+'use strict'
+var koa=require('koa')
+var logger=require('koa-logger')
+var session=require('koa-session')
+var bodyParser=require('koa-bodyparser')
+var app=koa()
+
+app.keys=['say']
+app.use(logger())
+app.use(session(app))
+app.use(bodyParser())
+
+app.use(function *(next) {
+	console.log(this.href)
+	console.log(this.method)
+
+	this.body={
+		success:true
+	}
+
+	yield next
+})
+
+app.listen(1234)
+```
+
+现在访问localhost就可以返回一段成功的json
+
+## 将路由写到单独的文件
+
+首先我们在index.js中将引入路由文件
+
+```javascript
+'use strict'
+var koa=require('koa')
+var logger=require('koa-logger')
+var session=require('koa-session')
+var bodyParser=require('koa-bodyparser')
+var app=koa()
+
+app.keys=['say']
+app.use(logger())
+app.use(session(app))
+app.use(bodyParser())
+
+//引入路由文件
+var router=require('./config/routes')()
+
+app
+	.use(router.routes())
+	.use(router.allowedMethods())
+
+app.listen(1234)
+console.log('listening on port 1234')
+```
+
+然后新建路由文件
+
+config/routes.js
+
+```javascript
+'use strict'
+
+var Router=require('koa-router')
+var User=require('../app/controllers/user')
+var App=require('../app/controllers/app')
+
+module.exports=function () {
+	var router=new Router({
+		//定义全局api的前缀
+		prefix:'/api/1'
+	})
+
+	//post请求使用User控制器上面的signup方法处理
+	//user
+	router.post('/u/signup',User.signup)
+	router.post('/u/verify',User.verify)
+	router.post('/u/update',User.update)
+
+	//app
+	router.post('/signature',App.signature)
+
+	return router
+}
+```
+
+在路由文件中我们引入了几个控制器，将相应去请求指定不同的控制器方法调用
+
+user.js
+
+```javascript
+'use strict'
+
+exports.signup=function *(next) {
+	this.body={
+		success:true
+	}
+}
+
+exports.verify=function *(next) {
+	this.body={
+		success:true
+	}
+}
+
+exports.update=function *(next) {
+	this.body={
+		success:true
+	}
+}
+```
+
+app.js
+
+```javascript
+'use strict'
+
+exports.signature=function *(next) {
+	this.body={
+		success:true
+	}
+}
+```
+
+现在我们可以随便访问一个api来测试接口是否正常工作
+
+## 接入mongodb
+
+首先新建一个model，在这里面定义user的模型
+
+```javascript
+'use strict'
+
+var mongoose=require('mongoose')
+var UserSchema=new mongoose.Schema({
+	phoneNumber:{
+		unique:true,
+		type:String
+	},
+	areaCode:String,
+	verifyCode:String,
+	accessToken:String,
+	nickname:String,
+	gender:String,
+	breed:String,
+	age:String,
+	avatar:String,
+	meta:{
+		createAt:{
+			type:Date,
+			default:Date.now()
+		},
+		updateAt:{
+			type:Date,
+			default:Date.now()
+		}
+	}
+})
+
+UserSchema.pre('save',function (next) {
+	if (!this.isNew) {
+		this.meta.updateAt=Date.now()
+	}
+
+	next()
+})
+
+//暴露模型
+module.exports=mongoose.model('User',UserSchema)
+```
+
+然后就可以在Controller里面操作数据库了
+
+```javascript
+'use strict'
+
+var xss=require('xss')
+var mongoose=require('mongoose')
+var User=mongoose.model('User')
+
+exports.signup=function *(next) {
+	//拿到request里面的phoneNumber
+	// console.log(this.request.body)
+	// var phoneNumber=this.request.body.phoneNumber
+	var phoneNumber=this.query.phoneNumber
+
+	//根据手机号查找用户，调用exec后就返回的是一个Promise
+	var user=yield User.findOne({
+		phoneNumber:phoneNumber
+	}).exec()
+
+	console.log(user)
+	console.log(phoneNumber)
+
+	if (user) {
+		//更新用户的验证码
+		user.verifyCode='1212'
+	} else{
+		//不存在，则新建一个用户
+		user = new User({
+			phoneNumber:xss(phoneNumber)
+		})
+	}
+
+	try{
+		user=yield user.save()
+	}catch(e){
+		this.body={
+			success:false
+		}
+		return
+	}
+
+
+	this.body={
+		success:true
+	}
+}
+
+exports.verify=function *(next) {
+	this.body={
+		success:true
+	}
+}
+
+exports.update=function *(next) {
+	this.body={
+		success:true
+	}
+}
+```
+
+## 接入注册短信
+
+这里使用https://luosimao.com
+
+## 通用验证
+
+我们知道基本上每个请求都有accessToken，如果是post请求需要有body，像这样的逻辑，如果在每个接口都判断，可以说是很庞大的，这样我们将数据的校验写到app.js的功能中
+
+```javascript
+exports.hasBody=function *(next) {
+	var body=this.request.body||{}
+
+	if (Object.keys(body).length===0) {
+		this.body={
+			success:false,
+			err:'没有传递body参数'
+		}
+
+		return next
+	}
+
+	yield next
+}
+
+//全局token判断
+exports.hasToken=function *(next) {
+	//先获取url中的token
+	var accessToken=this.query.accessToken
+
+	if (!accessToken) {
+		accessToken=this.request.body.accessToken
+	}
+
+	if (!accessToken) {
+		this.body={
+			success:false,
+			err:'token不能为空！'
+		}
+
+		return next
+	}
+
+	//再查询用户，如果查询不到用户，说明token错误，或者用户没注册
+	var user=yield User.findOne({
+		accessToken:accessToken
+	}).exec()
+
+	if (!user) {
+		this.body={
+			success:false,
+			err:'token错误！'
+		}
+
+		return next
+	}
+
+	this.session=this.session||{}
+	this.session.user=user
+
+	yield next
+}
+```
+
+然后在router中配置，中间件
+
+```javascript
+router.post('/u/signup',App.hasBody,User.signup)
+router.post('/u/verify',App.hasBody,User.verify)
+//登陆才需要token
+router.post('/u/update',App.hasBody,App.hasToken,User.update)
+```
+
+## 接入七牛云
+
+先创建一个七牛空间，然后在程序里加入qiniu的配置
+
+```javascript
+qiniu:{
+	'AK':'cMoZ5Ql3sJZ2ZReLyQDjNbIqiaNmAzn54QDzZE_J',
+	'SK':'8MCooB-Kb8s9lCAQbhLFwUukmJJiCEn-w483ainh'
+}
+```
+
+
+
+卸载模块，并删除依赖
+
+```javascript
+npm uninstall uuid --save
+```
+
 
 
 # 屏幕单位
