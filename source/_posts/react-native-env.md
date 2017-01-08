@@ -1135,17 +1135,41 @@ rninit init [Project Name] --source react-native@0.22.2
 
 http://coding.imooc.com/learn/questiondetail/1708
 
+## React-native Cannot find module 'invariant'
 
+升级了node,和react-native-cli后，初始项目报错，我手动安装了下invariant模块，再次初始化项目居然可以了
 
+```shell
+npm install invariant
+```
 
+这个模块的地址https://www.npmjs.com/package/invariant
 
+## ListView的renderRow方法this指向不对
 
+解决方法是，调用_renderRow方法然后在调用bind(this)
 
+```javascript
+<ListView
+  dataSource={this.state.dataSource}
+  renderRow={this._renderRow.bind(this)} />
+```
 
+这样在_renderRow方法中获取this，就能得到正确的指示了
 
+## node v7.3.0集成react-native-vector-icons报错
 
+第一个错误是，找不到模块，用的是react-native link方式操作的。解决方法是，手动在xcode链接。
 
+第二个错误是，找不到字体，这个问题是，拷贝字体是没有勾选target。也就是说字体没有打包到ipa中。
 
+https://github.com/oblador/react-native-vector-icons
+
+http://blog.csdn.net/sakulafly/article/details/46368173
+
+## ios9 http不能访问
+
+https://segmentfault.com/a/1190000002933776
 
 
 

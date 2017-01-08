@@ -1724,6 +1724,51 @@ _upload(body){
 npm i react-native-progress --save
 ```
 
+## 录音
+
+使用react-native-audio模块
+
+```javascript
+npm i react-native-audio@1.2.1 --save
+//这里安装1.3.0才不报错
+```
+
+然后链接
+
+```shell
+npm link react-native-audio
+```
+
+示例代码https://github.com/jsierles/react-native-audio/blob/master/AudioExample/AudioExample.js
+
+## app图标
+
+### 使用appicontemplate
+
+https://appicontemplate.com/(打开：https://applypixels.com/)，然后点击ios app icon,下载app icon，然后打开app的设计稿，然后点击atn后缀的文件这样就导入了动作文件，然后打打开psd，然后将图标拖动到刚刚打开的psd,在调整好颜色，最后使用动作面板导出图标。
+
+### 使用makeappcion
+
+http://makeappicon.com/,使用网页端，上传一个图标，然后输入邮箱，下载附件，里面包括android,ios,watch
+
+## 更改app名称
+
+只需要在plist中添加key为CFBundleDisplayName，值为名称就行了，还可以将CFBundleDevelopmentRegion改为zh_CN
+
+## 更改启动画面
+
+直接修改LaunchScreen.xib
+
+## 轮播图
+
+使用一个第三方组件
+
+```shell
+npm i react-native-swiper --save
+```
+
+
+
 # 服务端开发过程
 
 ## 初始化项目
@@ -1735,8 +1780,25 @@ npm i react-native-progress --save
 npm init
 
 //安装依赖
-npm i koa koa-logger koa-session koa-bodyparse koa-router mongoose sha1 lodash uuid xss bluebird speaksasy --save
+npm i koa koa-logger koa-session koa-bodyparser koa-router mongoose sha1 lodash uuid xss bluebird  --save
 ```
+
+speaksasy找不到了
+
+升级到koa2,安装
+
+```shell
+npm install koa@next
+koa-logger@2
+
+//session还没支持2，所以要koa-convert
+npm i koa-convert --save 
+app.use(convert(session(app)));
+
+npm install koa-bodyparser@next --save
+```
+
+
 
 ## 使用koa搭建一个小型服务器
 
@@ -2062,6 +2124,91 @@ qiniu:{
 
 ```javascript
 npm uninstall uuid --save
+```
+
+## 接入cloudinary
+
+```shell
+npm i cloudinary --save
+```
+
+### 将上传到七牛的视频同步到cloudinary
+
+将视频上传到七牛是因为，访问七牛快，同步到cloudinary是因为他有将视频和音频合成一个视频的功能。
+
+同步的逻辑很简单，就是客户端将视频上传到了七牛，然后将视频信息发送到我们的服务端，并保持，然后异步同步七牛的视频到cloudinary,同步完了，将他返回的信息在存储到我们的服务器
+
+```javascript
+var body=this.request.body
+var videoData=body.video
+var user=this.session.user
+
+console.log('create video')
+console.log(videoData)
+
+if (!videoData||!videoData.key) {
+	this.body={
+		success:false,
+		err:'视频没有上传成功'
+	}
+	return next
+}
+
+//用七牛key查询是否有视频存在
+var video=yield Video.findOne({
+	qiniu_key:videoData.key
+})
+
+if (!video) {
+	//创建一个新视频
+	video=new Video({
+		author:user._id,
+		qiniu_key:videoData.key,
+		persistentId:videoData.persistentId
+	})
+
+	video=yield video.save()
+
+	console.log('new video save')
+	console.log(video)
+}
+
+//将生成的静音视频，同步到cloudinary，然后使用它的音频合成服务
+
+
+var url=config.qiniu.video+video.qiniu_key
+robot.uploadToCloudinary(url)
+	.then(function (data) {
+		if (data&&data.public_id) {
+			video.public_id=data.public_id
+			video.detail=data
+			video.save()
+		}
+	})
+
+this.body={
+	success:true,
+	data:video._id
+}
+```
+
+在这里就是用了cloudinary的sdk
+
+```javascript
+exports.uploadToCloudinary=function (url) {
+	return new Promise(function (resolve,reject) {
+		cloudinary.uploader.upload(url,function (result) {
+			if (result&&result.public_id) {
+				resolve(result)
+			} else{
+				reject(result)
+			}
+		},{
+			resource_type:'video',
+			folder:'video'
+		})
+	})
+}
 ```
 
 
