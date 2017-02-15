@@ -645,5 +645,1153 @@ int main(void)
 }
 ```
 
+类
+
+定义类
+
+    class Point {
+
+    public:
+        int x;
+        int y;
+        void printX(){
+            cout<<x<<endl;
+        }
+        void printY(){
+            cout<<y<<endl;
+        }
+    };
+
+实例化对象
+
+在栈上创建对象:
+
+    //通过栈的方式实例化对象
+    Point point;
+    point.x=10;
+    point.y=20;
+    
+    point.printX();
+    point.printY();
+
+在堆上创建对象：
+
+    Point *point=new Point();
+    if (NULL==point) {
+        //实例化对象失败
+        return 0;
+    }
+    
+    point->x=100;
+    point->y=200;
+    point->printX();
+    point->printY();
+
+字符串
+
+初始化方式
+
+    string s1;
+    string s2("abc");
+    string s3(s2);
+    string s4(3,'c');
+    
+    cout<<s1<<endl;
+    cout<<s2<<endl;
+    cout<<s3<<endl;
+    cout<<s4<<endl;
+
+常用函数
+
+  方法名    	作用                  
+  s.empty	字符串为空，返回true，否则false
+  s.size 	字符的个数               
+  s[n]   	返回s中n位置的字符          
+  s1+s2  	连接字符串               
+  s1=s2  	将s1的内容替换为s2的副本      
+  v1==v2 	内容相等，返回true         
+  v1!=v2 	内容不相等，返回true        
+
+    string s1="hello";
+    string s2("world");
+    string s3=s1+s2;
+    string s4="hello" +s2;
+    string s5="hello"+s2+"world";
+    
+    //    string s6="hello"+"world"; //这种方式错误，只有一端是一个变量才可以，而java中则可以
+
+实例：读取用户姓名
+
+    cout<<"请输入用户名："<<endl;
+    string name;
+    getline(cin, name);
+    
+    cout<<name<<endl;
+    
+    if (name.empty()) {
+        cout<<"输入的姓名不能为空"<<endl;
+        return 0;
+    }
+    
+    cout<<"Hello "+name<<endl;
+    cout<<"你的名字长度："<<name.size()<<endl;
+    cout<<"你的名字首字母是："<<name[0]<<endl;
+    
+    if ("admin"==name) {
+        cout<<"你是一个管理员"<<endl;
+    }
+
+封装
+
+他的好处是保护数据不被恶意篡改。下面模拟一个用户的实例化，然后打印用户信息：
+
+    #include <iostream>
+    #include <string>
+    
+    using namespace std;
+    
+    class Student {
+
+
+    public:
+        void setName(string _name){
+            m_strName=_name;
+        }
+        string getName(){
+            return m_strName;
+        }
+        void setGender(string _gender){
+            m_strGender=_gender;
+        }
+        string getGender(){
+            return m_strGender;
+        }
+        int getScore(){
+            return m_iScore;
+        }
+        
+        void initScore(){
+            m_iScore=0;
+        }
+        
+        void study(int _score){
+            m_iScore+=_score;
+        }
+        
+    private:
+        string m_strName;
+        string m_strGender;
+        int m_iScore;
+    };
+    
+    int main(){
+        Student stu;
+        
+        stu.initScore();
+        stu.setName("张三");
+        stu.setGender("男");
+        stu.study(5);
+        stu.study(3);
+        
+        cout<<stu.getName()<<" "<<stu.getGender()<<" " <<stu.getScore()<<endl;
+
+
+        return 0;
+    }
+
+类外定义
+
+一般情况下，我们将类的声明定义在一个文件：
+
+Student.hpp
+
+    #ifndef Student_hpp
+    #define Student_hpp
+    
+    #include <stdio.h>
+    #include <string>
+    
+    using namespace std;
+    
+    //定义类
+    class Student {
+
+
+    public:
+        void setName(string _name);
+        string getName();
+        void setGender(string _gender);
+        string getGender();
+        void setAge(int _age);
+        int getAge();
+        void teach();
+    private:
+        string m_strName;
+        string m_strGedner;
+        int m_iAge;
+    };
+    
+    #endif /* Student_hpp */
+
+然后在另一个文件实现：
+
+Student.cpp
+
+    #include <iostream>
+
+    #include "Student.hpp"
+
+​    
+​    
+    //实现类
+    void Student::setName(string _name){
+        m_strName=_name;
+    }
+    string Student::getName(){
+        return m_strName;
+    }
+    void Student::setGender(string _gender){
+        m_strGedner=_gender;
+    }
+    string Student::getGender(){
+        return m_strGedner;
+    }
+    void Student::setAge(int _age){
+        m_iAge=_age;
+    }
+    int Student::getAge(){
+        return m_iAge;
+    }
+    void Student::teach(){
+        cout<<"现在上课了..."<<endl;
+    }
+
+内存分区
+
+栈区：int x=0；int *p=NULL;
+
+堆区：int *p=new int[20];
+
+全局区：存储全局变量以静态变量
+
+常量区：string str="hello";
+
+代码区：存储逻辑代码的二进制
+
+构造函数
+
+Teacher.hpp
+
+在头文件里面定义构造函数
+
+    #ifndef Teacher_hpp
+    #define Teacher_hpp
+    
+    #include <iostream>
+    #include <string>
+    
+    using namespace std;
+    
+    class Teacher {
+
+
+    public:
+        //构造函数
+        Teacher();
+        Teacher(string name,int age=20);
+        
+        //成员函数
+        void setName(string _name);
+        string getName();
+        void setAge(int _age);
+        int getAge();
+    private:
+        string m_strName;
+        int m_iAge;
+    
+    };
+    
+    #endif /* Teacher_hpp */
+
+在实现文件里面实现构造函数：
+
+    #include "Teacher.hpp"
+
+​    
+    Teacher::Teacher(){
+        m_strName="jack";
+        m_iAge=30;
+        cout<<"Teacher()"<<endl;
+    }
+    Teacher::Teacher(string name,int age){
+        m_strName=name;
+        m_iAge=age;
+        cout<<"Teacher(string name,int age)"<<endl;
+    }
+    
+    void Teacher::setName(string _name){
+        m_strName=_name;
+    }
+    string Teacher::getName(){
+        return m_strName;
+    }
+    void Teacher::setAge(int _age){
+        m_iAge=_age;
+    }
+    int Teacher::getAge(){
+        return m_iAge;
+    }
+
+然后在实现文件里面就可以使用：
+
+    #include "Teacher.hpp"
+
+    int main(){
+
+        Teacher t1;
+
+        Teacher t2("zhangsan",10);
+
+        Teacher t3("lisi");
+
+        cout<<t1.getName()<<" "<<t1.getAge()<<endl;
+        cout<<t2.getName()<<" "<<t2.getAge()<<endl;
+        cout<<t3.getName()<<" "<<t3.getAge()<<endl;
+        
+        return 0;
+    }
+
+构造函数初始化列表
+
+常量必须用初始化列表初始化。
+
+Teacher.hpp
+
+    #ifndef Teacher_hpp
+    #define Teacher_hpp
+    
+    #include <iostream>
+    #include <string>
+    
+    using namespace std;
+    
+    class Teacher {
+
+
+    public:
+        //构造函数
+        Teacher(string name="jack",int age=20,int max=100);
+        
+        //成员函数
+        void setName(string _name);
+        string getName();
+        void setAge(int _age);
+        int getAge();
+    private:
+        string m_strName;
+        int m_iAge;
+        const int m_iMax; //表示这个老师能带多少个学生，是一个常量只能初始化一次
+    };
+    
+    #endif /* Teacher_hpp */
+
+Teacher.cpp
+
+    #include "Teacher.hpp"
+
+​    
+    Teacher::Teacher(string name,int age,int max):m_strName(name),m_iAge(age),m_iMax(max){
+        //这里使用初始化列表
+        cout<<"Teacher(string name,int age)"<<endl;
+    }
+    
+    void Teacher::setName(string _name){
+        m_strName=_name;
+    }
+    string Teacher::getName(){
+        return m_strName;
+    }
+    void Teacher::setAge(int _age){
+        m_iAge=_age;
+    }
+    int Teacher::getAge(){
+        return m_iAge;
+    }
+
+main.cpp
+
+    Teacher t1;
+
+    Teacher t2("zhangsan",10);
+
+    Teacher t3("zhangsan",150);
+
+​    
+    cout<<t1.getName()<<" "<<t1.getAge()<<endl;
+    cout<<t2.getName()<<" "<<t2.getAge()<<endl;
+    cout<<t3.getName()<<" "<<t3.getAge()<<endl;
+
+拷贝构造函数
+
+如果没有定义，则系统默认生成一个。当采用直接初始化(赋值)或复制初始化时系统将自动调用，还有就是参数传递也会调用。
+
+Teacher.hpp
+
+    #ifndef Teacher_hpp
+    #define Teacher_hpp
+    
+    #include <iostream>
+    #include <string>
+    
+    using namespace std;
+    
+    class Teacher {
+
+
+    public:
+        //构造函数
+        Teacher(string name="jack",int age=20);
+        //拷贝构造函数
+        Teacher(const Teacher & tea);
+        
+        //成员函数
+        void setName(string _name);
+        string getName();
+        void setAge(int _age);
+        int getAge();
+    private:
+        string m_strName;
+        int m_iAge;
+       
+    };
+    
+    #endif /* Teacher_hpp */
+
+Teacher.cpp
+
+    #include "Teacher.hpp"
+
+​    
+    Teacher::Teacher(string name,int age):m_strName(name),m_iAge(age){
+        //这里使用初始化列表
+        cout<<"Teacher(string name,int age)"<<endl;
+    }
+    
+    Teacher::Teacher(const Teacher & tea){
+        cout<<"Teacher(const Teacher & tea)"<<endl;
+    }
+    
+    void Teacher::setName(string _name){
+        m_strName=_name;
+    }
+    string Teacher::getName(){
+        return m_strName;
+    }
+    void Teacher::setAge(int _age){
+        m_iAge=_age;
+    }
+    int Teacher::getAge(){
+        return m_iAge;
+    }
+
+main.cpp
+
+    Teacher t1;
+
+​    
+    Teacher t2=t1;//会调用拷贝构造函数
+    Teacher t3(t1);//会调用拷贝构造函数
+    
+    test(t1);
+
+test是一个函数
+
+    void test(Teacher t){
+        t.setName("a");
+        cout<<t.getName()<<endl;
+    }
+
+析构函数
+
+1.没有定义则系统自动生成。
+
+2.对象销毁时自动调用，目的是归还资源。
+
+3.析构函数，没有返回值，没有参数，不能重载。
+
+Teacher.hpp
+
+    #ifndef Teacher_hpp
+    #define Teacher_hpp
+    
+    #include <iostream>
+    #include <string>
+    
+    using namespace std;
+    
+    class Teacher {
+
+
+    public:
+        //构造函数
+        Teacher(string name="jack",int age=20);
+        //拷贝构造函数
+        Teacher(const Teacher & tea);
+        
+        //析构函数
+        ~Teacher();
+        
+        //成员函数
+        void setName(string _name);
+        string getName();
+        void setAge(int _age);
+        int getAge();
+    private:
+        string m_strName;
+        int m_iAge;
+       
+    };
+    
+    #endif /* Teacher_hpp */
+
+然后实现析构函数
+
+    #include "Teacher.hpp"
+
+​    
+    Teacher::Teacher(string name,int age):m_strName(name),m_iAge(age){
+        //这里使用初始化列表
+        cout<<"Teacher(string name,int age)"<<endl;
+    }
+    
+    Teacher::Teacher(const Teacher & tea){
+        cout<<"Teacher(const Teacher & tea)"<<endl;
+    }
+    
+    Teacher::~Teacher(){
+        cout<<"~Teacher()"<<endl;
+    }
+    
+    void Teacher::setName(string _name){
+        m_strName=_name;
+    }
+    string Teacher::getName(){
+        return m_strName;
+    }
+    void Teacher::setAge(int _age){
+        m_iAge=_age;
+    }
+    int Teacher::getAge(){
+        return m_iAge;
+    }
+
+最后测试是否调用了析构函数
+
+main.cpp
+
+    Teacher t1; //这样方式声明的，会自动调用析构函数
+    Teacher t2(t1); //这样方式声明的，会自动调用析构函数
+    
+    Teacher *t3 = new Teacher();
+    delete t3; //在堆上创建的对象，必须手动调用
+
+
+# 类
+
+## 定义类
+
+```c++
+class Point {
+    
+public:
+    int x;
+    int y;
+    void printX(){
+        cout<<x<<endl;
+    }
+    void printY(){
+        cout<<y<<endl;
+    }
+};
+```
+
+## 实例化对象
+
+在栈上创建对象:
+
+```c++
+//通过栈的方式实例化对象
+Point point;
+point.x=10;
+point.y=20;
+
+point.printX();
+point.printY();
+```
+
+在堆上创建对象：
+
+```c++
+Point *point=new Point();
+if (NULL==point) {
+    //实例化对象失败
+    return 0;
+}
+
+point->x=100;
+point->y=200;
+point->printX();
+point->printY();
+```
+
+# 字符串
+
+## 初始化方式
+
+```c++
+string s1;
+string s2("abc");
+string s3(s2);
+string s4(3,'c');
+
+cout<<s1<<endl;
+cout<<s2<<endl;
+cout<<s3<<endl;
+cout<<s4<<endl;
+```
+
+## 常用函数
+
+| 方法名     | 作用                   |
+| ------- | -------------------- |
+| s.empty | 字符串为空，返回true，否则false |
+| s.size  | 字符的个数                |
+| s[n]    | 返回s中n位置的字符           |
+| s1+s2   | 连接字符串                |
+| s1=s2   | 将s1的内容替换为s2的副本       |
+| v1==v2  | 内容相等，返回true          |
+| v1!=v2  | 内容不相等，返回true         |
+
+```c++
+string s1="hello";
+string s2("world");
+string s3=s1+s2;
+string s4="hello" +s2;
+string s5="hello"+s2+"world";
+
+//    string s6="hello"+"world"; //这种方式错误，只有一端是一个变量才可以，而java中则可以
+```
+
+## 实例：读取用户姓名
+
+```c++
+cout<<"请输入用户名："<<endl;
+string name;
+getline(cin, name);
+
+cout<<name<<endl;
+
+if (name.empty()) {
+    cout<<"输入的姓名不能为空"<<endl;
+    return 0;
+}
+
+cout<<"Hello "+name<<endl;
+cout<<"你的名字长度："<<name.size()<<endl;
+cout<<"你的名字首字母是："<<name[0]<<endl;
+
+if ("admin"==name) {
+    cout<<"你是一个管理员"<<endl;
+}
+```
+
+# 封装
+
+他的好处是保护数据不被恶意篡改。下面模拟一个用户的实例化，然后打印用户信息：
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Student {
+    
+    
+public:
+    void setName(string _name){
+        m_strName=_name;
+    }
+    string getName(){
+        return m_strName;
+    }
+    void setGender(string _gender){
+        m_strGender=_gender;
+    }
+    string getGender(){
+        return m_strGender;
+    }
+    int getScore(){
+        return m_iScore;
+    }
+    
+    void initScore(){
+        m_iScore=0;
+    }
+    
+    void study(int _score){
+        m_iScore+=_score;
+    }
+    
+private:
+    string m_strName;
+    string m_strGender;
+    int m_iScore;
+};
+
+int main(){
+    Student stu;
+    
+    stu.initScore();
+    stu.setName("张三");
+    stu.setGender("男");
+    stu.study(5);
+    stu.study(3);
+    
+    cout<<stu.getName()<<" "<<stu.getGender()<<" " <<stu.getScore()<<endl;
+    
+    
+    return 0;
+}
+```
+
+# 类外定义
+
+一般情况下，我们将类的声明定义在一个文件：
+
+Student.hpp
+
+```c++
+#ifndef Student_hpp
+#define Student_hpp
+
+#include <stdio.h>
+#include <string>
+
+using namespace std;
+
+//定义类
+class Student {
+    
+    
+public:
+    void setName(string _name);
+    string getName();
+    void setGender(string _gender);
+    string getGender();
+    void setAge(int _age);
+    int getAge();
+    void teach();
+private:
+    string m_strName;
+    string m_strGedner;
+    int m_iAge;
+};
+
+#endif /* Student_hpp */
+```
+
+然后在另一个文件实现：
+
+Student.cpp
+
+```c++
+#include <iostream>
+
+#include "Student.hpp"
+
+
+
+//实现类
+void Student::setName(string _name){
+    m_strName=_name;
+}
+string Student::getName(){
+    return m_strName;
+}
+void Student::setGender(string _gender){
+    m_strGedner=_gender;
+}
+string Student::getGender(){
+    return m_strGedner;
+}
+void Student::setAge(int _age){
+    m_iAge=_age;
+}
+int Student::getAge(){
+    return m_iAge;
+}
+void Student::teach(){
+    cout<<"现在上课了..."<<endl;
+}
+```
+
+# 内存分区
+
+栈区：int x=0；int *p=NULL;
+
+堆区：int *p=new int[20];
+
+全局区：存储全局变量以静态变量
+
+常量区：string str="hello";
+
+代码区：存储逻辑代码的二进制
+
+# 构造函数
+
+Teacher.hpp
+
+在头文件里面定义构造函数
+
+```c++
+#ifndef Teacher_hpp
+#define Teacher_hpp
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Teacher {
+    
+    
+public:
+    //构造函数
+    Teacher();
+    Teacher(string name,int age=20);
+    
+    //成员函数
+    void setName(string _name);
+    string getName();
+    void setAge(int _age);
+    int getAge();
+private:
+    string m_strName;
+    int m_iAge;
+
+};
+
+#endif /* Teacher_hpp */
+```
+
+在实现文件里面实现构造函数：
+
+```c++
+#include "Teacher.hpp"
+
+
+Teacher::Teacher(){
+    m_strName="jack";
+    m_iAge=30;
+    cout<<"Teacher()"<<endl;
+}
+Teacher::Teacher(string name,int age){
+    m_strName=name;
+    m_iAge=age;
+    cout<<"Teacher(string name,int age)"<<endl;
+}
+
+void Teacher::setName(string _name){
+    m_strName=_name;
+}
+string Teacher::getName(){
+    return m_strName;
+}
+void Teacher::setAge(int _age){
+    m_iAge=_age;
+}
+int Teacher::getAge(){
+    return m_iAge;
+}
+```
+
+然后在实现文件里面就可以使用：
+
+```c++
+#include "Teacher.hpp"
+
+int main(){
+    
+    Teacher t1;
+    
+    Teacher t2("zhangsan",10);
+    
+    Teacher t3("lisi");
+    
+    cout<<t1.getName()<<" "<<t1.getAge()<<endl;
+    cout<<t2.getName()<<" "<<t2.getAge()<<endl;
+    cout<<t3.getName()<<" "<<t3.getAge()<<endl;
+    
+    return 0;
+}
+```
+
+## 构造函数初始化列表
+
+常量必须用初始化列表初始化。
+
+Teacher.hpp
+
+```c++
+#ifndef Teacher_hpp
+#define Teacher_hpp
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Teacher {
+    
+    
+public:
+    //构造函数
+    Teacher(string name="jack",int age=20,int max=100);
+    
+    //成员函数
+    void setName(string _name);
+    string getName();
+    void setAge(int _age);
+    int getAge();
+private:
+    string m_strName;
+    int m_iAge;
+    const int m_iMax; //表示这个老师能带多少个学生，是一个常量只能初始化一次
+};
+
+#endif /* Teacher_hpp */
+```
+
+Teacher.cpp
+
+```c++
+#include "Teacher.hpp"
+
+
+Teacher::Teacher(string name,int age,int max):m_strName(name),m_iAge(age),m_iMax(max){
+    //这里使用初始化列表
+    cout<<"Teacher(string name,int age)"<<endl;
+}
+
+void Teacher::setName(string _name){
+    m_strName=_name;
+}
+string Teacher::getName(){
+    return m_strName;
+}
+void Teacher::setAge(int _age){
+    m_iAge=_age;
+}
+int Teacher::getAge(){
+    return m_iAge;
+}
+```
+
+main.cpp
+
+```c++
+Teacher t1;
+
+Teacher t2("zhangsan",10);
+
+Teacher t3("zhangsan",150);
+
+
+cout<<t1.getName()<<" "<<t1.getAge()<<endl;
+cout<<t2.getName()<<" "<<t2.getAge()<<endl;
+cout<<t3.getName()<<" "<<t3.getAge()<<endl;
+```
+
+## 拷贝构造函数
+
+如果没有定义，则系统默认生成一个。当采用直接初始化(赋值)或复制初始化时系统将自动调用，还有就是参数传递也会调用。
+
+Teacher.hpp
+
+```c++
+#ifndef Teacher_hpp
+#define Teacher_hpp
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Teacher {
+    
+    
+public:
+    //构造函数
+    Teacher(string name="jack",int age=20);
+    //拷贝构造函数
+    Teacher(const Teacher & tea);
+    
+    //成员函数
+    void setName(string _name);
+    string getName();
+    void setAge(int _age);
+    int getAge();
+private:
+    string m_strName;
+    int m_iAge;
+   
+};
+
+#endif /* Teacher_hpp */
+```
+
+Teacher.cpp
+
+```c++
+#include "Teacher.hpp"
+
+
+Teacher::Teacher(string name,int age):m_strName(name),m_iAge(age){
+    //这里使用初始化列表
+    cout<<"Teacher(string name,int age)"<<endl;
+}
+
+Teacher::Teacher(const Teacher & tea){
+    cout<<"Teacher(const Teacher & tea)"<<endl;
+}
+
+void Teacher::setName(string _name){
+    m_strName=_name;
+}
+string Teacher::getName(){
+    return m_strName;
+}
+void Teacher::setAge(int _age){
+    m_iAge=_age;
+}
+int Teacher::getAge(){
+    return m_iAge;
+}
+```
+
+main.cpp
+
+```c++
+Teacher t1;
+
+
+Teacher t2=t1;//会调用拷贝构造函数
+Teacher t3(t1);//会调用拷贝构造函数
+
+test(t1);
+```
+
+test是一个函数
+
+```c++
+void test(Teacher t){
+    t.setName("a");
+    cout<<t.getName()<<endl;
+}
+```
+
+# 析构函数
+
+1.没有定义则系统自动生成。
+
+2.对象销毁时自动调用，目的是归还资源。
+
+3.析构函数，没有返回值，没有参数，不能重载。
+
+Teacher.hpp
+
+```c++
+#ifndef Teacher_hpp
+#define Teacher_hpp
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Teacher {
+    
+    
+public:
+    //构造函数
+    Teacher(string name="jack",int age=20);
+    //拷贝构造函数
+    Teacher(const Teacher & tea);
+    
+    //析构函数
+    ~Teacher();
+    
+    //成员函数
+    void setName(string _name);
+    string getName();
+    void setAge(int _age);
+    int getAge();
+private:
+    string m_strName;
+    int m_iAge;
+   
+};
+
+#endif /* Teacher_hpp */
+```
+
+然后实现析构函数
+
+```c++
+#include "Teacher.hpp"
+
+
+Teacher::Teacher(string name,int age):m_strName(name),m_iAge(age){
+    //这里使用初始化列表
+    cout<<"Teacher(string name,int age)"<<endl;
+}
+
+Teacher::Teacher(const Teacher & tea){
+    cout<<"Teacher(const Teacher & tea)"<<endl;
+}
+
+Teacher::~Teacher(){
+    cout<<"~Teacher()"<<endl;
+}
+
+void Teacher::setName(string _name){
+    m_strName=_name;
+}
+string Teacher::getName(){
+    return m_strName;
+}
+void Teacher::setAge(int _age){
+    m_iAge=_age;
+}
+int Teacher::getAge(){
+    return m_iAge;
+}
+```
+
+最后测试是否调用了析构函数
+
+main.cpp
+
+```c++
+Teacher t1; //这样方式声明的，会自动调用析构函数
+Teacher t2(t1); //这样方式声明的，会自动调用析构函数
+
+Teacher *t3 = new Teacher();
+delete t3; //在堆上创建的对象，必须手动调用
+```
+
+
+
 # 模板
 
