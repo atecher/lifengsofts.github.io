@@ -456,6 +456,196 @@ void fun(const int &a, const int &b){
 
 用const修饰了，里面就不能改变变量(常量)的值了
 
+## 常对象成员和常成员函数
+
+这样声明
+
+```c++
+const Coordinate m_pCoorA;
+
+//也可以这样
+Coordinate const m_pCoorA;
+```
+
+改进上面的例子，将Line其中的一个成员改为常成员，并添加一些常成员函数。
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+class  Coordinate{
+    
+    
+public:
+    Coordinate(int x,int y);
+    ~Coordinate();
+    int getX() const; //因为该类，有可能在其他类声明了常成员，所以要定义常成员函数，不然无法编译，也就是说在该函数中不能改变常成员的值
+    int getY() const;
+private:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+#include <iostream>
+
+#include "Coordinate.hpp"
+
+using namespace std;
+
+Coordinate::Coordinate(int x,int y){
+    m_iX=x;
+    m_iY=y;
+    cout<<"Coordinate(int x,int y)"<<endl;
+}
+
+Coordinate::~Coordinate(){
+    cout<<"~Coordinate"<<endl;
+}
+
+int Coordinate::getX() const{
+    return m_iX;
+}
+
+int Coordinate::getY() const{
+    return m_iY;
+}
+```
+
+Line.hpp
+
+```c++
+#ifndef Line_hpp
+#define Line_hpp
+
+#include "Coordinate.hpp"
+
+class Line {
+    
+    
+public:
+    Line(int x1,int y1,int x2,int y2);
+    ~Line();
+    
+    //这两个函数重载
+    void printInfo();
+    void printInfo() const;
+private:
+    const Coordinate m_pCoorA;
+    Coordinate m_pCoorB;
+};
+
+#endif /* Line_hpp */
+```
+
+Line.cpp
+
+```c+
+#include <iostream>
+
+#include "Line.hpp"
+
+using namespace std;
+
+Line::Line(int x1,int y1,int x2,int y2):m_pCoorA(x1,y1),m_pCoorB(x2,y2){
+    cout<<"Line()"<<endl;
+}
+
+Line::~Line(){
+    
+    cout<<"~Line()"<<endl;
+}
+
+void Line::printInfo(){
+    cout<<"printinfo()"<<endl;
+    cout<<m_pCoorA.getX()<<","<<m_pCoorA.getY()<<endl;
+    cout<<m_pCoorB.getX()<<","<<m_pCoorB.getY()<<endl;
+}
+
+void Line::printInfo() const{
+    cout<<"printinfo() const"<<endl;
+    cout<<m_pCoorA.getX()<<","<<m_pCoorA.getY()<<endl;
+    cout<<m_pCoorB.getX()<<","<<m_pCoorB.getY()<<endl;
+}
+```
+
+测试
+
+```c++
+//这样就调用到了const函数
+const Line line(1,2,3,4);
+line.printInfo();
+```
+
+## 对象常指针和对象常引用
+
+```c++
+Line line(1,2,3,4);
+
+const Line &l1=line; //常对象引用
+const Line *l2=&line; //常对象指针
+```
+
+综合案例
+
+```c++
+#include <iostream>
+using namespace std;
+class Coordinate
+{
+    
+public:
+	Coordinate(int x, int y)
+	{
+		// 设置X,Y的坐标
+		m_iX=x;
+        m_iY=y;
+	}
+    // 实现常成员函数
+	void printInfo() const
+	{
+	    cout<<"("<<m_iX<<","<<m_iY<<")"<<endl;
+	}
+public:
+	int m_iX;
+	int m_iY;
+};
+
+
+int main(void)
+{
+	const Coordinate coor(3, 5);
+
+	// 创建常指针p
+	const Coordinate *p=&coor;
+    // 创建常引用c
+    const Coordinate &c=coor;
+	
+	coor.printInfo();
+	p->printInfo();
+	c.printInfo();  
+	
+	return 0;
+}
+```
+
+输出：
+
+```shell
+(3,5)
+(3,5)
+(3,5)
+```
+
+
+
 # 函数新特性
 
 ## 函数参数默认值
@@ -1701,6 +1891,180 @@ void test(Teacher t){
 }
 ```
 
+### 浅拷贝
+
+定义一个Array类，数据成员为m_iCount，成员函数包括数据封装函数，构造函数，拷贝构造函数和析构函数。
+
+Array.hpp
+
+```c++
+#ifndef Array_hpp
+#define Array_hpp
+
+class Array {
+    
+    
+public:
+    Array();
+    Array(const Array &arr);
+    ~Array();
+    
+    void setCount(int count);
+    int getCount();
+private:
+    int m_iCount;
+};
+
+#endif /* Array_hpp */
+```
+
+Array.cpp
+
+```c++
+#include <iostream>
+
+#include "Array.hpp"
+
+using namespace std;
+
+Array::Array(){
+    cout<<"Array"<<endl;
+}
+
+Array::Array(const Array &arr){
+    //浅拷贝
+    m_iCount=arr.m_iCount;
+    cout<<"Array &"<<endl;
+}
+
+Array::~Array(){
+    cout<<"~Array"<<endl;
+}
+
+void Array::setCount(int count){
+    m_iCount=count;
+}
+
+int Array::getCount(){
+    return m_iCount;
+}
+```
+
+测试
+
+```c++
+Array arr1;
+arr1.setCount(5);
+
+Array arr2(arr1);
+
+cout<<arr2.getCount()<<endl; //5,可以看到拷贝成功
+```
+
+### 深拷贝
+
+我们在上一节的例子增加一个指针成员变量，实现深拷贝。
+
+Array.hpp
+
+```c++
+#ifndef Array_hpp
+#define Array_hpp
+
+class Array {
+    
+    
+public:
+    Array(int count);
+    Array(const Array &arr);
+    ~Array();
+    
+    void setCount(int count);
+    int getCount();
+    
+    void printAddr();
+    
+    void printArr();
+private:
+    int m_iCount;
+    int *m_pAdd; //增加了指针
+};
+
+#endif /* Array_hpp */
+```
+
+Array.cpp
+
+```c++
+#include <iostream>
+
+#include "Array.hpp"
+
+using namespace std;
+
+Array::Array(int count){
+    m_iCount=count;
+    m_pAdd=new int(m_iCount);
+    
+    //赋默认值
+    for (int i=0; i<m_iCount; i++) {
+        m_pAdd[i]=i+1;
+    }
+    
+    cout<<"Array"<<endl;
+}
+
+Array::Array(const Array &arr){
+    //深拷贝
+    m_iCount=arr.m_iCount;
+    
+    m_pAdd=new int[m_iCount];
+    
+    for (int i=0; i<m_iCount; i++) {
+        m_pAdd[i]=arr.m_pAdd[i];
+    }
+    
+    cout<<"Array &"<<endl;
+}
+
+Array::~Array(){
+    delete [] m_pAdd;
+    m_pAdd=NULL;
+    cout<<"~Array"<<endl;
+}
+
+void Array::setCount(int count){
+    m_iCount=count;
+}
+
+int Array::getCount(){
+    return m_iCount;
+}
+
+void Array::printAddr(){
+    cout<<m_pAdd<<endl;
+}
+
+void Array::printArr(){
+    for (int i=0; i<m_iCount; i++) {
+        cout<<m_pAdd[i]<<endl;
+    }
+}
+```
+
+测试是否拷贝成功
+
+```c++
+Array arr1(5);
+
+Array arr2(arr1);
+
+arr1.printArr();
+arr2.printArr();
+```
+
+他们打印的值相同，但地址就不一样了。
+
 # 析构函数
 
 1.没有定义则系统自动生成。
@@ -1791,7 +2155,585 @@ Teacher *t3 = new Teacher();
 delete t3; //在堆上创建的对象，必须手动调用
 ```
 
+# 对象数组
 
+首先定义一个对象Point用来表示一个二维坐标。
+
+Point.hpp
+
+```c++
+#ifndef Point_hpp
+#define Point_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Point {
+    
+    
+public:
+    Point();
+    ~Point();
+    
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Point_hpp */
+```
+
+Point.cpp
+
+```c++
+#include "Point.hpp"
+
+Point::Point(){
+    cout<<"Point()"<<endl;
+}
+
+Point::~Point(){
+    cout<<"~Point()"<<endl;
+}
+```
+
+然后创建这个对象的对象数组。
+
+```c++
+#include <iostream>
+#include <string>
+#include "Point.hpp"
+
+using namespace std;
+
+int main(){
+    
+    //在栈上创建对象
+    Point t[3];
+    
+    t[0].m_iX=10;
+    t[0].m_iY=20;
+    
+    //在堆上创建对象
+    Point *p=new Point[3];
+    p->m_iX=7;
+    p[0].m_iY=10;
+    
+    p++;//p+=1;p+=1;
+    
+    //1
+    p->m_iX=11;
+    p[0].m_iY=20;
+    
+    //2
+    p[1].m_iX=20;
+    p++;
+    p->m_iY=30;
+    
+    //遍历
+    for (int i=0; i<3; i++) {
+        cout<<t[i].m_iX<<" "<<t[i].m_iY<<endl;
+    }
+    
+    
+    //现在指针是指向最后一个元素，所以只能倒序遍历
+    for (int j=0; j<3; j++) {
+        cout<<p->m_iX<<" "<<p->m_iY<<endl;
+        p--;
+    }
+    
+    p++; //重要，因为p现在指向到了，数组前面的元素
+    
+    delete []p;
+    p=NULL;
+    
+    return 0;
+}
+```
+
+# 对象成员
+
+一个对象的成员是对象。下面模拟一个Line类，有两个Point，point对象有两个成员x,y。
+
+Point.hpp
+
+```c+
+#ifndef Point_hpp
+#define Point_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Point {
+    
+    
+public:
+    Point();
+    ~Point();
+    
+    void setX(int _x);
+    int getX();
+    
+    void setY(int _y);
+    int getY();
+private:
+    int m_iX;
+    int m_iY;
+};
+
+
+
+#endif /* Point_hpp */
+```
+
+Point.cpp
+
+```c++
+#include "Point.hpp"
+
+Point::Point(){
+    cout<<"Point()"<<endl;
+}
+
+Point::~Point(){
+    cout<<"~Point()"<<endl;
+}
+
+void Point::setX(int _x){
+    m_iX=_x;
+}
+
+int Point::getX(){
+    return m_iX;
+}
+
+void Point::setY(int _y){
+    m_iY=_y;
+}
+
+int Point::getY(){
+    return m_iY;
+}
+```
+
+我们现在测试他们的构造函数调用顺序：
+
+```c++
+Line *line=new Line();
+
+delete line;
+```
+
+输出如下：
+
+```shell
+Point()
+Point()
+Line()
+~Line()
+~Point()
+~Point()
+```
+
+结论：先初始化内部对象成员，然后在初始化外部类。销毁先外部类，然后销毁内部成员对象。
+
+那成员之间他们的初始化顺序和销毁顺序是什么呢：
+
+我给Point,Line都加上了构造参数
+
+Point.cpp
+
+```c++
+Point::Point(int x,int y):m_iX(x),m_iY(y){
+    cout<<"Point()"<<m_iX<<","<<m_iY<<endl;
+}
+
+Point::~Point(){
+    cout<<"~Point()"<<m_iX<<","<<m_iY<<endl;
+}
+```
+
+Line.cpp
+
+```c
+Line::Line(int x1,int y1,int x2,int y2):m_pointA(x1,y1),m_pointB(x2,y2){
+    cout<<"Line()"<<endl;
+}
+Line::~Line(){
+    cout<<"~Line()"<<endl;
+}
+```
+
+然后穿入值：
+
+```c++
+Line *line=new Line(1,2,3,4);
+
+delete line;
+```
+
+输出：
+
+```shell
+Point()1,2
+Point()3,4
+Line()
+~Line()
+~Point()3,4
+~Point()1,2
+```
+
+可以看见小初始化最上面的对象成员，销毁则相反。
+
+# 对象指针
+
+首先定义一个坐标类，然后实例化两个对象，然后分别计算坐标之和，最后使用指针操作。
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+class Coordinate {
+    
+    
+public:
+    Coordinate();
+    ~Coordinate();
+public:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+#include <iostream>
+
+#include "Coordinate.hpp"
+
+using namespace std;
+
+Coordinate::Coordinate(){
+    cout<<"Coordinate()"<<endl;
+}
+
+Coordinate::~Coordinate(){
+    cout<<"~Coordinate()"<<endl;
+}
+```
+
+测试
+
+```c++
+//    Coordinate *p1=NULL;
+//    p1=new Coordinate;
+//    
+//    Coordinate *p2=new Coordinate();
+//    
+//    p1->m_iX=10;
+//    p1->m_iY=20;
+//    
+//    (*p2).m_iX=30;
+//    (*p2).m_iY=40;
+//    
+//    //计算这两个点坐标之和
+//    cout<<p1->m_iX+(*p2).m_iX<<endl; //40
+//    cout<<p1->m_iY+(*p2).m_iY<<endl; //60
+//    
+//    delete p1;
+//    p1=NULL;
+//    
+//    delete p2;
+//    p2=NULL;
+
+//对象指针
+Coordinate p1;
+
+Coordinate *p2=&p1;
+
+p2->m_iX=10;
+p2->m_iY=20;
+
+cout<<p1.m_iX<<endl; //10
+cout<<p1.m_iY<<endl; //20，可以看到我们通过指针的方式操作了p1
+```
+
+## 成员对象指针
+
+改进上面的项目，将Line里面的点换成指针。
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+class  Coordinate{
+    
+    
+public:
+    Coordinate(int x,int y);
+    ~Coordinate();
+    int getX();
+    int getY();
+private:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+#include <iostream>
+
+#include "Coordinate.hpp"
+
+using namespace std;
+
+Coordinate::Coordinate(int x,int y){
+    m_iX=x;
+    m_iY=y;
+    cout<<"Coordinate(int x,int y)"<<endl;
+}
+
+Coordinate::~Coordinate(){
+    cout<<"~Coordinate"<<endl;
+}
+
+int Coordinate::getX(){
+    return m_iX;
+}
+
+int Coordinate::getY(){
+    return m_iY;
+}
+```
+
+Line.hpp
+
+```c++
+#ifndef Line_hpp
+#define Line_hpp
+
+#include "Coordinate.hpp"
+
+class Line {
+    
+    
+public:
+    Line(int x1,int y1,int x2,int y2);
+    ~Line();
+    void printInfo();
+private:
+    Coordinate *m_pCoorA;
+    Coordinate *m_pCoorB;
+};
+
+#endif /* Line_hpp */
+```
+
+Line.cpp
+
+```c++
+#include <iostream>
+
+#include "Line.hpp"
+
+using namespace std;
+
+Line::Line(int x1,int y1,int x2,int y2){
+    //先实例化两个点
+    m_pCoorA=new Coordinate(x1,y1);
+    m_pCoorB=new Coordinate(x2,y2);
+    cout<<"Line()"<<endl;
+}
+
+Line::~Line(){
+    delete m_pCoorA;
+    m_pCoorA=NULL;
+    
+    delete m_pCoorB;
+    m_pCoorB=NULL;
+    cout<<"~Line()"<<endl;
+}
+
+void Line::printInfo(){
+    cout<<"printinfo()"<<endl;
+    cout<<m_pCoorA->getX()<<","<<m_pCoorA->getY()<<endl;
+    cout<<m_pCoorB->getX()<<","<<m_pCoorB->getY()<<endl;
+}
+```
+
+测试
+
+```c++
+Line *p=new Line(1,2,3,4);
+p->printInfo();
+
+delete p;
+p=NULL;
+
+cout<<sizeof(p)<<endl;
+cout<<sizeof(Line)<<endl;
+
+//    Coordinate(int x,int y)
+//    Coordinate(int x,int y)
+//    Line()
+//    printinfo()
+//    1,2
+//    3,4
+//    ~Coordinate
+//    ~Coordinate
+//    ~Line()
+//    8 //64位，一个指针8位，
+//    16 //line里面有两个指针
+```
+
+# this指针
+
+this指针指向当前对象的地址，值和&当前对象的值一样。
+
+Array.hpp
+
+```c++
+#ifndef Array_hpp
+#define Array_hpp
+
+class Array {
+    
+    
+public:
+    Array(int len);
+    ~Array();
+    
+    void setLen(int len);
+    int getLen();
+    
+    Array* printInfo();
+private:
+    int len;
+    
+};
+
+#endif /* Array_hpp */
+```
+
+Array.cpp
+
+```c++
+#include <iostream>
+
+#include "Array.hpp"
+
+using namespace std;
+
+Array::Array(int len){
+    this->len=len;
+}
+
+Array::~Array(){
+    
+}
+
+void Array::setLen(int len){
+    this->len=len;
+}
+
+int Array::getLen(){
+    return len;
+}
+
+//如果这里return的Array对象，那么他是一个临时对象，不会更改原对象的值
+//如果return是Array&,新对象的改变会影响到原对象
+//如果return是指针，也会改变原对象
+Array* Array::printInfo(){
+//    cout<<"len="<<len<<endl;
+    cout<<this<<endl;
+    return this; //他要求返回一个对象，this是一个指针，*this就是一个对象
+}
+```
+
+测试
+
+```c
+Array arr(10);
+
+//    arr.printInfo().setLen(5);
+arr.printInfo()->setLen(5);
+
+//    cout<<arr.getLen()<<endl;
+cout<<&arr<<endl;
+```
+
+# 继承
+
+## 什么是继承
+
+学生继承人类的一些共性。
+
+定义一个Person类，然后让Worker共有继承Person类。
+
+## 继承中构造函数和析构函数调用顺序
+
+在继承中：
+
+创建对象时先调用父类的构造函数，在调用子类的构造函数。
+
+销毁对象时先调用子类的析构函数，然后在调用父类的析构函数。
+
+输出如下：
+
+```shell
+Person()
+Worker()
+~Worker()
+~Person()
+```
+
+其中Worker继承Person
+
+## 继承方式
+
+### 共有继承
+
+class A:public B
+
+| 父类成员访问属性  | 子类成员访问属性        |
+| --------- | --------------- |
+| private   | 无法访问(也可以说没继承下来) |
+| protected | protected       |
+| public    | public          |
+
+### 保护继承
+
+class A:protected B
+
+| 父类成员访问属性  | 子类成员访问属性        |
+| :-------- | --------------- |
+| private   | 无法访问(也可以说没继承下来) |
+| protected | protected       |
+| public    | protected       |
+
+### 私有继承
+
+class A:private B
+
+| 父类成员访问属性  | 子类成员访问属性        |
+| :-------- | --------------- |
+| private   | 无法访问(也可以说没继承下来) |
+| protected | private         |
+| public    | private         |
+
+私有继承也属于一个Has a关系，因为他只能访问父类的共有属性。
 
 # 模板
 
