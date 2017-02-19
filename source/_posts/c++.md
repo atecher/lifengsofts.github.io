@@ -2735,5 +2735,463 @@ class A:private B
 
 私有继承也属于一个Has a关系，因为他只能访问父类的共有属性。
 
+## 隐藏
+
+父子关系，成员同名，隐藏。
+
+```c++
+//Soldier里有一个play,他的父类也有一个play方法
+Soldier s;
+
+//调用Soldier里的play方法
+s.play();
+s.work();
+
+//调用Person里面的play方法
+s.Person::play();
+```
+
+## 多重集成
+
+注意他不是多继承，比如：士兵继承人，步兵继承士兵，他们之间的关系是多重继承。
+
+## 多继承
+
+比如:农民集成工人类，还继承农民类，简称农民工类，他们之间的关系就是多继承。
+
+Worker.hpp
+
+```c++
+#ifndef Worker_hpp
+#define Worker_hpp
+
+#include <string>
+
+using namespace std;
+
+class Worker {
+    
+    
+public:
+    Worker(string code="001");
+    virtual ~Worker();
+    void carry();  //射击
+protected:
+    string m_strCode;
+};
+
+#endif /* Worker_hpp */
+```
+
+Worker.cpp
+
+```c++
+#include <iostream>
+
+#include "Worker.hpp"
+
+using namespace std;
+
+Worker::Worker(string code){
+    m_strCode=code;
+    cout<<"Worker()"<<endl;
+}
+
+Worker::~Worker(){
+    cout<<"~Worker()"<<endl;
+}
+
+void Worker::carry(){
+    cout<<m_strCode<<endl;
+    cout<<"Worker-carry()"<<endl;
+}
+```
+
+Farmer.hpp
+
+```c++
+#ifndef Farmer_hpp
+#define Farmer_hpp
+
+#include <string>
+
+using namespace std;
+
+class Farmer {
+    
+    
+public:
+    Farmer(string name="jack");
+    virtual ~Farmer();
+    void sow();
+protected:
+    string m_strName;
+};
+
+#endif /* Farmer_hpp */
+```
+
+Farmer.cpp
+
+```c++
+#include <iostream>
+
+#include "Farmer.hpp"
+
+using namespace std;
+
+Farmer::Farmer(string name){
+    m_strName=name;
+    cout<<"Farmer()"<<endl;
+}
+
+Farmer::~Farmer(){
+    cout<<"~Farmer()"<<endl;
+}
+
+
+void Farmer::sow(){
+    cout<<"sow()"<<endl;
+}
+```
+
+MigrantWorker.hpp
+
+```c++
+#ifndef MigrantWorker_hpp
+#define MigrantWorker_hpp
+
+#include <string>
+
+#include "Worker.hpp"
+#include "Farmer.hpp"
+
+using namespace std;
+
+//这里在前面，先调用构造函数
+class MigrantWorker:public Worker,public Farmer {
+    
+    
+public:
+    MigrantWorker(string name,string code);
+    ~MigrantWorker();
+};
+
+#endif /* MigrantWorker_hpp */
+```
+
+MigrantWorker.cpp
+
+```c++
+#include <iostream>
+
+#include "MigrantWorker.hpp"
+
+using namespace std;
+
+MigrantWorker::MigrantWorker(string name,string code):Farmer(name),Worker(code){
+    cout<<"MigrantWorker"<<endl;
+}
+
+MigrantWorker::~MigrantWorker(){
+    cout<<"~MigrantWorker()"<<endl;
+}
+```
+
+最后测试
+
+```c++
+MigrantWorker *p = new MigrantWorker("Merry","100");
+
+p->carry();
+p->sow();
+
+delete p;
+p=NULL;
+```
+
+输出：
+
+```shell
+Worker()
+Farmer()
+MigrantWorker
+100
+Worker-carry()
+sow()
+~MigrantWorker()
+~Farmer()
+~Worker()
+```
+
+## 虚继承
+
+是为了解决菱形继承问题。简单来讲就是，工人继承人，农民继承人，农民工继承工人，农民就会出现两份人的信息，如果让工人虚继承人，农民虚继承人，农民工在继承他们两个，就只会出现一份人的信息。就这问题，如果按照常规写法，会报错，Person重定义。解决方法有多种
+
+### 宏定义
+
+```c++
+#ifndef Person_hpp //解决宏定义
+#define Person_hpp //解决宏定义
+
+#include <string>
+
+using namespace std;
+
+class Person {
+    
+    
+public:
+    Person(string color="blue");
+    virtual ~Person();
+    
+    void printColor();
+protected:
+    string m_strColor;
+};
+
+#endif //解决宏定义
+```
+
+在菱形继承中，会导致里面有多份数据。可以这样验证：
+
+```shell
+Person()
+Worker()
+Person()
+Farmer()
+MigrantWorker
+Worker red //重复数据
+Person-printColor()
+Farmer red //重复数据
+Person-printColor()
+~MigrantWorker()
+~Farmer()
+~Person()
+~Worker()
+~Person()
+```
+
+解决方法是工人，农民从人类那里虚拟继承。
+
+```c++
+class Worker:virtual public Person
+  
+class Farmer:virtual public Person
+```
+
+这样打印结果就是：
+
+```shell
+Person()
+Worker()
+Farmer()
+MigrantWorker
+b
+Person-printColor()
+b
+Person-printColor()
+~MigrantWorker()
+~Farmer()
+~Worker()
+~Person()
+```
+
+但是这样的结果就是，Person类无法接收到子类传递的参数。下面是完整测试代码：
+
+Person.hpp
+
+```c++
+#ifndef Person_hpp
+#define Person_hpp
+
+#include <string>
+
+using namespace std;
+
+class Person {
+    
+    
+public:
+    Person(string color="b");
+    virtual ~Person();
+    
+    void printColor();
+protected:
+    string m_strColor;
+};
+
+#endif /* Person_hpp */
+```
+
+Person.cpp
+
+```c++
+#include <iostream>
+
+#include "Person.hpp"
+
+using namespace std;
+
+Person::Person(string code){
+    m_strColor=code;
+    cout<<"Person()"<<endl;
+}
+
+Person::~Person(){
+    cout<<"~Person()"<<endl;
+}
+
+void Person::printColor(){
+    cout<<m_strColor<<endl;
+    cout<<"Person-printColor()"<<endl;
+}
+```
+
+Worker.hpp
+
+```c++
+#ifndef Worker_hpp
+#define Worker_hpp
+
+#include <string>
+
+#include "Person.hpp"
+
+using namespace std;
+
+class Worker:virtual public Person {
+    
+    
+public:
+    Worker(string code="001",string color="blue");
+    virtual ~Worker();
+    void carry();  //射击
+protected:
+    string m_strCode;
+};
+
+#endif /* Worker_hpp */
+```
+
+Worker.cpp
+
+```c++
+#include <iostream>
+
+#include "Worker.hpp"
+
+using namespace std;
+
+Worker::Worker(string code,string color):Person("Worker "+color){
+    m_strCode=code;
+    cout<<"Worker()"<<endl;
+}
+
+Worker::~Worker(){
+    cout<<"~Worker()"<<endl;
+}
+
+void Worker::carry(){
+    cout<<m_strCode<<endl;
+    cout<<"Worker-carry()"<<endl;
+}
+```
+
+Farmer.hpp
+
+```c++
+#ifndef Farmer_hpp
+#define Farmer_hpp
+
+#include <string>
+
+#include "Person.hpp"
+
+using namespace std;
+
+class Farmer:virtual public Person {
+    
+    
+public:
+    Farmer(string name="jack",string color="blue");
+    virtual ~Farmer();
+    void sow();
+protected:
+    string m_strName;
+};
+
+#endif /* Farmer_hpp */
+```
+
+Farmer.cpp
+
+```c++
+#include <iostream>
+
+#include "Farmer.hpp"
+
+
+
+using namespace std;
+
+Farmer::Farmer(string name,string color):Person("Farmer "+color){
+    m_strName=name;
+    cout<<"Farmer()"<<endl;
+}
+
+Farmer::~Farmer(){
+    cout<<"~Farmer()"<<endl;
+}
+
+
+void Farmer::sow(){
+    cout<<"sow()"<<endl;
+}
+```
+
+MigrantWorker.hpp
+
+```c++
+#ifndef MigrantWorker_hpp
+#define MigrantWorker_hpp
+
+#include <string>
+
+#include "Worker.hpp"
+#include "Farmer.hpp"
+
+using namespace std;
+
+//这里在前面，先调用构造函数
+class MigrantWorker:public Worker,public Farmer {
+    
+    
+public:
+    MigrantWorker(string name,string code,string color);
+    ~MigrantWorker();
+};
+
+#endif /* MigrantWorker_hpp */
+```
+
+MigrantWorker.cpp
+
+```c++
+#include <iostream>
+
+#include "MigrantWorker.hpp"
+
+using namespace std;
+
+MigrantWorker::MigrantWorker(string name,string code,string color):Farmer(name,color),Worker(code,color){
+    cout<<"MigrantWorker"<<endl;
+}
+
+MigrantWorker::~MigrantWorker(){
+    cout<<"~MigrantWorker()"<<endl;
+}
+```
+
 # 模板
 
