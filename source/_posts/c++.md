@@ -3193,5 +3193,206 @@ MigrantWorker::~MigrantWorker(){
 }
 ```
 
+# 多态
+
+## 静态多态(早绑定)
+
+例子是，一个类有多个函数重载，在调用的时候传不同的参数，在编译时就确定了要调用那个函数。
+
+## 动态多态(晚绑定)
+
+比如：我们定义一个形状类定义一个计算面积的函数，在定义圆继承形状类中也定义一个计算面积函数并实现，在定义一个矩形并也实现计算面积的函数。
+
+然后也用形状类型的指针，引用这两个对象，然后调用计算面积的方法。他们会调用不同对象类的面积方法。
+
+Shape.hpp
+
+```c++
+#ifndef Shape_hpp
+#define Shape_hpp
+
+
+
+class Shape {
+    
+    
+public:
+    Shape();
+    ~Shape();
+    virtual double calcArea(); //要实现多态，需要加virtual，子类方法默认也就加上了，但最好手动也加上，这样一看就明白，
+};
+
+#endif /* Shape_hpp */
+```
+
+Shape.cpp
+
+```c++
+#include "Shape.hpp"
+
+#include <iostream>
+
+using namespace std;
+
+Shape::Shape(){
+    cout<<"Shape()"<<endl;
+}
+
+Shape::~Shape(){
+    cout<<"~Shape"<<endl;
+}
+
+double Shape::calcArea(){
+    cout<<"Shape-calcAre()"<<endl;
+    return 0;
+}
+```
+
+Circle.hpp
+
+```c++
+#ifndef Circle_hpp
+#define Circle_hpp
+
+#include "Shape.hpp"
+
+class Circle:public Shape {
+    
+    
+public:
+    Circle(double r);
+    ~Circle();
+    double calcArea();
+protected:
+    double m_dR; //圆的半径
+};
+
+#endif /* Circle_hpp */
+```
+
+Circle.cpp
+
+```c++
+#include <iostream>
+
+#include "Circle.hpp"
+
+using namespace std;
+
+Circle::Circle(double r){
+    cout<<"Circle"<<endl;
+}
+
+Circle::~Circle(){
+    cout<<"~Circle"<<endl;
+}
+double Circle::calcArea(){
+    cout<<"Circle-calcArea"<<endl;
+    return 3.14*m_dR*m_dR;
+}
+```
+
+Rect.hpp
+
+```c++
+#ifndef Rect_hpp
+#define Rect_hpp
+
+#include "Shape.hpp"
+
+class Rect:public Shape {
+    
+    
+public:
+    Rect(double width,double height);
+    ~Rect();
+    double calcArea();
+    
+protected:
+    double m_dWidth;
+    double m_dHeight;
+};
+
+#endif /* Rect_hpp */
+```
+
+Rect.cpp
+
+```c++
+#include <iostream>
+
+#include "Rect.hpp"
+
+using namespace std;
+
+Rect::Rect(double width,double height){
+    m_dWidth=width;
+    m_dHeight=height;
+    cout<<"Rect"<<endl;
+}
+
+Rect::~Rect(){
+    cout<<"~Rect"<<endl;
+}
+
+double Rect::calcArea(){
+    cout<<"Rect-calcArea"<<endl;
+    return m_dHeight*m_dWidth;
+}
+```
+
+测试
+
+```c++
+Shape *shape1=new Rect(2,5);
+Shape *shape2=new Circle(3);
+
+shape1->calcArea();
+shape2->calcArea();
+
+delete shape1;
+delete shape2;
+
+shape1=NULL;
+shape2=NULL;
+```
+
+输出：
+
+```shell
+Shape()
+Rect
+Shape()
+Circle
+Rect-calcArea
+Circle-calcArea
+~Shape //可以看见析构函数还有问题，因为只调用了父类析构函数
+~Shape
+```
+
+## virtual使用限制
+
+修饰的函数不能使全局函数，不能修饰静态成员函数，不能修饰构造函数，导致编译错误。
+
+不能修饰内联函数，如果修饰了inline将被忽略。
+
+## 虚析构函数
+
+他就是解决上面例子中析构函数问题的。一般建议父类都声明虚构析构函数，因为你不知道未来的子类是否会使用析构函数释放资源。
+
+```c++
+virtual ~Shape(); 
+```
+
+## 抽象类
+
+含有纯虚函数的类叫抽象类。不能实例化对象，编译错误
+
+```c++
+virtual double test()=0; //声明一个纯虚函数
+```
+
+
+
 # 模板
 
