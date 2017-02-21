@@ -3392,7 +3392,283 @@ virtual ~Shape();
 virtual double test()=0; //声明一个纯虚函数
 ```
 
+这里我们设计这样一个示例，一个人类，一个工人类，一个清洁工类
 
+Person.hpp
+
+```c++
+#ifndef Person_hpp
+#define Person_hpp
+
+#include <string>
+
+using namespace std;
+
+class Person {
+    
+    
+public:
+    Person(string name);
+    virtual void work()=0; //纯虚函数
+    virtual ~Person(){};
+private:
+    string m_strName;
+};
+
+#endif /* Person_hpp */
+```
+
+Person.cpp
+
+```c++
+#include "Person.hpp"
+
+Person::Person(string name){
+    m_strName=name;
+}
+```
+
+Worker.hpp
+
+```c++
+#ifndef Worker_hpp
+#define Worker_hpp
+
+#include "Person.hpp"
+
+class Worker:public Person {
+    
+    
+public:
+    Worker(string name,int age);
+//    virtual void work();
+private:
+    int m_iAge;
+};
+
+#endif /* Worker_hpp */
+```
+
+Worker.cpp
+
+```c++
+#include <iostream>
+
+#include "Worker.hpp"
+
+using namespace std;
+
+Worker::Worker(string name,int age):Person(name){
+    m_iAge=age;
+}
+
+//void Worker::work(){
+//    cout<<"Work-work()"<<endl;
+//}
+```
+
+Dustman.hpp
+
+```c++
+#ifndef Dustman_hpp
+#define Dustman_hpp
+
+#include "Worker.hpp"
+
+class Dustman:public Worker {
+    
+    
+public:
+    Dustman(string name,int age);
+    virtual void work();
+};
+
+#endif /* Dustman_hpp */
+```
+
+Dustman.cpp
+
+```c++
+#include <iostream>
+
+#include "Dustman.hpp"
+
+using namespace std;
+
+Dustman::Dustman(string name,int age):Worker(name,age){
+    
+}
+
+void Dustman::work(){
+    cout<<"Dustman-扫地"<<endl;
+}
+```
+
+测试
+
+```c++
+Dustman dustman("a",20); //测试是否可以被实例化
+```
+
+## 接口类
+
+仅含有纯虚函数的类称为接口类。下面定义一个可飞的接口，然后实现一个飞机，战斗机类。
+
+Flyable.hpp
+
+```c++
+#ifndef Flyable_h
+#define Flyable_h
+
+class Flyable {
+    
+    
+public:
+    virtual void takeoff()=0;
+    virtual void land()=0;
+};
+
+#endif /* Flyable_h */
+```
+
+由于它是接口类，所以没有cpp文件。
+
+Plane.hpp
+
+```c++
+#ifndef Plane_hpp
+#define Plane_hpp
+
+#include <string>
+
+#include "Flyable.hpp"
+
+using namespace std;
+
+class Plane :public Flyable {
+    
+    
+public:
+    Plane(string code);
+    virtual void takeoff();
+    virtual void land();
+    void printCode();
+private:
+    string m_strCode;
+};
+
+#endif /* Plane_hpp */
+```
+
+Plane.cpp
+
+```c++
+#include <iostream>
+
+#include "Plane.hpp"
+
+using namespace std;
+
+Plane::Plane(string code){
+    m_strCode=code;
+}
+
+void Plane::takeoff(){
+    cout<<"Plane-takeoff()"<<endl;
+}
+
+void Plane::land(){
+    cout<<"Plane-land()"<<endl;
+}
+
+void Plane::printCode(){
+    cout<<m_strCode<<endl;
+}
+```
+
+FighterPlane.hpp
+
+```c++
+#ifndef FighterPlane_hpp
+#define FighterPlane_hpp
+
+#include <string>
+
+#include "Plane.hpp"
+
+using namespace std;
+
+class FighterPlane:public Plane {
+    
+    
+public:
+    FighterPlane(string code);
+    virtual void takeoff();
+    virtual void land();
+};
+
+#endif /* FighterPlane_hpp */
+```
+
+FighterPlane.cpp
+
+```c++
+#include <iostream>
+
+#include "FighterPlane.hpp"
+
+
+using namespace std;
+
+FighterPlane::FighterPlane(string code):Plane(code){
+    
+}
+
+void FighterPlane::takeoff(){
+    cout<<"FighterPlane-takeoff()"<<endl;
+}
+
+void FighterPlane::land(){
+    cout<<"FighterPlane-land()"<<endl;
+}
+```
+
+测试
+
+```c++
+#include <iostream>
+
+#include "Flyable.hpp"
+#include "Plane.hpp"
+#include "FighterPlane.hpp"
+
+void flyMatch(Flyable *f1,Flyable *f2){
+    f1->takeoff();
+    f1->land();
+    f2->takeoff();
+    f2->land();
+}
+
+int main(int argc, const char * argv[]) {
+
+    //传入父类
+//    Plane p1("1");
+//    Plane p2("2");
+//    
+//    flyMatch(&p1, &p2);
+    
+    //传入子类
+    FighterPlane p1("1");
+    FighterPlane p2("2");
+    
+    p1.printCode();
+    p2.printCode();
+    
+    flyMatch(&p1, &p2);
+    
+    return 0;
+}
+```
 
 # 模板
 
