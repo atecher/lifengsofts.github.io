@@ -3670,5 +3670,29 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+# RTTI(运行时类型识别)
+
+Run-Time Type Identification
+
+## typeid
+
+注意：
+
+他返回一个type_info对象的引用
+
+如果想通过父类的指针获得派生类的数据类型，父类必须带有虚函数。
+
+只能获取对象的实际类型，不能判断指针
+
+## dynamic_cast
+
+注意：
+
+只能用于指针和引用的转换
+
+要转换的类型中必须包含虚函数
+
+转换成功返回子类的地址，失败返回NULL
+
 # 模板
 
