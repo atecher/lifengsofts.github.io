@@ -3694,5 +3694,463 @@ Run-Time Type Identification
 
 转换成功返回子类的地址，失败返回NULL
 
+下面演示定义一个Flyable,然后定义一个Bird,Plane继承Flyable,然后演示使用方法。
+
+Flyable.hpp
+
+```c++
+#ifndef Flyable_hpp
+#define Flyable_hpp
+
+class Flyable {
+    
+    
+public:
+    virtual void takeoff()=0;
+    virtual void land()=0;
+};
+
+#endif /* Flyable_hpp */
+```
+
+Bird.hpp
+
+```c++
+#ifndef Bird_hpp
+#define Bird_hpp
+
+#include <string>
+
+#include "Flyable.hpp"
+
+class Bird:public Flyable {
+    
+    
+public:
+    void foraging();
+    virtual void takeoff();
+    virtual void land();
+};
+
+#endif /* Bird_hpp */
+```
+
+Bird.cpp
+
+```c++
+#include <string>
+#include <iostream>
+
+#include "Bird.hpp"
+
+using namespace std;
+
+void Bird::foraging(){
+    cout<<"Bird-foraging()"<<endl;
+}
+
+void Bird::takeoff(){
+    cout<<"Bird-takeoff()"<<endl;
+}
+
+void Bird::land(){
+    cout<<"Bird-land()"<<endl;
+}
+```
+
+Plane.hpp
+
+```c++
+#ifndef Plane_hpp
+#define Plane_hpp
+
+#include <string>
+
+#include "Flyable.hpp"
+
+using namespace std;
+
+class  Plane:public Flyable {
+    
+    
+public:
+    void carry();
+    virtual void takeoff();
+    virtual void land();
+};
+
+#endif /* Plane_hpp */
+```
+
+Plane.cpp
+
+```c++
+#include <iostream>
+
+#include "Plane.hpp"
+
+
+using namespace std;
+
+void Plane::carry(){
+    cout<<"Plane-carry()"<<endl;
+}
+
+void Plane::takeoff(){
+    cout<<"Plane-takeoff()"<<endl;
+}
+
+void Plane::land(){
+    cout<<"Plane-land()"<<endl;
+}
+```
+
+main.cpp
+
+```c++
+#include <iostream>
+//#include <typeinfo> //有些编译器要包含
+
+using namespace std;
+
+#include "Flyable.hpp"
+#include "Bird.hpp"
+#include "Plane.hpp"
+
+
+
+void doSomething(Flyable *obj){
+    //xcode中输出5Plane,4Bird
+    cout<<typeid(*obj).name()<<endl;
+    obj->takeoff();
+    
+//    typeid有点栗色java中的instance
+    if (typeid(*obj)==typeid(Bird)) {
+        Bird *bird=dynamic_cast<Bird *>(obj);
+        bird->foraging();
+    }else if (typeid(*obj)==typeid(Plane)){
+        Plane *plane=dynamic_cast<Plane *>(obj);
+        plane->carry();
+    }
+    obj->land();
+}
+
+int main(int argc, const char * argv[]) {
+    
+//    Bird b;
+//    doSomething(&b);
+    
+    //输出
+//    4Bird
+//    Bird-takeoff()
+//    Bird-foraging()
+//    Bird-land()
+    
+    //基本类型
+    int i=10; //i
+    cout<<typeid(i).name()<<endl;
+    
+    //指针
+    Plane *p=new Plane();
+    cout<<typeid(p).name()<<endl; //P5Plane
+    cout<<typeid(*p).name()<<endl;//5Plane
+    
+    return 0;
+}
+```
+
+# 异常
+
+Exception.hpp
+
+```c++
+#ifndef Exception_hpp
+#define Exception_hpp
+
+class Exception {
+    
+    
+public:
+    virtual void printException();
+    virtual ~Exception(){}
+
+};
+
+#endif /* Exception_hpp */
+```
+
+Exception.cpp
+
+```c++
+#include <iostream>
+
+#include "Exception.hpp"
+
+#include "Exception.hpp"
+
+using namespace std;
+
+void Exception::printException(){
+    cout<<"Exception-printException"<<endl;
+}
+```
+
+IndexException.hpp
+
+```c++
+#ifndef IndexException_hpp
+#define IndexException_hpp
+
+#include "Exception.hpp"
+
+class IndexException:public Exception {
+    
+    
+public:
+    virtual void printException();
+};
+
+#endif /* IndexException_hpp */
+```
+
+IndexException.cpp
+
+```c++
+#include <iostream>
+
+#include "IndexException.hpp"
+
+
+using namespace std;
+
+void IndexException::printException(){
+    cout<<"IndexException-下标越界"<<endl;
+}
+```
+
+测试
+
+```c++
+#include <iostream>
+
+#include "IndexException.hpp"
+
+using namespace std;
+
+int main(int argc, const char * argv[]) {
+    
+    //基本方式
+    try {
+        throw 1;
+    } catch (int) {
+        cout<<"捕捉到异常了"<<endl;
+    }
+    
+    //捕捉到异常的值
+    try {
+        throw 0.1;
+    } catch (double &e) {
+        cout<<e<<endl;
+    }
+    
+    //对象异常
+    try {
+        throw IndexException();
+    } catch (IndexException e) {
+        e.printException();
+    }catch(Exception e){
+        e.printException();
+    }
+    
+    return 0;
+}
+```
+
+# 友元
+
+## 友元函数
+
+不建议使用，会影响封装讯。
+
+在友元函数里面可以直接访问对象的私有属性。
+
+### 友元全局函数
+
+这里演示先定义一个Time,然后在定义一个全局函数，并在Time中声明这个函数为Time类的友元函数。并访问私有属性。
+
+Time.hpp
+
+```c++
+#ifndef Time_hpp
+#define Time_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Time {
+    
+    //声明为全局友元函数，这样在这个函数中就可以直接访问私有变量
+    friend void printTime(Time &t);
+public:
+    Time(int hour,int min,int sec);
+private:
+    int m_iHour;
+    int m_iMinute;
+    int m_iSecond;
+};
+
+#endif /* Time_hpp */
+```
+
+Time.cpp
+
+```c++
+#include "Time.hpp"
+
+Time::Time(int hour,int min,int sec){
+    m_iHour=hour;
+    m_iMinute=min;
+    m_iSecond=sec;
+}
+```
+
+然后定一个全局函数，并测试
+
+```c++
+#include <iostream>
+
+#include "Time.hpp"
+
+void printTime(Time &t){
+    cout<<t.m_iHour<<":"<<t.m_iMinute<<":"<<t.m_iHour<<endl;
+}
+
+int main(int argc, const char * argv[]) {
+    
+    Time t(6,10,20);
+    printTime(t);
+    
+    return 0;
+}
+```
+
+可以看到现在完全可以访问私有函数。
+
+### 友元成员函数
+
+这里我们定义一个Time,然后在Match类中定义一个函数，然后将这个函数申明为Time类中的友元成员函数。
+
+Time.hpp
+
+```c++
+#ifndef Time_hpp
+#define Time_hpp
+
+#include <iostream>
+
+#include "Match.hpp"
+
+using namespace std;
+
+class Time {
+    
+    //声明为全局友元函数，这样在这个函数中就可以直接访问私有变量
+    friend void Match::printTime(Time &t);
+public:
+    Time(int hour,int min,int sec);
+private:
+    int m_iHour;
+    int m_iMinute;
+    int m_iSecond;
+};
+
+#endif /* Time_hpp */
+```
+
+Time.cpp
+
+```c++
+#include "Time.hpp"
+
+Time::Time(int hour,int min,int sec){
+    m_iHour=hour;
+    m_iMinute=min;
+    m_iSecond=sec;
+}
+```
+
+Match.hpp
+
+```c++
+#ifndef Match_hpp
+#define Match_hpp
+
+class Time;
+
+class Match {
+    
+    
+public:
+    void printTime(Time &t);
+};
+
+#endif /* Match_hpp */
+```
+
+Match.cpp
+
+```c++
+#include <iostream>
+
+#include "Time.hpp"
+#include "Match.hpp"
+
+using namespace std;
+
+
+void Match::printTime(Time &t){
+    cout<<t.m_iHour<<":"<<t.m_iMinute<<":"<<t.m_iHour<<endl;
+}
+```
+
+测试
+
+```c++
+#include <iostream>
+
+#include "Time.hpp"
+
+//void printTime(Time &t){
+//    cout<<t.m_iHour<<":"<<t.m_iMinute<<":"<<t.m_iHour<<endl;
+//}
+
+int main(int argc, const char * argv[]) {
+    
+    Time t(6,10,20);
+//    printTime(t);
+    
+    return 0;
+}
+```
+
+## 友元类
+
+注意：
+
+友元关系不可以传递，A是B的朋友，B是C的朋友，A不一定是C的朋友
+
+友元关系的单向性，A是B的朋友，B不一定是A的朋友
+
+友元声明的形式以及数量不受限制，也就是说即声明函数，字段都可以
+
+特别注意：友元只是封装的补充，并不是很好地设计。
+
+下载演示将Match类声明为Time的友元类，这样就可以访问Time的私有函数，数据成员。
+
+# 静态
+
+
+
 # 模板
 
