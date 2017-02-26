@@ -4150,7 +4150,720 @@ int main(int argc, const char * argv[]) {
 
 # 静态
 
+## 静态数据成员
 
+## 静态成员函数
+
+注意：
+
+静态数据成员必须单独初始化
+
+静态数据成员不能调用飞静态成员函数和非静态数据成员。
+
+静态成员函数后面不能加const
+
+Tank.hpp
+
+```c++
+#ifndef Tank_hpp
+#define Tank_hpp
+
+class Tank {
+    
+    
+public:
+    Tank(char code);
+    ~Tank();
+    Tank();
+    void fire();
+//    static int getCount(); //静态成员函数
+    static int getCount() ;
+private:
+    static int s_iCount;
+    char m_cCode; //静态数据成员
+};
+
+#endif /* Tank_hpp */
+```
+
+Tank.cpp
+
+```c++
+#include <iostream>
+
+
+#include "Tank.hpp"
+
+using namespace std;
+
+//初始化静态数据成员
+int Tank::s_iCount=0;
+
+Tank::Tank(char code){
+    m_cCode=code;
+    s_iCount++;
+    cout<<"Tank()"<<endl;
+}
+
+Tank::~Tank(){
+    s_iCount--;
+    cout<<"~Tank()"<<endl;
+}
+
+void Tank::fire(){
+//    getCount(); //可以调用
+    cout<<"fire()"<<endl;
+}
+
+//实现静态成员函数时，不用写static
+int Tank::getCount(){
+//    fire();//不能调用
+    return s_iCount;
+}
+
+//int Tank::getCount(){
+//    return s_iCount;
+//}
+```
+
+测试
+
+```c++
+//    Tank t1('a');
+//    
+//    cout<<t1.getCount()<<endl;
+//    cout<<Tank::getCount()<<endl;
+//    
+//    Tank *t2=new Tank('b');
+//    
+//    cout<<Tank::getCount()<<endl;
+//    
+//    delete t2;
+//    
+//    cout<<Tank::getCount()<<endl;
+//
+//    
+//    Tank *t3=new Tank('c');
+//    
+//    cout<<Tank::getCount()<<endl;
+//    
+//    delete t3;
+//    
+//    cout<<Tank::getCount()<<endl;
+```
+
+# 运算符重载
+
+给原有的运算符赋予新的功能。本质就是函数重载
+
+## -负号
+
+友元函数,成员函数两种方式
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Coordinate {
+    
+    
+public:
+    //友元函数方式重载-
+    friend Coordinate &operator-(Coordinate &c);
+    
+    Coordinate(int x,int y);
+    
+    //声明-(负号)运算符重载,成员函数重载
+//    Coordinate &operator-();
+    
+    int getX();
+    int getY();
+    
+private:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+#include "Coordinate.hpp"
+
+Coordinate::Coordinate(int x,int y){
+    m_iX=x;
+    m_iY=y;
+}
+
+int Coordinate::getX(){
+    return m_iX;
+}
+
+int Coordinate::getY(){
+    return m_iY;
+}
+
+
+//Coordinate &Coordinate::operator-(){
+//    m_iX=-m_iX;
+//    this->m_iY=-this->m_iY;
+//    return *this;
+//}
+
+Coordinate &operator-(Coordinate &c){
+    c.m_iX=-c.m_iX;
+    c.m_iY=-c.m_iY;
+    return c;
+}
+```
+
+测试
+
+```c++
+Coordinate coor(1,3);
+cout<<coor.getX()<<","<<coor.getY()<<endl; //1,3
+-coor;
+cout<<coor.getX()<<","<<coor.getY()<<endl; //-1,-3
+```
+
+
+
+## ++重载
+
+包括前置,后置
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Coordinate {
+    
+    
+public:
+    //友元函数方式重载-
+    friend Coordinate &operator-(Coordinate &c);
+    friend Coordinate &operator++(Coordinate &c);
+    
+    Coordinate(int x,int y);
+    
+    //声明-(负号)运算符重载,成员函数重载
+//    Coordinate &operator-();
+    
+    //前置++
+//    Coordinate &operator++();
+    
+    //后置++
+    Coordinate operator++(int);
+    
+    
+    
+    int getX();
+    int getY();
+    
+private:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+#include "Coordinate.hpp"
+
+Coordinate::Coordinate(int x,int y){
+    m_iX=x;
+    m_iY=y;
+}
+
+int Coordinate::getX(){
+    return m_iX;
+}
+
+int Coordinate::getY(){
+    return m_iY;
+}
+
+
+//Coordinate &Coordinate::operator-(){
+//    m_iX=-m_iX;
+//    this->m_iY=-this->m_iY;
+//    return *this;
+//}
+
+Coordinate &operator-(Coordinate &c){
+    c.m_iX=-c.m_iX;
+    c.m_iY=-c.m_iY;
+    return c;
+}
+
+//Coordinate &Coordinate::operator++(){
+//    m_iX++;
+//    ++m_iY;
+//    return *this;
+//}
+
+Coordinate &operator++(Coordinate &c){
+    c.m_iX++;
+    c.m_iY++;
+    return c;
+}
+
+Coordinate Coordinate::operator++(int){
+    
+    Coordinate old(*this);
+
+    this->m_iX++;
+    this->m_iY++;
+    return old;
+}
+```
+
+测试
+
+```c++
+#include <iostream>
+
+#include "Coordinate.hpp"
+
+int main(int argc, const char * argv[]) {
+    
+Coordinate coor(1,3);
+cout<<coor.getX()<<","<<coor.getY()<<endl; //1,3
+    
+//-coor;
+//cout<<coor.getX()<<","<<coor.getY()<<endl;
+    
+//    ++coor;
+//    cout<<coor.getX()<<","<<coor.getY()<<endl; //2,4
+    
+    cout<<(coor++).getX()<<",";
+    cout<<(coor++).getY()<<endl; //1,4
+    cout<<coor.getX()<<","<<coor.getY()<<endl; //3,5
+    
+    return 0;
+}
+```
+
+## +加号，cout<<，[]
+
+Coordinate.hpp
+
+```c++
+#ifndef Coordinate_hpp
+#define Coordinate_hpp
+
+#include <iostream>
+
+using namespace std;
+
+class Coordinate {
+    
+    
+public:
+    //友元函数方式重载-
+    friend Coordinate &operator-(Coordinate &c);
+    friend Coordinate &operator++(Coordinate &c);
+    friend Coordinate operator+(Coordinate c1,Coordinate c2);
+    //输出函数，必须是友元函数
+    friend ostream &operator<<(ostream &out,Coordinate &c);
+    
+    Coordinate(int x,int y);
+    
+    //声明-(负号)运算符重载,成员函数重载
+//    Coordinate &operator-();
+    
+    //前置++
+//    Coordinate &operator++();
+    
+    //后置++
+    Coordinate operator++(int);
+    
+    //a+b
+//    Coordinate operator+(Coordinate c);
+    
+    //[]，索引负号
+    int operator[](int index);
+    
+    int getX();
+    int getY();
+    
+private:
+    int m_iX;
+    int m_iY;
+};
+
+#endif /* Coordinate_hpp */
+```
+
+Coordinate.cpp
+
+```c++
+Coordinate operator+(Coordinate c1,Coordinate c2){
+    Coordinate temp(0,0);
+        temp.m_iX=c1.m_iX+c2.m_iX;
+        temp.m_iY=c1.m_iY+c2.m_iY;
+        return temp;
+}
+
+ostream &operator<<(ostream &out,Coordinate &c){
+    out<<c.m_iX<<","<<c.m_iY<<endl;
+    return out;
+}
+
+int Coordinate::operator[](int index){
+    if (0==index) {
+        return m_iX;
+    }else if (1==index){
+        return m_iY;
+    }
+    return -1;
+}
+```
+
+测试
+
+```shell
+Coordinate coor(1,3);
+cout<<coor.getX()<<","<<coor.getY()<<endl; //1,3
+
+//-coor;
+//cout<<coor.getX()<<","<<coor.getY()<<endl;
+
+//    ++coor;
+//    cout<<coor.getX()<<","<<coor.getY()<<endl; //2,4
+
+//    cout<<(coor++).getX()<<",";
+//    cout<<(coor++).getY()<<endl; //1,4
+//    cout<<coor.getX()<<","<<coor.getY()<<endl; //3,5
+
+
+//a+b
+Coordinate coor1(2,4);
+Coordinate c3(0,0);
+
+c3=coor+coor1;
+
+//    cout<<c3.getX()<<","<<c3.getY()<<endl; //3,7
+cout<<c3<<endl;
+
+//[]
+cout<<c3[0]<<endl; //3
+cout<<c3[1]<<endl; //7
+cout<<c3[30]<<endl; //-1
+```
 
 # 模板
+
+将类型作为参数传递给函数。
+
+```c++
+template <class T> //函数模板 ，这里的class用typename也行
+T max(T a,T b){ 
+	return (a>b)?a:b;
+}
+```
+
+使用
+
+```c++
+int ival=max(10,100); //没有指定数据类型，这里自动用int实例化一个模板函数
+char cval=max<char>('a','b');//指定了类型
+```
+
+## 函数模板
+
+### 变量作为模板参数
+
+```c++
+template <int size>
+void display(){
+	cout<<size<<endl;
+}
+
+display<10>();
+```
+
+### 多模板参数
+
+```c++
+template <typename T,typename c>
+void display(T a,C b){
+	cout<<a<<" "<<b<<endl;
+}
+
+int a=103;
+string str="hello";
+display<int,string>(a,str);
+```
+
+typename和class可以混用。
+
+下面定义了一些函数模板并使用它
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+void display(T a) {
+    cout<<a<<endl;
+}
+
+template <typename T,class S>
+void display(T t,S s) {
+    cout<<t<<endl;
+    cout<<s<<endl;
+}
+
+template <typename T,int kSize>
+void display(T a) {
+    for (int i=0; i<kSize; i++) {
+        cout<<a<<endl;
+    }
+}
+
+int main(int argc, const char * argv[]) {
+//    display(10);
+//    display<double>(10.18);
+
+//    display<int,double>(10, 20.4);
+    
+    display<int, 4>(3);
+    
+    
+    return 0;
+}
+```
+
+## 类模板
+
+类内定义
+
+```c++
+template <typename T>
+class MyArray{
+public:
+	void display(){
+	...
+	}
+private:
+	T *m_pArr;
+}
+```
+
+类外定义
+
+```c++
+template <typname T>
+void MyArray<T>::display(){
+	...
+}
+```
+
+实例化类
+
+```c++
+MyArray<int> arr;
+arr.display();
+```
+
+注意：暂时模板的定义和声明必须在一个文件中，不能分离
+
+这里我们定义一个MyArray
+
+MyArray.hpp，实现也写道这里离了，所以没有cpp文件
+
+```c++
+#ifndef MyArray_hpp
+#define MyArray_hpp
+
+#include <iostream>
+
+using namespace std;
+
+template <typename T,int kSize,int kVal>
+class MyArray {
+    
+    
+public:
+    MyArray();
+    ~MyArray(){
+        delete []m_pArr;
+        m_pArr=NULL;
+    }
+    void display();
+private:
+    T *m_pArr;
+};
+
+//实现
+template <typename T,int kSize,int kVal>
+MyArray<T,kSize,kVal>::MyArray(){
+    m_pArr=new T[kSize];
+    for (int i=0; i<kSize; i++) {
+        m_pArr[i]=kVal;
+    }
+}
+
+template <typename T,int kSize,int kVal>
+void MyArray<T,kSize,kVal>::display(){
+    for (int i=0; i<kSize; i++) {
+        cout<<m_pArr[i]<<endl;
+    }
+}
+
+
+#endif /* MyArray_hpp */
+```
+
+测试
+
+``` c++
+MyArray<int,4,10> arr;
+arr.display(); //打印4个10
+```
+
+# 标准模板库
+
+STL:standard template lib
+
+## vector向量
+
+对数组的封装
+
+### 初始化方法
+
+| vector<T> v1;      | 保存为T类型，v1默认为空 |
+| ------------------ | ------------- |
+| vector<T> v2(v1);  | v2是v1的副本      |
+| vector<T> v3(n,i); | v3包含n个值为i的元素  |
+| vector<T> v4(n);   | v4包含有n个初始化元素  |
+
+| empty()         | 向量是否为空          |
+| --------------- | --------------- |
+| begin()         | 返回迭代器首元素        |
+| end()           | 返回迭代器末尾元素的下一个元素 |
+| clear()         | 清空向量            |
+| front()         | 第一个元素           |
+| back()          | 最后一个元素          |
+| size()          | 获得向量中数据的个数      |
+| push_back(elem) | 在末尾插入数据         |
+| pop_back()      | 在末尾删除数据         |
+
+## 迭代器iterator
+
+```c++
+vector vec;
+vec.push_back("aa");
+vec.push_back("bb");
+vector<string>::iterator it=vec.begin();
+for(;it!vec.end();it++){
+	cout<<*it<<endl;
+}
+```
+
+```c++
+vector<int> vec;
+
+vec.push_back(3);
+vec.push_back(4);
+vec.push_back(6);
+//
+//    cout<<vec.size()<<endl;
+//    vec.pop_back();
+//    cout<<vec.size()<<endl;
+
+//    for (int i=0; i<vec.size(); i++) {
+//        cout<<vec[i]<<endl;
+//    }
+
+vector<int>::iterator it=vec.begin();
+//    cout<<*it<<endl;//3
+//    for (; it!=vec.end(); it++) {
+//        cout<<*it<<endl;
+//    }
+
+cout<<vec.front()<<endl; //3
+cout<<vec.back()<<endl; //6
+```
+
+
+
+## list链表
+
+和vector使用差不多，插入山数据块
+
+```c++
+list<int> l1;
+l1.push_back(1);
+l1.push_back(10);
+l1.push_back(20);
+
+//list不能使用[]
+//    for (int i=0; i<l1.size(); i++) {
+//        cout<<l1[i]<<endl;
+//    }
+
+
+list<int>::iterator it=l1.begin();
+for (; it!=l1.end(); it++) {
+    cout<<*it<<endl;
+}
+```
+
+## map映射
+
+存储的数据成对，key-value
+
+```c++
+map<int,string> m;
+
+//定义一对
+pair<int,string> p1(10,"shanghai");
+pair<int,string> p2(20,"beijing");
+
+m.insert(p1);
+m.insert(p2);
+
+cout<<m[10]<<endl;
+cout<<m[20]<<endl;
+```
+
+测试
+
+```c++
+map<int,string> m;
+pair<int, string> p1(3,"hello");
+pair<int, string> p2(5,"a");
+
+m.insert(p1);
+m.insert(p2);
+
+//    cout<<m[3]<<endl; //hello
+
+map<int,string>::iterator it=m.begin();
+for (; it!=m.end(); it++) {
+    cout<<it->first<<endl; //key
+    cout<<it->second<<endl; //value
+    cout<<endl;
+}
+```
 
