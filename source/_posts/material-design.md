@@ -48,7 +48,15 @@ colorAccent：每个控件的主色调，比如RatingBar的填充色
 
 android:textColor：所有文本颜色
 
+android:navigationBarColor:屏幕底部导航栏颜色，21才有
 
+# Android历史上重要的版本
+
+14:4.0
+
+19:4.4
+
+21:5.0
 
 
 

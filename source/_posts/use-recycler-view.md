@@ -359,3 +359,64 @@ layoutManager.isAutoMeasureEnabled = true
 ```
 
 这样就不会有问题了
+
+# 瀑布流
+
+## 设置布局管理器
+
+```java
+rv = (RecyclerView) findViewById(R.id.rv);
+rv.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
+```
+
+## 设置高度
+
+```java
+public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
+  MyData data = getData(position);
+  LayoutParams layoutParams = holder.tv.getLayoutParams(); //
+  layoutParams.height=data.getHeight();
+  holder.tv.setBackgroundColor(data.getColor());
+}
+```
+
+通常使用这种方式：
+
+```
+return new ViewHolder(layoutInflater.inflate(R.layout.item_1,parent,false));
+```
+
+但是如果你使用了这种：
+
+```
+return new ViewHolder(View.inflate(context,R.layout.item_1,null));
+```
+
+如果你的item_1里面外层有ViewGroup包裹那也是没问题的，因为holder.tv.getLayoutParams()就能返回值了，如果没有包裹，那这里是空。
+
+但是如果手动传值给parent给他，也会报错，只不过不是这里空指针。
+
+```
+return new ViewHolder(View.inflate(context,R.layout.item_2,parent));
+```
+
+如果这样就会报错：
+
+java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
+
+原因是新创建的view是否添加到布局是由RecyelerView决定的，如果我们手动添加就会导致有两个父类。
+
+解放方式是要么，在外层包裹一个ViewGroup,或者直接使用layoutInflater填充布局。一般不要用View.inflate，这就是偷懒的代价。
+
+## 动态更改List和瀑布流效果
+
+只需要更改布局管理器
+
+```java
+if (isList) {
+  rv.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
+} else {
+  rv.setLayoutManager(new LinearLayoutManager(this));
+}
+```
+
