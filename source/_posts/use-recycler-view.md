@@ -1,6 +1,6 @@
 ---
 title: RecyclerView的使用解析
-date: 2016-07-28 14:10:19
+date: 2017-03-05 10:48:03
 categories: Android
 tags: 
     - RecyclerView
@@ -146,7 +146,6 @@ public abstract class BaseRecyclerViewAdapter<D, VH extends RecyclerView.ViewHol
         void onItemClick(int position);
     }
 }
-
 ```
 
 他定义了data列表对应最终的数据集合，定义了一个条目点击事件接口。接下来我们将整个适配器设置到RecyclerView
@@ -287,10 +286,10 @@ item_divider.xml
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="rectangle">
-    <solid android:color="#f00"/>
-    <size android:height="1dp"/>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:shape="rectangle">
+    <size android:width="10dp" android:height="10dp"/>
+	<solid android:color="#ff0000"/>
 </shape>
 ```
 
@@ -302,39 +301,329 @@ item_divider.xml
 </style>
 ```
 
-//有分割线图
+## LinearLayoutManager
 
-//TODO listview更换方向
+这个布局管理器可以垂直和水平
 
-//GridView
+使用ItemViewDecoration
+
+ItemViewDecoration.java
+
+```java
+package cn.woblog.android;
+
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ItemDecoration;
+import android.support.v7.widget.RecyclerView.LayoutParams;
+import android.support.v7.widget.RecyclerView.State;
+import android.view.View;
+import android.widget.LinearLayout;
+
+/**
+ * Created by renpingqing on 2017/3/4.
+ */
+
+public class ItemViewDecoration extends ItemDecoration {
+
+  private int orientation;
+  private final int[] atts = new int[]{android.R.attr.listDivider};
+  private final Drawable dividerDrawable;
+  private final Context context;
+
+  public ItemViewDecoration(Context context, int orientation) {
+    this.context = context;
+    this.orientation = orientation;
+    TypedArray typedArray = context.obtainStyledAttributes(atts);
+    dividerDrawable = typedArray.getDrawable(0);
+    typedArray.recycle();
+  }
+
+  public ItemViewDecoration(Context context) {
+    this(context, LinearLayout.VERTICAL);
+  }
+
+  @Override
+  public void onDraw(Canvas c, RecyclerView parent, State state) {
+    super.onDraw(c, parent, state);
+    if (isVertical()) {
+      drawVertical(c, parent, state);
+    } else {
+      drawHorizontal(c, parent, state);
+    }
+  }
+
+  private void drawHorizontal(Canvas c, RecyclerView parent, State state) {
+    int top = parent.getPaddingTop();
+    int bottom = parent.getHeight() - parent.getPaddingBottom();
+
+    int childCount = parent.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      View view = parent.getChildAt(i);
+      RecyclerView.LayoutParams params = (LayoutParams) view.getLayoutParams();
+      int left =
+          view.getRight() + params.rightMargin + Math.round(ViewCompat.getTranslationX(view));
+      int right = left + dividerDrawable.getIntrinsicWidth();
+      dividerDrawable.setBounds(left, top, right, bottom);
+      dividerDrawable.draw(c);
+    }
+  }
+
+  private void drawVertical(Canvas c, RecyclerView parent, State state) {
+    int left = parent.getPaddingLeft();
+    int right = parent.getWidth() - parent.getPaddingRight();
+    int childCount = parent.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      View view = parent.getChildAt(i);
+      RecyclerView.LayoutParams params = (LayoutParams) view.getLayoutParams();
+      int top =
+          view.getBottom() + params.bottomMargin + Math.round(ViewCompat.getTranslationY(view));
+      int bottom = top + dividerDrawable.getIntrinsicHeight();
+      dividerDrawable.setBounds(left, top, right, bottom);
+      dividerDrawable.draw(c);
+    }
+  }
+
+  private boolean isVertical() {
+    return orientation == LinearLayout.VERTICAL;
+  }
+
+  public void setOrientation(int orientation) {
+    this.orientation = orientation;
+  }
+
+  @Override
+  public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
+    if (isVertical()) {
+      outRect.set(0, 0, 0, dividerDrawable.getIntrinsicHeight());
+    } else {
+      outRect.set(0, 0, dividerDrawable.getIntrinsicWidth(), 0);
+    }
+  }
+}
+```
+
+### 水平方向
+
+```java
+rv.setLayoutManager(new LinearLayoutManager(this, LinearLayout.HORIZONTAL,false));
+itemViewDecoration = new ItemViewDecoration(this,LinearLayout.HORIZONTAL);
+rv.addItemDecoration(itemViewDecoration);
+```
+
+### 垂直方向
+
+```jade
+rv.setLayoutManager(new LinearLayoutManager(this));
+itemViewDecoration = new ItemViewDecoration(this);
+rv.addItemDecoration(itemViewDecoration);
+```
+
+## GridLayoutManager
+
+使用ItemGridViewDecoration，他里面写了两种情况，一种是四边都有，一种是只有中间才有
+
+```java
+package cn.woblog.android;
+
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ItemDecoration;
+import android.support.v7.widget.RecyclerView.LayoutParams;
+import android.support.v7.widget.RecyclerView.State;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
+import android.widget.LinearLayout;
+
+/**
+ * Created by renpingqing on 2017/3/4.
+ */
+
+public class ItemGridViewDecoration extends ItemDecoration {
+
+  private int orientation;
+  private final int[] atts = new int[]{android.R.attr.listDivider};
+  private final Drawable dividerDrawable;
+  private final Context context;
+  private int spanCount;
+
+  public ItemGridViewDecoration(Context context) {
+    this.context = context;
+    TypedArray typedArray = context.obtainStyledAttributes(atts);
+    dividerDrawable = typedArray.getDrawable(0);
+    typedArray.recycle();
+  }
+
+  @Override
+  public void onDraw(Canvas c, RecyclerView parent, State state) {
+    super.onDraw(c, parent, state);
+    drawVertical(c, parent, state);
+    drawHorizontal(c, parent, state);
+  }
+
+  private void drawHorizontal(Canvas c, RecyclerView parent, State state) {
+    int childCount = parent.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      View view = parent.getChildAt(i);
+      LayoutParams params = (LayoutParams) view.getLayoutParams();
+
+      int c2 = i % spanCount;
+
+      if (i <= spanCount) {
+        //第一行，绘制第一行，顶部
+        int left = view.getLeft() - params.rightMargin - dividerDrawable.getIntrinsicWidth();
+
+        int top = params.bottomMargin;
+//      这里加上dividerDrawable.getIntrinsicWidth()，边框宽度，就可以绘制到下一个格子的左边，如果这里不加，当然也可以加在绘制垂直的时候
+        int right = view.getRight() + params.rightMargin + dividerDrawable.getIntrinsicWidth();
+        int bottom = top + dividerDrawable.getIntrinsicHeight() + params.bottomMargin;
+        dividerDrawable.setBounds(left, top, right, bottom);
+        dividerDrawable.draw(c);
+      }
+
+      //左边减去divider的宽度，就可以绘制最左边的线了
+      int left = view.getLeft() - params.rightMargin - dividerDrawable.getIntrinsicWidth();
+      int top = view.getBottom() + params.bottomMargin;
+//      这里加上dividerDrawable.getIntrinsicWidth()，边框宽度，就可以绘制到下一个格子的左边，如果这里不加，当然也可以加在绘制垂直的时候
+      int right = view.getRight() + params.rightMargin + dividerDrawable.getIntrinsicWidth();
+      int bottom = top + dividerDrawable.getIntrinsicHeight() + params.bottomMargin;
+      dividerDrawable.setBounds(left, top, right, bottom);
+      dividerDrawable.draw(c);
+    }
+  }
+
+  private void drawVertical(Canvas c, RecyclerView parent, State state) {
+    int childCount = parent.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      View view = parent.getChildAt(i);
+      LayoutParams params = (LayoutParams) view.getLayoutParams();
+
+      int c2 = i % spanCount;
+//      if (c2 == 2) {
+      //第一列，左边线
+      int left = params.rightMargin;
+      int top = view.getTop() - params.bottomMargin - dividerDrawable.getIntrinsicHeight(); //就能补齐
+      int right = left + dividerDrawable.getIntrinsicWidth();
+      int bottom = view.getBottom() + params.bottomMargin;
+      dividerDrawable.setBounds(left, top, right, bottom);
+      dividerDrawable.draw(c);
+//      }
+
+      left = view.getRight() + params.rightMargin;
+      top = view.getTop() - params.bottomMargin;
+      right = left + dividerDrawable.getIntrinsicWidth();
+      bottom = view.getBottom() + params.bottomMargin;
+      dividerDrawable.setBounds(left, top, right, bottom);
+      dividerDrawable.draw(c);
 
 
+    }
+  }
+
+  private boolean isVertical() {
+    return orientation == LinearLayout.VERTICAL;
+  }
+
+  public void setOrientation(int orientation) {
+    this.orientation = orientation;
+  }
+
+  @Override
+  public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
+    //左边，右边都偏移divider宽度
+
+    int itemCount = 0;
+    int position = 0;
+
+    if (parent.getLayoutManager() instanceof GridLayoutManager) {
+      GridLayoutManager layoutManager = (GridLayoutManager) parent.getLayoutManager();
+
+      itemCount = layoutManager.getItemCount();
+      position = layoutManager.getPosition(view) + 1;
+      spanCount = layoutManager.getSpanCount();
+    } else if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+      //TODO 显示还有问题
+      StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) parent
+          .getLayoutManager();
+
+      itemCount = layoutManager.getItemCount();
+      position = layoutManager.getPosition(view) + 1;
+      spanCount = layoutManager.getSpanCount();
+    }
+
+    int childSize = parent.getChildCount();
+
+    int rowCount = itemCount / spanCount - 1;
+    int lastRowStart = rowCount * spanCount;
+
+    int c = position % spanCount;
+
+//    //    ---中间，四边都有
+//    if (position <= spanCount) {
+//      //如果是第一列
+//      if (c == 1) {
+//        outRect.set(dividerDrawable.getIntrinsicWidth(), dividerDrawable.getIntrinsicWidth(),
+//            dividerDrawable.getIntrinsicWidth(), dividerDrawable.getIntrinsicHeight());
+//      } else {
+//        outRect.set(0, dividerDrawable.getIntrinsicHeight(), dividerDrawable.getIntrinsicWidth(),
+//            dividerDrawable.getIntrinsicHeight());
+//      }
+//
+//    } else {
+//      //判断是否是第一列
+//      if (c == 1) {
+//        outRect.set(dividerDrawable.getIntrinsicWidth(), 0, dividerDrawable.getIntrinsicWidth(),
+//            dividerDrawable.getIntrinsicHeight());
+//      } else {
+//        outRect
+//            .set(0, 0, dividerDrawable.getIntrinsicWidth(), dividerDrawable.getIntrinsicHeight());
+//      }
+//
+//    }
+//
+//    //    \---中间，四边都有
+
+//    ---只有中间才有分割线
+    if (position > lastRowStart) {
+      //最后一行
+      //最后一列
+      if (c == 0) {
+        outRect.set(0, 0, 0, 0);
+      } else {
+        outRect.set(0, 0, dividerDrawable.getIntrinsicWidth(), 0);
+      }
+    } else {
+      if (c == 0) {
+        outRect.set(0, 0, 0, dividerDrawable.getIntrinsicHeight());
+      } else {
+        outRect
+            .set(0, 0, dividerDrawable.getIntrinsicWidth(), dividerDrawable.getIntrinsicHeight());
+      }
+    }
+
+    //    \---只有中间才有分割线
+  }
 
 
+}
+```
 
+使用的时候添加一个布局管理器和一个分割线
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
+rv.setLayoutManager(new GridLayoutManager(this,3));
+rv.addItemDecoration(new ItemGridViewDecoration(this));
+```
 
 
 
