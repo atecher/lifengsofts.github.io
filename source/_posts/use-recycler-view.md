@@ -9,6 +9,12 @@ tags:
 
 RecyclerView比ListView更灵活，比如我现在是显示一个List，过一会儿需要换成Grid格式，在这种情况下如果使用的是ListView，那我们需要换成GridView等，下面就来看看他的基本使用
 
+# 添加依赖
+
+```groovy
+compile 'com.android.support:design:25.1.0'
+```
+
 # 添加控件到布局文件
 
 ```xml
