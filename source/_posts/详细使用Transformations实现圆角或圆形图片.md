@@ -154,3 +154,5 @@ public class RoundTransformation extends BitmapTransformation {
 到这里大家肯定会说，这个库太方便了，直接就可以用来做个相册并且是有特效那种的，比如：滤镜等，当然这种事啦，大神们早就想到了已经帮你实现好了[glide-transformations](https://github.com/wasabeef/glide-transformations)
 
 还有一个库就是使用Glide加载图片时，可以很完美的使用Android Palette，参考这个库：[GlidePalette](https://github.com/florent37/GlidePalette)
+
+

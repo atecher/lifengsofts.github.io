@@ -313,13 +313,235 @@ dl.addDrawerListener(new DrawerListener() {
 ll_content_container.setTranslationX(ll_left_men_container.getMeasuredWidth()*slideOffset);
 ```
 
+android:layout_gravity="start",一定要设置这个属性
+
+# NavigationView
+
+谷歌侧滑的View。一种规范，用来规范侧滑的样式
+
+Design包中。使用NavigationView，依赖design，recycelerView,CardView。外层还是DrawerLayout，这是Activity布局
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true"
+  tools:context="cn.woblog.android.ls_md_drawerlayout.NavigationActivity">
+
+  <!--内容-->
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></RelativeLayout>
+
+  <android.support.design.widget.NavigationView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    app:headerLayout="@layout/header_menu"
+    app:menu="@menu/navigation_menu"></android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>
+
+```
+
+NavigationView引用了一个菜单和header_menu，header_menu就是一个常规布局用于显示到Item上方。
+
+menu和普通的menu写法一样
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    android:id="@+id/menu_1"
+    android:icon="@android:drawable/ic_menu_add"
+    android:orderInCategory="100"
+    android:title="add" />
+
+  <item
+    android:id="@+id/menu_2"
+    android:icon="@android:drawable/ic_menu_agenda"
+    android:orderInCategory="100"
+    android:title="agenda" />
+
+  <item
+    android:id="@+id/menu_3"
+    android:icon="@android:drawable/ic_menu_call"
+    android:orderInCategory="100"
+    android:title="call" />
+</menu>
+```
+
+还可以有子菜单
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    android:id="@+id/menu_1"
+    android:icon="@android:drawable/ic_menu_add"
+    android:orderInCategory="100"
+    android:title="add" />
+
+  <item
+    android:id="@+id/menu_2"
+    android:icon="@android:drawable/ic_menu_agenda"
+    android:orderInCategory="100"
+    android:title="agenda" />
+
+  <item
+    android:id="@+id/menu_3"
+    android:icon="@android:drawable/ic_menu_call"
+    android:orderInCategory="100"
+    android:title="call">
+    <menu>
+      <item
+        android:id="@+id/menu_31"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:orderInCategory="100"
+        android:title="agenda" />
+
+    </menu>
+  </item>
+</menu>
+```
+
+# SnackBar
+
+一个新的toast，和Dialog中间的产物。design中s
+
+Toast:用户无法交互
+
+Dialog:打断用户。
+
+他结合了两种
+
+基本使用
+
+```java
+Snackbar s=Snackbar.make(view,"打开GPS?",Snackbar.LENGTH_LONG);
+//按钮，不能设置多个，后面的覆盖前面的
+s.setAction("确定", new OnClickListener() {
+  @Override
+  public void onClick(View v) {
+    showToast(null);
+  }
+});
+//监听关闭，打开
+s.addCallback(new Callback(){
+  @Override
+  public void onShown(Snackbar sb) {
+    super.onShown(sb);
+  }
+
+  @Override
+  public void onDismissed(Snackbar transientBottomBar, int event) {
+    super.onDismissed(transientBottomBar, event);
+  }
+});
+
+//按钮颜色
+s.setActionTextColor(Color.RED);
+
+s.show();
+```
 
 
 
+Android Resource Navigator：源码查看器
+
+Android SDK Search:
 
 
 
+如果想更改消息的颜色，可以通过更改项目的样式
 
+```xml
+<item name="android:textSize">@dimen/design_snackbar_text_size</item>
+<item name="android:textColor">?android:textColorPrimary</item>
+```
+
+但是这样就更改了全局样式。
+
+# TextInputLayout
+
+带提示的信息的EditText
+
+```xml
+<android.support.design.widget.TextInputLayout
+  android:layout_width="match_parent"
+  app:hintAnimationEnabled="false"
+  android:layout_height="wrap_content">
+  <EditText
+    android:layout_width="match_parent"
+    android:hint="请输入密码"
+    android:layout_height="wrap_content" />
+</android.support.design.widget.TextInputLayout>
+```
+
+app:hintAnimationEnabled="false"：是否开启提示文字动画
+
+app:errorEnabled="true":是否开启错误提示，但是你的自定义什么错误
+
+ app:counterOverflowTextAppearance=""  超出字符数文字样式
+
+app:counterTextAppearance=""
+app:errorTextAppearance=""
+
+计数
+
+```java
+til = (TextInputLayout) findViewById(R.id.til);
+//    til.getEditText().addTextChangedListener();
+
+    //计数
+    til.setCounterEnabled(true);
+    til.setCounterMaxLength(10);
+```
+
+```java
+til.getEditText().addTextChangedListener(new MinLengthTextWatch(til,"长度应低于6"));
+
+```
+
+```java
+//自定义错误
+class MinLengthTextWatch implements TextWatcher{
+
+    private final TextInputLayout textInputLayout;
+    private final String message;
+
+    public MinLengthTextWatch(TextInputLayout textInputLayout,String message) {
+      this.textInputLayout=textInputLayout;
+      this.message=message;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+      if (textInputLayout.getEditText().getText().toString().length() <= 6) {
+        textInputLayout.setErrorEnabled(false);
+      } else {
+        textInputLayout.setErrorEnabled(true);
+        textInputLayout.setError(message);
+      }
+    }
+}
+```
 
 
 
