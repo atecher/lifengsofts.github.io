@@ -543,10 +543,77 @@ class MinLengthTextWatch implements TextWatcher{
 }
 ```
 
+# ToolBar
+
+ActionBar:3.0,也就是兼容包,google规范了导航，但是不好用，扩展性不好。多数人用民间ActionBar，是SherlockActionBar,后面google重新定义了ToolBar,在MD中有AppBar
+
+作用：导航-显示标题，导航back，会计操作，操蛋，toolbar不一定放在顶部，也可以底部
 
 
 
+使用：
+
+1.引入v7-appcompat
+
+2.使用appcompatActivity
+
+3.修改主题为Theme.AppCompat.Light.NoActionBar
+
+4.然后在布局中添加Toolbar
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l10_md_toolbar.MainActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimary"
+    app:logo="@mipmap/ic_launcher"
+    app:navigationIcon="@android:drawable/ic_menu_upload"
+    app:subtitle="副标题"
+    app:title="这是标题">
+    <!--<TextView-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:layout_gravity="center"-->
+      <!--android:text="这是其他文本" />-->
+  </android.support.v7.widget.Toolbar>
+
+</LinearLayout>
+
+```
+
+5.替换默认的actionBar
+
+```java
+Toolbar tb= (Toolbar) findViewById(R.id.tb);
+    setSupportActionBar(tb);
+```
+
+//text 默认覆盖了 toolbar的字
+
+监听返回按钮
+
+```java
+tb.setNavigationOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
+```
+
+app:popupTheme="@style/ThemeOverlay.AppCompat.Dark":修改弹出窗体也就是右上角菜单的样式
 
 
 
+# SearchView
 
