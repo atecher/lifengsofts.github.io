@@ -617,3 +617,353 @@ app:popupTheme="@style/ThemeOverlay.AppCompat.Dark":修改弹出窗体也就是�
 
 # SearchView
 
+可以实现在Toolbar上显示一个搜索框
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+  <item
+    android:id="@+id/menu_search"
+    app:actionViewClass="android.support.v7.widget.SearchView"
+    android:icon="@android:drawable/ic_menu_search"
+    android:title="搜索"
+    app:showAsAction="always" />
+  <item
+    android:id="@+id/menu_share"
+    android:icon="@android:drawable/ic_menu_share"
+    android:title="分享" />
+  <item
+    android:id="@+id/menu_more"
+    android:icon="@android:drawable/ic_menu_more"
+    android:title="更多"
+    app:showAsAction="never" />
+</menu>
+```
+
+然后在activity中添加，显示menu，还可以设置一些监听器
+
+```java
+package cn.woblog.android.l10_md_toolbar;
+
+import android.graphics.Color;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.SearchView.SearchAutoComplete;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    Toolbar tb= (Toolbar) findViewById(R.id.tb);
+    setSupportActionBar(tb);
+
+    tb.setNavigationOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main,menu);
+    //SearchView在menu中
+    MenuItem item = menu.findItem(R.id.menu_search);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    //进来就呈现搜索框
+//    searchView.setIconified(false);
+    //不能取消这个搜索框
+//    searchView.setIconifiedByDefault(false);
+
+    //自定义扩展,更改提示和颜色
+    SearchView.SearchAutoComplete searchEditTextView = (SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
+    searchEditTextView.setHint("请输入商品名称");
+    searchEditTextView.setHintTextColor(Color.WHITE);
+
+  searchView.setSubmitButtonEnabled(true);
+
+    //想AutoCompleteTextView提示
+//    searchView.setSuggestionsAdapter();
+
+
+    //进入查询
+    searchView.setOnQueryTextFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+
+
+      }
+
+    });
+
+    //关闭
+//    searchView.setOnCloseListener();
+    //搜索按钮
+//    searchView.setOnSearchClickListener(/);
+
+    //文本变化
+    searchView.setOnQueryTextListener(new OnQueryTextListener() {
+      @Override
+      public boolean onQueryTextSubmit(String query) {
+        //点击提交时
+        return false;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String newText) {
+        return false;
+      }
+    });
+
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.menu_share:
+        Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
+        break;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+}
+
+```
+
+# 滑动是状态栏变透明
+
+重点：
+
+```
+android:paddingTop="?attr/actionBarSize" //padding
+android:clipToPadding="false" //绘制范围是否在padding里面，
+android:clipChildren="false" //子控件是否超出padding区域
+```
+
+布局
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l10_md_toolbar_translucent.MainActivity">
+
+  <cn.woblog.android.l10_md_toolbar_translucent.MyScrollView
+    android:layout_width="match_parent"
+    android:id="@+id/sv"
+    android:paddingTop="?attr/actionBarSize"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+
+      android:orientation="vertical">
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+      <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="button" />
+    </android.support.v7.widget.LinearLayoutCompat>
+  </cn.woblog.android.l10_md_toolbar_translucent.MyScrollView>
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:layout_width="match_parent"
+    android:background="?attr/colorPrimary"
+    app:title="标题"
+    android:layout_height="?attr/actionBarSize">
+
+  </android.support.v7.widget.Toolbar>
+</RelativeLayout>
+
+```
+
+自定义scrollView
+
+```java
+package cn.woblog.android.l10_md_toolbar_translucent;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.ScrollView;
+
+/**
+ * Created by renpingqing on 2017/3/10.
+ */
+
+public class MyScrollView extends ScrollView {
+
+  private  ScrollListener scrollListener;
+
+  public void setScrollListener(ScrollListener scrollListener) {
+    this.scrollListener = scrollListener;
+  }
+
+  public MyScrollView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
+
+  @Override
+  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    super.onScrollChanged(l, t, oldl, oldt);
+
+    if (scrollListener != null) {
+
+//      滑出去的高度/屏幕高度
+      int scrollY=getScrollY();
+      int height=getContext().getResources().getDisplayMetrics().heightPixels;
+
+      double v = height * 1.0 / 3.0;
+      if (scrollY<= v) {
+        scrollListener.onScroll((float) (1- (scrollY*1.0/v))); //1~0
+      }
+
+    }
+  }
+
+
+}
+```
+
+使用
+
+```java
+package cn.woblog.android.l10_md_toolbar_translucent;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+
+public class MainActivity extends AppCompatActivity implements ScrollListener {
+
+  private Toolbar tb;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    tb = (Toolbar) findViewById(R.id.tb);
+
+    setSupportActionBar(tb);
+
+    MyScrollView sv= (MyScrollView) findViewById(R.id.sv);
+
+    sv.setScrollListener(this);
+  }
+
+  @Override
+  public void onScroll(float alpha) {
+    Log.d("TAG","a:"+alpha);
+    tb.setAlpha(alpha);
+  }
+}
+
+```
+
+# Palette
+
+调色板，v7-palette，可以分析出一些色彩特性,主色调，鲜艳的颜色，柔和的颜色等。
+
