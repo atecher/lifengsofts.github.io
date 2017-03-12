@@ -1505,5 +1505,330 @@ private int getStatusBarHeight() {
 
 3.修改toolbar的padding，比上面那种靠谱
 
+# 虚拟导航NavigationBar沉浸
 
+## 5.x
+
+### 属性
+
+navigationBarColor
+
+values-v21下设置
+
+```
+<item name="android:navigationBarColor">#0f0</item>
+```
+
+### 代码
+
+setNavigationBarColor
+
+## 4.4
+
+设置虚拟导航透明
+
+跟scrollView设置一个marginBottom或者添加一个TextView,48dp，但是要在代码中动态判断，因为有些手机可以没有虚拟导航栏
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:background="@color/colorPrimary"
+  tools:context="cn.woblog.android.l13mdtranslucent.MainActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:layout_width="match_parent"
+    android:titleTextColor="#fff"
+    android:fitsSystemWindows="true"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    app:title="这是toolbar标题"></android.support.v7.widget.Toolbar>
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:background="#fff">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+    </LinearLayout>
+  </ScrollView>
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:id="@+id/tv_navigation_bar"/>
+</LinearLayout>
+
+```
+
+
+
+```
+//导航栏
+ViewGroup.LayoutParams params = tv_navigation_bar.getLayoutParams();
+params.height=getNavigationBarHeight();
+tv_navigation_bar.setLayoutParams(params);
+```
+
+```
+private int getNavigationBarHeight() {
+  //反射android.R.dimen.status_bar_height
+  try {
+    Class<?> aClass = Class.forName("com.android.internal.R$dimen");
+    Object o = aClass.newInstance();
+    String status_bar_height = aClass.getField("navigation_bar_height").get(o).toString();
+    int height = Integer.parseInt(status_bar_height); //id
+    int dimensionPixelOffset = getResources().getDimensionPixelSize(height);
+    return dimensionPixelOffset;
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+  return 0;
+}
+```
+
+
+
+## 兼容性判断
+
+1.sdk版本不一样
+
+​	大于等于5.0，小于5.0大于等于4.4
+
+2.有的没有虚拟导航
+
+​	是否有（源码有方法）
+
+3.有的虚拟导航可以隐藏
+
+​	是否隐藏了
+
+2，3可以一起解决，解决方法是navigationBarHeight高度=这个那个屏幕高度-内容部分view高度，如果大于0表示有
+
+封装完成如下
+
+```java
+package cn.woblog.android.l13mdtranslucent;
+
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager.LayoutParams;
+
+/**
+ * Created by renpingqing on 2017/3/12.
+ */
+
+public class BaseTranslucentActivity extends AppCompatActivity {
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    //版本大于等于4.4，小于5.0就设置状态栏，导航栏透明
+    if (VERSION.SDK_INT>= VERSION_CODES.KITKAT &&VERSION.SDK_INT<VERSION_CODES.LOLLIPOP ) {
+      getWindow().addFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      getWindow().addFlags(LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    }
+  }
+
+  public void setOrChangeTranslucentColor( Toolbar toolbar,View bottomNavigationBar,int primaryColor){
+    //版本大于等于4.4，小于5.0就设置状态栏，导航栏透明
+    if (VERSION.SDK_INT >= VERSION_CODES.KITKAT && VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
+      if (toolbar != null) {
+        //1.设置toolbar高度
+        ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
+        layoutParams.height+=getStatusBarHeight();
+        toolbar.setLayoutParams(layoutParams);
+
+        //2.然后在设置顶部的padding,这样就不会有控件跑到状态栏下面了
+        toolbar.setPadding(
+            toolbar.getPaddingLeft(),
+            toolbar.getPaddingTop()+getStatusBarHeight(),
+            toolbar.getPaddingRight(),
+            toolbar.getPaddingBottom()
+        );
+
+        toolbar.setBackgroundColor(primaryColor);
+      }
+
+      //导航栏
+      if (bottomNavigationBar != null) {
+        //导航栏
+        ViewGroup.LayoutParams params = bottomNavigationBar.getLayoutParams();
+        params.height=getNavigationBarHeight();
+        bottomNavigationBar.setLayoutParams(params);
+
+        //设置导航栏颜色
+        bottomNavigationBar.setBackgroundColor(primaryColor);
+      }
+    } else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      //大于等于5.0
+      getWindow().setStatusBarColor(primaryColor);
+    getWindow().setNavigationBarColor(primaryColor);
+
+    } else {
+      //小于4.4,不处理
+    }
+  }
+
+  private int getNavigationBarHeight() {
+    //反射android.R.dimen.status_bar_height
+    try {
+      Class<?> aClass = Class.forName("com.android.internal.R$dimen");
+      Object o = aClass.newInstance();
+      String status_bar_height = aClass.getField("navigation_bar_height").get(o).toString();
+      int height = Integer.parseInt(status_bar_height); //id
+      int dimensionPixelOffset = getResources().getDimensionPixelSize(height);
+      return dimensionPixelOffset;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0;
+  }
+
+  private int getStatusBarHeight() {
+    //反射android.R.dimen.status_bar_height
+    try {
+      Class<?> aClass = Class.forName("com.android.internal.R$dimen");
+      Object o = aClass.newInstance();
+      String status_bar_height = aClass.getField("status_bar_height").get(o).toString();
+      int height = Integer.parseInt(status_bar_height); //id
+      int dimensionPixelOffset = getResources().getDimensionPixelSize(height);
+      return dimensionPixelOffset;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0;
+  }
+}
+
+```
+
+然后在activity里这么使用
+
+```
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+Toolbar toolbar= (Toolbar) findViewById(R.id.tb);
+    TextView tv_navigation_bar= (TextView) findViewById(R.id.tv_navigation_bar);
+
+    setOrChangeTranslucentColor(toolbar,tv_navigation_bar,getResources().getColor(R.color.colorPrimary));
+```
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:background="@color/colorPrimary"
+  tools:context="cn.woblog.android.l13mdtranslucent.MainActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:layout_width="match_parent"
+    android:titleTextColor="#fff"
+    android:fitsSystemWindows="true"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    app:title="这是toolbar标题"></android.support.v7.widget.Toolbar>
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:background="#fff">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+    </LinearLayout>
+  </ScrollView>
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:id="@+id/tv_navigation_bar"/>
+</LinearLayout>
+
+```
 
