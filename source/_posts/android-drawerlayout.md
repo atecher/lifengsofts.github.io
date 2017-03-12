@@ -967,3 +967,543 @@ public class MainActivity extends AppCompatActivity implements ScrollListener {
 
 调色板，v7-palette，可以分析出一些色彩特性,主色调，鲜艳的颜色，柔和的颜色等。
 
+```java
+BitmapDrawable bitmapDrawable = (BitmapDrawable) iv.getDrawable();
+    Bitmap bitmap = bitmapDrawable.getBitmap();
+//    Palette palette = Palette.generate(bitmap); //不推荐
+    Palette.from(bitmap).generate(new PaletteAsyncListener() {
+      @Override
+      public void onGenerated(Palette palette) {
+        //暗，柔和
+        int darkMutedColor = palette.getDarkMutedColor(Color.BLUE);
+        //暗，鲜艳
+        int darkVibrantColor = palette.getDarkVibrantColor(Color.BLUE);
+        //亮，柔和
+        int lightMutedColor = palette.getLightMutedColor(Color.BLUE);
+        //亮，鲜艳
+        int lightVibrantColor = palette.getLightVibrantColor(Color.BLUE);
+
+        //鲜艳
+        int vibrantColor = palette.getVibrantColor(Color.BLUE);
+        //柔和
+        int mutedColor = palette.getMutedColor(Color.BLUE);
+
+        tv1.setBackgroundColor(darkMutedColor);
+        tv2.setBackgroundColor(darkVibrantColor);
+        tv3.setBackgroundColor(lightMutedColor);
+        tv4.setBackgroundColor(lightVibrantColor);
+        tv5.setBackgroundColor(vibrantColor);
+        tv6.setBackgroundColor(mutedColor);
+
+        //颜色样板，拿到亮，鲜艳的
+        Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
+        //推荐，标题颜色
+        int titleTextColor = lightVibrantSwatch.getTitleTextColor();
+        int bodyTextColor = lightVibrantSwatch.getBodyTextColor();
+        //该颜色在图片中所占的比例
+        int population = lightVibrantSwatch.getPopulation();
+        //图片的整体颜色
+        int rgb = lightVibrantSwatch.getRgb();
+
+        tv_title.setBackgroundColor(getTranslucentColor(0.6,rgb));
+        tv_body.setBackgroundColor(rgb);
+
+        tv_title.setTextColor(titleTextColor);
+        tv_body.setTextColor(bodyTextColor);
+      }
+
+
+    });
+```
+
+```java
+private int getTranslucentColor(double v, int rgb) {
+//    int blue=rgb&0xff;
+
+    int blue=Color.blue(rgb); //还可以这样那
+
+    int green=rgb>>8&0xff;
+    int red=rgb>>16&0xff;
+    int alpha=rgb>>>24; //无符号，高位补0
+    alpha= (int) Math.round(alpha*v);
+    return Color.argb(alpha,red,green,blue);
+  }
+```
+
+# TabLayout
+
+选项卡,design包
+
+TabLayout+viewPager+fragment
+
+布局
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:orientation="vertical"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l12_md_tablayout.MainActivity">
+
+  <android.support.design.widget.TabLayout
+    android:id="@+id/tl"
+    app:tabIndicatorColor="@color/colorPrimary"
+    app:tabTextColor="@color/colorPrimary"
+    app:tabSelectedTextColor="#f00"
+    app:tabMode="fixed"
+    app:tabGravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></android.support.design.widget.TabLayout>
+
+  <android.support.v4.view.ViewPager
+    android:id="@+id/vp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+</LinearLayout>
+
+```
+
+```java
+package cn.woblog.android.l12_md_tablayout;
+
+import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.OnTabSelectedListener;
+import android.support.design.widget.TabLayout.Tab;
+import android.support.design.widget.TabLayout.TabLayoutOnPageChangeListener;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+
+  private String[] titles={"新闻","体验"
+//      ,"科学","汽车",
+//  "科技","财经","美女","八卦"
+  };
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    final ViewPager vp= (ViewPager) findViewById(R.id.vp);
+    TabLayout tl= (TabLayout) findViewById(R.id.tl);
+
+    MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+    vp.setAdapter(myPagerAdapter);
+    //title 来自PagerAdapter
+  tl.setTabsFromPagerAdapter(myPagerAdapter);
+
+  //1.tab和viewpager关联
+    tl.addOnTabSelectedListener(new OnTabSelectedListener() {
+      @Override
+      public void onTabSelected(Tab tab) {
+        //联动viewpager
+        vp.setCurrentItem(tab.getPosition());
+      }
+
+      @Override
+      public void onTabUnselected(Tab tab) {
+
+      }
+
+      @Override
+      public void onTabReselected(Tab tab) {
+
+      }
+    });
+
+//    2.viewpager关联tab
+    vp.addOnPageChangeListener(new TabLayoutOnPageChangeListener(tl));
+  }
+  class  MyPagerAdapter extends FragmentPagerAdapter{
+
+    public MyPagerAdapter(FragmentManager fm) {
+      super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+      NewsFragment fragment = new NewsFragment();
+      Bundle bundle = new Bundle();
+      bundle.putString(NewsFragment.DATA,titles[position]);
+      fragment.setArguments(bundle);
+      return fragment;
+    }
+
+    @Override
+    public int getCount() {
+      return titles.length;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+      return titles[position];
+    }
+  }
+}
+
+```
+
+上面关联tabLayout和ViewPager可以这样关联
+
+```java
+tl.setupWithViewPager(vp);
+```
+
+
+
+# 当tab使用和自定义View
+
+只需要将tabLyout放到底部，自定义item，但是Item要定义高度，但是选中的颜色需要特别处理。
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:orientation="vertical"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l12_md_tablayout.MainActivity">
+
+  <android.support.v4.view.ViewPager
+    android:id="@+id/vp"
+    android:layout_width="match_parent"
+    android:layout_height="0dp" android:layout_weight="1"></android.support.v4.view.ViewPager>
+
+  <android.support.design.widget.TabLayout
+    android:id="@+id/tl"
+    app:tabIndicatorHeight="0dp"
+    app:tabIndicatorColor="@color/colorPrimary"
+    app:tabTextColor="@color/colorPrimary"
+    app:tabSelectedTextColor="#f00"
+    app:tabMode="fixed"
+    app:tabGravity="fill"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></android.support.design.widget.TabLayout>
+</LinearLayout>
+
+```
+
+代码
+
+```java
+package cn.woblog.android.l12_md_tablayout;
+
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.Tab;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+  private String[] titles={"新闻","体验"
+//      ,"科学","汽车",
+//  "科技","财经","美女","八卦"
+  };
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    final ViewPager vp= (ViewPager) findViewById(R.id.vp);
+    TabLayout tl= (TabLayout) findViewById(R.id.tl);
+
+    MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+    vp.setAdapter(myPagerAdapter);
+    //title 来自PagerAdapter
+  tl.setTabsFromPagerAdapter(myPagerAdapter);
+
+//  //1.tab和viewpager关联
+//    tl.addOnTabSelectedListener(new OnTabSelectedListener() {
+//      @Override
+//      public void onTabSelected(Tab tab) {
+//        //联动viewpager
+//        vp.setCurrentItem(tab.getPosition());
+//      }
+//
+//      @Override
+//      public void onTabUnselected(Tab tab) {
+//
+//      }
+//
+//      @Override
+//      public void onTabReselected(Tab tab) {
+//
+//      }
+//    });
+//
+////    2.viewpager关联tab
+//    vp.addOnPageChangeListener(new TabLayoutOnPageChangeListener(tl));
+
+    //在setAdapter后调用
+    tl.setupWithViewPager(vp);
+
+    //自定义view
+    for (int i = 0; i < tl.getTabCount(); i++) {
+      Tab tab = tl.getTabAt(i);
+      View view = View.inflate(this, R.layout.item_tab, null);
+     TextView tv_tab_title= (TextView) view.findViewById(R.id.tv_tab_title);
+      tv_tab_title.setText("标题："+i);
+      tab.setCustomView(view);
+
+      //分割线
+      LinearLayout linearLayout = (LinearLayout) tl.getChildAt(0);
+      linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+      linearLayout.setDividerDrawable(ContextCompat.getDrawable(this,
+          R.drawable.item_divider));
+      linearLayout.setDividerPadding(40); //值越大，线越短
+
+
+    }
+  }
+  class  MyPagerAdapter extends FragmentPagerAdapter{
+
+    public MyPagerAdapter(FragmentManager fm) {
+      super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+      NewsFragment fragment = new NewsFragment();
+      Bundle bundle = new Bundle();
+      bundle.putString(NewsFragment.DATA,titles[position]);
+      fragment.setArguments(bundle);
+      return fragment;
+    }
+
+    @Override
+    public int getCount() {
+      return titles.length;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+      return titles[position];
+    }
+  }
+}
+
+```
+
+现在还需要处理，选中颜色，首先需要定义一个selector
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+  <solid android:color="#80c0c0c0"/>
+  <size android:width="1dp"/>
+</shape>
+```
+
+然后在item里面引用这个
+
+```xml
+<TextView
+    android:textColor="@drawable/selector_tab_text"
+    android:id="@+id/tv_tab_title"
+    android:text="标题"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp" android:layout_weight="1" />
+  </LinearLayout>
+```
+
+选中处理
+
+```java
+//处理选中监听
+    tl.addOnTabSelectedListener(new OnTabSelectedListener() {
+      @Override
+      public void onTabSelected(Tab tab) {
+        tab.getCustomView().findViewById(R.id.tv_tab_title).setSelected(true);
+      }
+
+      @Override
+      public void onTabUnselected(Tab tab) {
+        tab.getCustomView().findViewById(R.id.tv_tab_title).setSelected(false);
+      }
+
+      @Override
+      public void onTabReselected(Tab tab) {
+
+      }
+    });
+```
+
+# 澄清是
+
+让整个app沉浸到整个屏幕，没有显示状态栏，美有导航栏。显示做的是，状态栏和导航和app一体的颜色，还有考虑兼容性。兼容到4.4
+
+## 5.0
+
+自定实现了，但是要用AppCompat主题
+
+### 设置主题
+
+值是colorPrimaryDark
+
+### 样式属性
+
+在values-v21及以上可以用这句话设置导航栏颜色
+
+```
+<item name="android:navigationBarColor">#0f0</item>
+    <item name="android:statusBarColor">#0f0</item>
+```
+
+### 代码
+
+```java
+getWindow().setStatusBarColor(Color.YELLOW);
+    getWindow().setNavigationBarColor(Color.RED);
+```
+
+## 4.4 19
+
+只能使用特殊手段，特殊手段就是这个版本中可以设置状态栏为透明
+
+### 样式
+
+不推荐，只能设置19，而且写到主题的。
+
+```
+<item name="android:windowTranslucentStatus">true</item>
+```
+
+### 代码
+
+```java
+getWindow().addFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS);
+```
+
+布局内部，的toolbar上
+
+```
+android:fitsSystemWindows="true"
+```
+
+在setCOntentView前，另外界面到了状态栏下面了，但现在有问题了，就是如果有EditText,只要弹出键盘，toolbar的颜色就会连接到键盘顶部（6.0,4.4没有）。还有就是toolbar标题在最地步了。去掉外层的scrollview就可以了
+
+1.解决办法，推荐
+
+将  android:fitsSystemWindows="true"，移动根布局，然后在设置一个背景(也可以设置android:windowBackground,默认主题里)，还得给内容设置白色。
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="?attr/colorPrimary"
+  android:fitsSystemWindows="true"
+  android:orientation="vertical"
+  tools:context="cn.woblog.android.l13mdtranslucent.MainActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    app:title="这是toolbar标题"></android.support.v7.widget.Toolbar>
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="清输入名字" />
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>
+
+```
+
+2.修改toolbal的高度
+
+设置
+
+```
+android:fitsSystemWindows="true"
+```
+
+到Toolbar,然后修改toolbar高度
+
+```
+ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
+layoutParams.height+=getStatusBarHeight();
+toolbar.setLayoutParams(layoutParams);
+
+//反射
+private int getStatusBarHeight() {
+    //反射android.R.dimen.status_bar_height
+    try {
+      Class<?> aClass = Class.forName("com.android.internal.R$dimen");
+      Object o = aClass.newInstance();
+      String status_bar_height = aClass.getField("status_bar_height").get(o).toString();
+      int height = Integer.parseInt(status_bar_height); //id
+      int dimensionPixelOffset = getResources().getDimensionPixelSize(height);
+      return dimensionPixelOffset;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0;
+  }
+```
+
+3.修改toolbar的padding，比上面那种靠谱
+
+
+
