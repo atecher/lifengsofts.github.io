@@ -1894,3 +1894,447 @@ public void rotate(View view) {
   }
 ```
 
+# RV+FAB+TB
+
+实现的效果就是滚动RV，然后分别隐藏FAB和TB
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l16mdfabanimation.MainActivity">
+
+  <android.support.v7.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:id="@+id/rv"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:paddingTop="?attr/actionBarSize"
+    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
+
+  <ImageView
+    android:id="@+id/fab"
+    android:layout_width="58dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:layout_height="58dp"
+    android:layout_margin="16dp"
+    android:background="@drawable/fab_bg"
+    android:src="@android:drawable/ic_input_add" />
+</RelativeLayout>
+
+```
+
+```java
+package cn.woblog.android.l16mdfabanimation;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+  private static final int THRESHOLD = 20;
+
+  private Toolbar tb;
+  private ImageView fab;
+  private RecyclerView rv;
+  private boolean isVisiable=true;
+  private int distance;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    rv = (RecyclerView) findViewById(R.id.rv);
+    tb = (Toolbar) findViewById(R.id.tb);
+    fab = (ImageView) findViewById(R.id.fab);
+
+    setSupportActionBar(tb);
+
+    rv.addOnScrollListener(new OnScrollListener() {
+      @Override
+      public void onScrolled(RecyclerView recyclerView, int dx,int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        Log.d("TAG","dy:"+dy);
+        //dy 垂直方向的，滚动值正，向上滚动，要隐藏
+        if (distance > THRESHOLD && isVisiable) {
+          //dy为正，表示
+          isVisiable = false;
+          hide();
+          distance = 0;
+        } else if (distance<-THRESHOLD&&!isVisiable) {
+        //如果值，小于，并且没有显示，那就显示
+          isVisiable=true;
+          show();
+          distance = 0;
+        }
+
+        //累加滚动距离distance
+        if ((isVisiable&& dy>0)||(!isVisiable&&dy<0)) {
+        distance+=dy;
+        }
+      }
+    });
+
+    rv.setLayoutManager(new LinearLayoutManager(this));
+
+    ArrayList<String> strings = new ArrayList<>();
+    for (int i = 0; i < 50; i++) {
+      strings.add("item:"+i);
+    }
+    MyAdapter myAdapter = new MyAdapter(strings);
+
+    rv.setAdapter(myAdapter);
+  }
+
+  private void show() {
+  //和hide逻辑相反
+    tb.animate().translationY(0).setInterpolator(new AccelerateInterpolator(3));
+
+    RelativeLayout.LayoutParams layoutParams= (RelativeLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
+  }
+
+  private void hide() {
+    //toolbar，向上移动，自己的高度
+    tb.animate().translationY(-tb.getHeight()).setInterpolator(new AccelerateInterpolator(3));
+
+    //fab向下移动，自己的高度和底部的高度
+    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(fab.getHeight()+layoutParams.bottomMargin).setInterpolator(new AccelerateInterpolator(3));
+  }
+
+  private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+    private final ArrayList<String> strings;
+
+    public MyAdapter(ArrayList<String> strings) {
+      this.strings=strings;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1,parent,false));
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+
+      String s = strings.get(position);
+      MyViewHolder holder1= (MyViewHolder) holder;
+      holder1.tv.setText(s);
+    }
+
+    @Override
+    public int getItemCount() {
+      return strings.size();
+    }
+
+    private class MyViewHolder extends ViewHolder {
+
+      public TextView tv;
+
+      public MyViewHolder(View inflate) {
+        super(inflate);
+        tv = (TextView) itemView.findViewById(android.R.id.text1);
+      }
+    }
+  }
+}
+
+```
+
+
+
+# CoordinatorLayout
+
+上面那种实现方法我们还得写监听器，继承ViewGroup,协调并掉拥堵子控件，产生一些效果。
+
+通过设置View的Behavior来设置触摸动画的调度。
+
+## Behavior
+
+他是监听和被监听的桥梁，被监听通知Behavior，我们在Behavior里更改监听控件，这里是监听RV,更改FAB
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l16mdfabanimation.MainActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/tb"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
+
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab"
+    android:layout_width="58dp"
+    app:layout_behavior="cn.woblog.android.l16mdfabanimation.FabBehavior"
+    android:layout_height="58dp"
+    android:layout_margin="16dp"
+    android:background="@drawable/fab_bg"
+    android:layout_gravity="bottom|end"
+    android:src="@android:drawable/ic_input_add" />
+
+  <android.support.v7.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:id="@+id/rv"
+
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:paddingTop="?attr/actionBarSize"
+    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+</android.support.design.widget.CoordinatorLayout>
+
+```
+
+```java
+package cn.woblog.android.l16mdfabanimation;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+  private static final int THRESHOLD = 20;
+
+  private Toolbar tb;
+  private FloatingActionButton fab;
+  private RecyclerView rv;
+  private boolean isVisiable=true;
+  private int distance;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    rv = (RecyclerView) findViewById(R.id.rv);
+    tb = (Toolbar) findViewById(R.id.tb);
+    fab = (FloatingActionButton) findViewById(R.id.fab);
+
+    setSupportActionBar(tb);
+
+//    rv.addOnScrollListener(new OnScrollListener() {
+//      @Override
+//      public void onScrolled(RecyclerView recyclerView, int dx,int dy) {
+//        super.onScrolled(recyclerView, dx, dy);
+//        Log.d("TAG","dy:"+dy);
+//        //dy 垂直方向的，滚动值正，向上滚动，要隐藏
+//        if (distance > THRESHOLD && isVisiable) {
+//          //dy为正，表示
+//          isVisiable = false;
+//          hide();
+//          distance = 0;
+//        } else if (distance<-THRESHOLD&&!isVisiable) {
+//        //如果值，小于，并且没有显示，那就显示
+//          isVisiable=true;
+//          show();
+//          distance = 0;
+//        }
+//
+//        //累加滚动距离distance
+//        if ((isVisiable&& dy>0)||(!isVisiable&&dy<0)) {
+//        distance+=dy;
+//        }
+//      }
+//    });
+
+    rv.setLayoutManager(new LinearLayoutManager(this));
+
+    ArrayList<String> strings = new ArrayList<>();
+    for (int i = 0; i < 50; i++) {
+      strings.add("item:"+i);
+    }
+    MyAdapter myAdapter = new MyAdapter(strings);
+
+    rv.setAdapter(myAdapter);
+  }
+
+  private void show() {
+  //和hide逻辑相反
+    tb.animate().translationY(0).setInterpolator(new AccelerateInterpolator(3));
+
+    RelativeLayout.LayoutParams layoutParams= (RelativeLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
+  }
+
+  private void hide() {
+    //toolbar，向上移动，自己的高度
+    tb.animate().translationY(-tb.getHeight()).setInterpolator(new AccelerateInterpolator(3));
+
+    //fab向下移动，自己的高度和底部的高度
+    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(fab.getHeight()+layoutParams.bottomMargin).setInterpolator(new AccelerateInterpolator(3));
+  }
+
+  private class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+    private final ArrayList<String> strings;
+
+    public MyAdapter(ArrayList<String> strings) {
+      this.strings=strings;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1,parent,false));
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+
+      String s = strings.get(position);
+      MyViewHolder holder1= (MyViewHolder) holder;
+      holder1.tv.setText(s);
+    }
+
+    @Override
+    public int getItemCount() {
+      return strings.size();
+    }
+
+    private class MyViewHolder extends ViewHolder {
+
+      public TextView tv;
+
+      public MyViewHolder(View inflate) {
+        super(inflate);
+        tv = (TextView) itemView.findViewById(android.R.id.text1);
+      }
+    }
+  }
+}
+
+```
+
+```java
+package cn.woblog.android.l16mdfabanimation;
+
+import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+
+/**
+ * Created by renpingqing on 2017/3/14.
+ */
+
+public class FabBehavior extends FloatingActionButton.Behavior {
+  private boolean isVisiable=true;
+//  @Override
+//  public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child,
+//      View dependency) {
+//    return super.layoutDependsOn(parent, child, dependency);
+//  }
+//
+//  @Override
+//  public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child,
+//      View dependency) {
+//    return super.onDependentViewChanged(parent, child, dependency);
+//  }
+
+
+  //要重写这两个构造方法，不然崩溃
+  public FabBehavior() {
+  }
+
+  public FabBehavior(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
+
+  @Override
+  public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout,
+      FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) {
+    //当观察的view滑动的时候，开始滑动，这是RV
+    //nestedScrollAxes:滑动关联轴，这里只关心，垂直
+
+    return nestedScrollAxes== ViewCompat.SCROLL_AXIS_VERTICAL || super
+        .onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
+  }
+
+  @Override
+  public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child,
+      View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+    //滑动的时候
+    super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed,
+        dyUnconsumed);
+
+    //根据情况执行动画
+    if (dyConsumed>0 && isVisiable) {
+    //hide
+      onHide(child);
+      isVisiable=false;
+    } else if (dyConsumed<0 && !isVisiable) {
+
+      onShow(child);
+      isVisiable=true;
+    }
+  }
+
+  private void onHide(FloatingActionButton fab) {
+    //fab向下移动，自己的高度和底部的高度
+    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(fab.getHeight()+layoutParams.bottomMargin).setInterpolator(new AccelerateInterpolator(3));
+
+//    ViewCompat.animate(fab).scaleX(0f).scaleY(0f).start();;
+  }
+
+  private void onShow(FloatingActionButton fab) {
+    CoordinatorLayout.LayoutParams layoutParams= (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+    fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
+
+//    ViewCompat.animate(fab).scaleX(1f).scaleY(1f).start();;
+  }
+}
+
+```
+
