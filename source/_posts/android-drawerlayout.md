@@ -1832,3 +1832,65 @@ Toolbar toolbar= (Toolbar) findViewById(R.id.tb);
 
 ```
 
+# FloatingActionButton
+
+design包，悬浮动作按钮，可以设置着色阴影
+
+特性：阴影，反馈（按下去，elevation）
+
+
+
+兼容性：
+
+需要些两个layout
+
+layout-v21这里添加layoutMargin,16dp
+
+低版本要将margin改为0dp
+
+
+
+app:backgroundTint:背景着色
+
+elevation：水波颜色
+
+rippleColor:点击后的效果颜色，还要设置clickable，不然没效果
+
+pressedTranslationZ:点击z轴变小多少高度，
+
+
+
+点击弹出菜单：
+
+多个按钮上下排列
+
+```xml
+<android.support.design.widget.FloatingActionButton
+    android:layout_width="wrap_content"
+    android:src="@android:drawable/ic_input_add"
+    app:backgroundTint="@color/colorPrimary"
+    android:elevation="10dp"
+    android:onClick="rotate"
+    android:layout_margin="16dp"
+    app:pressedTranslationZ="10dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    app:rippleColor="#f00"
+    android:clickable="true"
+    android:layout_height="wrap_content" />
+```
+
+```java
+public void rotate(View view) {
+    float toDegree =reverse?-90.0F:90.0F;
+    ObjectAnimator anim=ObjectAnimator
+        .ofFloat(view,"rotation",0.0f,toDegree)
+        ;
+    anim
+        .setDuration(200)
+        .start();
+
+        reverse=!reverse;
+  }
+```
+
