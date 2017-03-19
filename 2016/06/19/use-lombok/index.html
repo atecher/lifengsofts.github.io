@@ -1,0 +1,828 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Lombok," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="简介他是一个通过注解方式来减少你的POJO类的getter和setter等方法的一个工具，我这里演示的在Android Studio中的使用方式，当然如果你使用的是idea那么这方法也通用，如果你用的是eclipse，那么官网也有视频教程，我这里就不演示了
+安装依赖众所周知在在Android Studio中添加依赖有直接下载jar包和使用cradle的dependencies方法，我们这里直接使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java界的神器-使用Lombok来消除你的冗余代码量">
+<meta property="og:url" content="http://i.woblog.cn/2016/06/19/use-lombok/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="简介他是一个通过注解方式来减少你的POJO类的getter和setter等方法的一个工具，我这里演示的在Android Studio中的使用方式，当然如果你使用的是idea那么这方法也通用，如果你用的是eclipse，那么官网也有视频教程，我这里就不演示了
+安装依赖众所周知在在Android Studio中添加依赖有直接下载jar包和使用cradle的dependencies方法，我们这里直接使用">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/lombok_plugins.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/project_pre.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_2.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_3.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_4.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java界的神器-使用Lombok来消除你的冗余代码量">
+<meta name="twitter:description" content="简介他是一个通过注解方式来减少你的POJO类的getter和setter等方法的一个工具，我这里演示的在Android Studio中的使用方式，当然如果你使用的是idea那么这方法也通用，如果你用的是eclipse，那么官网也有视频教程，我这里就不演示了
+安装依赖众所周知在在Android Studio中添加依赖有直接下载jar包和使用cradle的dependencies方法，我们这里直接使用">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/lombok_plugins.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> Java界的神器-使用Lombok来消除你的冗余代码量 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java界的神器-使用Lombok来消除你的冗余代码量
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-19T11:20:08+00:00" content="2016-06-19">
+              2016-06-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/19/use-lombok/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/19/use-lombok/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>他是一个通过注解方式来减少你的POJO类的getter和setter等方法的一个工具，我这里演示的在Android Studio中的使用方式，当然如果你使用的是idea那么这方法也通用，如果你用的是eclipse，那么<a href="https://projectlombok.org" target="_blank" rel="external">官网</a>也有视频教程，我这里就不演示了</p>
+<h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h2><p>众所周知在在Android Studio中添加依赖有直接下载jar包和使用cradle的dependencies方法，我们这里直接使用dependencies方法</p>
+<h3 id="添加gradle依赖"><a href="#添加gradle依赖" class="headerlink" title="添加gradle依赖"></a>添加gradle依赖</h3><p>在你的项目的build.grade文件中添加</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">provided <span class="string">'org.projectlombok:lombok:1.12.6'</span></div></pre></td></tr></table></figure>
+<p>至于为什么是provided而不是compile，因为这个框架是在将java编译为class前处理代码了，意思是在生成的class文件中已经生成了getter和setter，所以这个依赖是我们在编译的时候使用，不需要打包到apk中</p>
+<h2 id="安装Lombok插件"><a href="#安装Lombok插件" class="headerlink" title="安装Lombok插件"></a>安装Lombok插件</h2><p>虽然我们添加了依赖，但是Android Studio他知道怎么处理这个文件吗，肯定是不知道啦，所以我们的安装一个插件来告诉他怎么处理</p>
+<p>Preferences &gt; Plugins &gt; Browse repositories</p>
+<p>在输入框内输入combo，可看到已经搜索出来了这个插件，我们点击旁边的安装，安装完成后重启插件我们就安装完毕了，它的使用使用说明可以查看<a href="https://github.com/mplushnikov/lombok-intellij-plugin" target="_blank" rel="external">插件主页</a></p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/lombok_plugins.png" alt=""></p>
+<p>现在插件虽然安装完了，但是Android Studio他怎么知道什么时候来使用这个插件呢，他是不是有个开关什么的，没错！你猜对了</p>
+<h2 id="开启项目的Annotation-process"><a href="#开启项目的Annotation-process" class="headerlink" title="开启项目的Annotation process"></a>开启项目的Annotation process</h2><p>首先我们打开项目的设置，要强调的是项目的，而不是工具全局的设置，如下图</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/project_pre.png" alt=""></p>
+<p>打开后按照下图勾选Enable annotation processing</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_2.png" alt=""></p>
+<p>到这里为止，工具和基本环境我们基本配置完了，接下来我们需要创建一个项目来测试</p>
+<h2 id="一些常用注解"><a href="#一些常用注解" class="headerlink" title="一些常用注解"></a>一些常用注解</h2><h3 id="Getter-and-Setter"><a href="#Getter-and-Setter" class="headerlink" title="@Getter and @Setter"></a>@Getter and @Setter</h3><p>可以很直观的从名字看出这个两个是分别用来生成Getter和Setter方法的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</div><div class="line">    <span class="meta">@Getter</span> <span class="meta">@Setter</span> <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="meta">@Setter</span>(AccessLevel.PROTECTED) <span class="keyword">private</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>相当于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmployed</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.employed;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEmployed</span><span class="params">(<span class="keyword">boolean</span> employed)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.employed = employed;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>到这里，大家肯定要问了，你说相当就等啊，或者上面相等的代码是怎么来的呢，其他我们可以直接反编译生成的class文件查看，打开Android Studio的class目录下的User.class文件，可以看到</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_3.png" alt=""></p>
+<p>同样下面的实例代码你可以这样查看，当然我们也可用通过Android Studio的</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/Snip20160619_4.png" alt=""></p>
+<p>从上图我们发现我们没有在源代码写一些Getter方法，但是从Structure窗口看到这些方法已经自动生成了，是不是很神奇</p>
+<h3 id="NonNull"><a href="#NonNull" class="headerlink" title="@NonNull"></a>@NonNull</h3><p>提供一个参数的非空判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Getter</span> <span class="meta">@Setter</span> <span class="meta">@NonNull</span></div><div class="line"><span class="keyword">private</span> List&lt;String&gt; members;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@NonNull</span></div><div class="line"><span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line"></div><div class="line"><span class="meta">@NonNull</span></div><div class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getMembers</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.members;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMembers</span><span class="params">(@NonNull List&lt;String&gt; members)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span>(members == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"members"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>.members = members;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ToString"><a href="#ToString" class="headerlink" title="@ToString"></a>@ToString</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ToString</span>(exclude=<span class="string">"name"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@Setter</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="meta">@Setter</span>(AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@Setter</span></div><div class="line">    <span class="meta">@NonNull</span></div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">"User(employed="</span> + <span class="keyword">this</span>.isEmployed() + <span class="string">", members="</span> + <span class="keyword">this</span>.getMembers() + <span class="string">")"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="EqualsAndHashCode"><a href="#EqualsAndHashCode" class="headerlink" title="@EqualsAndHashCode"></a>@EqualsAndHashCode</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@EqualsAndHashCode</span>(exclude=&#123;<span class="string">"name"</span>&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@Setter</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="meta">@Setter</span>(AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@Setter</span></div><div class="line">    <span class="meta">@NonNull</span></div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span>(o == <span class="keyword">this</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!(o <span class="keyword">instanceof</span> User)) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        User other = (User)o;</div><div class="line">        <span class="keyword">if</span>(!other.canEqual(<span class="keyword">this</span>)) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.isEmployed() != other.isEmployed()) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            List <span class="keyword">this</span>$members = <span class="keyword">this</span>.getMembers();</div><div class="line">            List other$members = other.getMembers();</div><div class="line">            <span class="keyword">if</span>(<span class="keyword">this</span>$members == <span class="keyword">null</span>) &#123;</div><div class="line">                <span class="keyword">if</span>(other$members != <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!<span class="keyword">this</span>$members.equals(other$members)) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canEqual</span><span class="params">(Object other)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> other <span class="keyword">instanceof</span> User;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">boolean</span> PRIME = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">byte</span> result = <span class="number">1</span>;</div><div class="line">    <span class="keyword">int</span> result1 = result * <span class="number">59</span> + (<span class="keyword">this</span>.isEmployed()?<span class="number">79</span>:<span class="number">97</span>);</div><div class="line">    List $members = <span class="keyword">this</span>.getMembers();</div><div class="line">    result1 = result1 * <span class="number">59</span> + ($members == <span class="keyword">null</span>?<span class="number">0</span>:$members.hashCode());</div><div class="line">    <span class="keyword">return</span> result1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Data"><a href="#Data" class="headerlink" title="@Data"></a>@Data</h3><p>这个注解相当于同时使用@ToString, @EqualsAndHashCode, @Getter和@Setter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Data</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> employed = <span class="keyword">true</span>;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmployed</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.employed;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getMembers</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.members;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEmployed</span><span class="params">(<span class="keyword">boolean</span> employed)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.employed = employed;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMembers</span><span class="params">(List&lt;String&gt; members)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.members = members;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(o == <span class="keyword">this</span>) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!(o <span class="keyword">instanceof</span> User)) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            User other = (User)o;</div><div class="line">            <span class="keyword">if</span>(!other.canEqual(<span class="keyword">this</span>)) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.isEmployed() != other.isEmployed()) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                String <span class="keyword">this</span>$name = <span class="keyword">this</span>.getName();</div><div class="line">                String other$name = other.getName();</div><div class="line">                <span class="keyword">if</span>(<span class="keyword">this</span>$name == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">if</span>(other$name != <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!<span class="keyword">this</span>$name.equals(other$name)) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                List <span class="keyword">this</span>$members = <span class="keyword">this</span>.getMembers();</div><div class="line">                List other$members = other.getMembers();</div><div class="line">                <span class="keyword">if</span>(<span class="keyword">this</span>$members == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">if</span>(other$members != <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!<span class="keyword">this</span>$members.equals(other$members)) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canEqual</span><span class="params">(Object other)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> other <span class="keyword">instanceof</span> User;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> PRIME = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">byte</span> result = <span class="number">1</span>;</div><div class="line">        <span class="keyword">int</span> result1 = result * <span class="number">59</span> + (<span class="keyword">this</span>.isEmployed()?<span class="number">79</span>:<span class="number">97</span>);</div><div class="line">        String $name = <span class="keyword">this</span>.getName();</div><div class="line">        result1 = result1 * <span class="number">59</span> + ($name == <span class="keyword">null</span>?<span class="number">0</span>:$name.hashCode());</div><div class="line">        List $members = <span class="keyword">this</span>.getMembers();</div><div class="line">        result1 = result1 * <span class="number">59</span> + ($members == <span class="keyword">null</span>?<span class="number">0</span>:$members.hashCode());</div><div class="line">        <span class="keyword">return</span> result1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"User(employed="</span> + <span class="keyword">this</span>.isEmployed() + <span class="string">", name="</span> + <span class="keyword">this</span>.getName() + <span class="string">", members="</span> + <span class="keyword">this</span>.getMembers() + <span class="string">")"</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Cleanup"><a href="#Cleanup" class="headerlink" title="@Cleanup"></a>@Cleanup</h3><p>他可以帮我们在需要释放的资源位置自动加上释放代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCleanUp</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="meta">@Cleanup</span> ByteArrayOutputStream baos = <span class="keyword">new</span> ByteArrayOutputStream();</div><div class="line">        baos.write(<span class="keyword">new</span> <span class="keyword">byte</span>[] &#123;<span class="string">'Y'</span>,<span class="string">'e'</span>,<span class="string">'s'</span>&#125;);</div><div class="line">        System.out.println(baos.toString());</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCleanUp</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        ByteArrayOutputStream e = <span class="keyword">new</span> ByteArrayOutputStream();</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            e.write(<span class="keyword">new</span> <span class="keyword">byte</span>[]&#123;(<span class="keyword">byte</span>)<span class="number">89</span>, (<span class="keyword">byte</span>)<span class="number">101</span>, (<span class="keyword">byte</span>)<span class="number">115</span>&#125;);</div><div class="line">            System.out.println(e.toString());</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">if</span>(Collections.singletonList(e).get(<span class="number">0</span>) != <span class="keyword">null</span>) &#123;</div><div class="line">                e.close();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException var6) &#123;</div><div class="line">        var6.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Synchronized"><a href="#Synchronized" class="headerlink" title="@Synchronized"></a>@Synchronized</h3><p>可以帮我们在方法上添加同步代码块</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSync</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> DateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"MM-dd-YYYY"</span>);</div><div class="line"></div><div class="line">    <span class="meta">@Synchronized</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">synchronizedFormat</span><span class="params">(Date date)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> format.format(date);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSync</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object $lock = <span class="keyword">new</span> Object[<span class="number">0</span>];</div><div class="line">    <span class="keyword">private</span> DateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"MM-dd-YYYY"</span>);</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestSync</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">synchronizedFormat</span><span class="params">(Date date)</span> </span>&#123;</div><div class="line">        Object var2 = <span class="keyword">this</span>.$lock;</div><div class="line">        <span class="keyword">synchronized</span>(<span class="keyword">this</span>.$lock) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.format.format(date);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>基本的使用就介绍到这里，下面一份完整代码<br>User.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.woblog.testlombok;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"></div><div class="line"><span class="keyword">import</span> lombok.AccessLevel;</div><div class="line"><span class="keyword">import</span> lombok.Cleanup;</div><div class="line"><span class="keyword">import</span> lombok.Data;</div><div class="line"><span class="keyword">import</span> lombok.EqualsAndHashCode;</div><div class="line"><span class="keyword">import</span> lombok.Getter;</div><div class="line"><span class="keyword">import</span> lombok.NonNull;</div><div class="line"><span class="keyword">import</span> lombok.Setter;</div><div class="line"><span class="keyword">import</span> lombok.SneakyThrows;</div><div class="line"><span class="keyword">import</span> lombok.Synchronized;</div><div class="line"><span class="keyword">import</span> lombok.ToString;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by renpingqing on 16/6/18.</div><div class="line"> */</div><div class="line"><span class="meta">@Data</span></div><div class="line"><span class="meta">@ToString</span>(callSuper = <span class="keyword">true</span>)</div><div class="line"><span class="comment">/**</span></div><div class="line"> * 这里如果不写false,会报错,</div><div class="line"> * Error:(21, 1) 警告: Generating equals/hashCode implementation but without a call to superclass,</div><div class="line"> * even though this class does not extend java.lang.Object. If this is intentional,</div><div class="line"> * add '<span class="doctag">@EqualsAndHashCode</span>(callSuper=false)' to your type.</div><div class="line"> */</div><div class="line"><span class="meta">@EqualsAndHashCode</span>(callSuper = <span class="keyword">false</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">extends</span> <span class="title">BasePOJO</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lockObj = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * userid只生成getUserId</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    String userId;</div><div class="line">    <span class="keyword">private</span> String username;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> gender;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> price;</div><div class="line">    <span class="meta">@Setter</span>(AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> vip = <span class="keyword">false</span>; <span class="comment">//vip,或者isVip都会生成isVip</span></div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * name不能为空</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> name</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">sayHello</span><span class="params">(@NonNull String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> String.format(<span class="string">"hi %s"</span>, name);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@SneakyThrows</span>(IOException.class)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">closeabale</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="meta">@Cleanup</span> InputStream is = <span class="keyword">new</span> ByteArrayInputStream(<span class="string">"hello world"</span>.getBytes());</div><div class="line">        System.out.println(is.available());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Synchronized</span>(<span class="string">"lockObj"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lockMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"test lock method"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>他生成的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">// Source code recreated from a .class file by IntelliJ IDEA</span></div><div class="line"><span class="comment">// (powered by Fernflower decompiler)</span></div><div class="line"><span class="comment">//</span></div><div class="line"></div><div class="line"><span class="keyword">package</span> com.woblog.testlombok;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.woblog.testlombok.BasePOJO;</div><div class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.util.Collections;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> lombok.NonNull;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">extends</span> <span class="title">BasePOJO</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lockObj = <span class="keyword">new</span> Object();</div><div class="line">    <span class="keyword">private</span> String userId;</div><div class="line">    <span class="keyword">private</span> String username;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> gender;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> price;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> vip = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; members;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">sayHello</span><span class="params">(@NonNull String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(name == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"name"</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">return</span> String.format(<span class="string">"hi %s"</span>, <span class="keyword">new</span> Object[]&#123;name&#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">closeabale</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            ByteArrayInputStream $ex = <span class="keyword">new</span> ByteArrayInputStream(<span class="string">"hello world"</span>.getBytes());</div><div class="line"></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                System.out.println($ex.available());</div><div class="line">            &#125; <span class="keyword">finally</span> &#123;</div><div class="line">                <span class="keyword">if</span>(Collections.singletonList($ex).get(<span class="number">0</span>) != <span class="keyword">null</span>) &#123;</div><div class="line">                    $ex.close();</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125; <span class="keyword">catch</span> (IOException var6) &#123;</div><div class="line">            <span class="keyword">throw</span> var6;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lockMethod</span><span class="params">()</span> </span>&#123;</div><div class="line">        Object var1 = <span class="keyword">this</span>.lockObj;</div><div class="line">        <span class="keyword">synchronized</span>(<span class="keyword">this</span>.lockObj) &#123;</div><div class="line">            System.out.println(<span class="string">"test lock method"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getLockObj</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.lockObj;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.username;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getGender</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.gender;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.price;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isVip</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.vip;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getMembers</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.members;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserId</span><span class="params">(String userId)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.userId = userId;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.username = username;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGender</span><span class="params">(<span class="keyword">int</span> gender)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.gender = gender;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPrice</span><span class="params">(<span class="keyword">float</span> price)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.price = price;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMembers</span><span class="params">(List&lt;String&gt; members)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.members = members;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"User(super="</span> + <span class="keyword">super</span>.toString() + <span class="string">", lockObj="</span> + <span class="keyword">this</span>.getLockObj() + <span class="string">", userId="</span> + <span class="keyword">this</span>.getUserId() + <span class="string">", username="</span> + <span class="keyword">this</span>.getUsername() + <span class="string">", gender="</span> + <span class="keyword">this</span>.getGender() + <span class="string">", price="</span> + <span class="keyword">this</span>.getPrice() + <span class="string">", vip="</span> + <span class="keyword">this</span>.isVip() + <span class="string">", members="</span> + <span class="keyword">this</span>.getMembers() + <span class="string">")"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(o == <span class="keyword">this</span>) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!(o <span class="keyword">instanceof</span> User)) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            User other = (User)o;</div><div class="line">            <span class="keyword">if</span>(!other.canEqual(<span class="keyword">this</span>)) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                label71: &#123;</div><div class="line">                    Object <span class="keyword">this</span>$lockObj = <span class="keyword">this</span>.getLockObj();</div><div class="line">                    Object other$lockObj = other.getLockObj();</div><div class="line">                    <span class="keyword">if</span>(<span class="keyword">this</span>$lockObj == <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">if</span>(other$lockObj == <span class="keyword">null</span>) &#123;</div><div class="line">                            <span class="keyword">break</span> label71;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>$lockObj.equals(other$lockObj)) &#123;</div><div class="line">                        <span class="keyword">break</span> label71;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                String <span class="keyword">this</span>$userId = <span class="keyword">this</span>.getUserId();</div><div class="line">                String other$userId = other.getUserId();</div><div class="line">                <span class="keyword">if</span>(<span class="keyword">this</span>$userId == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">if</span>(other$userId != <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!<span class="keyword">this</span>$userId.equals(other$userId)) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                label57: &#123;</div><div class="line">                    String <span class="keyword">this</span>$username = <span class="keyword">this</span>.getUsername();</div><div class="line">                    String other$username = other.getUsername();</div><div class="line">                    <span class="keyword">if</span>(<span class="keyword">this</span>$username == <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">if</span>(other$username == <span class="keyword">null</span>) &#123;</div><div class="line">                            <span class="keyword">break</span> label57;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>$username.equals(other$username)) &#123;</div><div class="line">                        <span class="keyword">break</span> label57;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">if</span>(<span class="keyword">this</span>.getGender() != other.getGender()) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span>(Float.compare(<span class="keyword">this</span>.getPrice(), other.getPrice()) != <span class="number">0</span>) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.isVip() != other.isVip()) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    List <span class="keyword">this</span>$members = <span class="keyword">this</span>.getMembers();</div><div class="line">                    List other$members = other.getMembers();</div><div class="line">                    <span class="keyword">if</span>(<span class="keyword">this</span>$members == <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="keyword">if</span>(other$members != <span class="keyword">null</span>) &#123;</div><div class="line">                            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(!<span class="keyword">this</span>$members.equals(other$members)) &#123;</div><div class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canEqual</span><span class="params">(Object other)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> other <span class="keyword">instanceof</span> User;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> PRIME = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">byte</span> result = <span class="number">1</span>;</div><div class="line">        Object $lockObj = <span class="keyword">this</span>.getLockObj();</div><div class="line">        <span class="keyword">int</span> result1 = result * <span class="number">59</span> + ($lockObj == <span class="keyword">null</span>?<span class="number">0</span>:$lockObj.hashCode());</div><div class="line">        String $userId = <span class="keyword">this</span>.getUserId();</div><div class="line">        result1 = result1 * <span class="number">59</span> + ($userId == <span class="keyword">null</span>?<span class="number">0</span>:$userId.hashCode());</div><div class="line">        String $username = <span class="keyword">this</span>.getUsername();</div><div class="line">        result1 = result1 * <span class="number">59</span> + ($username == <span class="keyword">null</span>?<span class="number">0</span>:$username.hashCode());</div><div class="line">        result1 = result1 * <span class="number">59</span> + <span class="keyword">this</span>.getGender();</div><div class="line">        result1 = result1 * <span class="number">59</span> + Float.floatToIntBits(<span class="keyword">this</span>.getPrice());</div><div class="line">        result1 = result1 * <span class="number">59</span> + (<span class="keyword">this</span>.isVip()?<span class="number">79</span>:<span class="number">97</span>);</div><div class="line">        List $members = <span class="keyword">this</span>.getMembers();</div><div class="line">        result1 = result1 * <span class="number">59</span> + ($members == <span class="keyword">null</span>?<span class="number">0</span>:$members.hashCode());</div><div class="line">        <span class="keyword">return</span> result1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUserId</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.userId;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setVip</span><span class="params">(<span class="keyword">boolean</span> vip)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.vip = vip;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">`</div></pre></td></tr></table></figure>
+<p>可以看到代码量差不多缩减了三倍，但是他也有一些缺点，比如：</p>
+<p>大大降低了源代码文件的可读性和完整性，降低了阅读源代码的舒适度。 </p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Lombok/" rel="tag">#Lombok</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/11/win7数据恢复/" rel="next" title="windows下的数据恢复">
+                <i class="fa fa-chevron-left"></i> windows下的数据恢复
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/21/use-build-variants/" rel="prev" title="使用Build Variants和productFlavors来打包不同配置的APP">
+                使用Build Variants和productFlavors来打包不同配置的APP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/19/use-lombok/"
+     data-title="Java界的神器-使用Lombok来消除你的冗余代码量"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/06/19/use-lombok/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/19/use-lombok/"
+           data-title="Java界的神器-使用Lombok来消除你的冗余代码量" data-url="http://i.woblog.cn/2016/06/19/use-lombok/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装依赖"><span class="nav-number">2.</span> <span class="nav-text">安装依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加gradle依赖"><span class="nav-number">2.1.</span> <span class="nav-text">添加gradle依赖</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Lombok插件"><span class="nav-number">3.</span> <span class="nav-text">安装Lombok插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启项目的Annotation-process"><span class="nav-number">4.</span> <span class="nav-text">开启项目的Annotation process</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些常用注解"><span class="nav-number">5.</span> <span class="nav-text">一些常用注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Getter-and-Setter"><span class="nav-number">5.1.</span> <span class="nav-text">@Getter and @Setter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NonNull"><span class="nav-number">5.2.</span> <span class="nav-text">@NonNull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ToString"><span class="nav-number">5.3.</span> <span class="nav-text">@ToString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EqualsAndHashCode"><span class="nav-number">5.4.</span> <span class="nav-text">@EqualsAndHashCode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data"><span class="nav-number">5.5.</span> <span class="nav-text">@Data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cleanup"><span class="nav-number">5.6.</span> <span class="nav-text">@Cleanup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Synchronized"><span class="nav-number">5.7.</span> <span class="nav-text">@Synchronized</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

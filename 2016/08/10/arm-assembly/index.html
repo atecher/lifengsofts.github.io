@@ -1,0 +1,1192 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ARM汇编," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ARM汇编程序结构Android中使用的ARM汇编是GUN ARM汇编，用到的编译器是GAS(GUN assembler)他有一套自己的语法，具体的可以参考https://sourceware.org/binutils/docs/as/index.html
+解析ARM汇编1234567891011121314151617181920212223242526272829303132333435363">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARM汇编">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/10/arm-assembly/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="ARM汇编程序结构Android中使用的ARM汇编是GUN ARM汇编，用到的编译器是GAS(GUN assembler)他有一套自己的语法，具体的可以参考https://sourceware.org/binutils/docs/as/index.html
+解析ARM汇编1234567891011121314151617181920212223242526272829303132333435363">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ARM汇编">
+<meta name="twitter:description" content="ARM汇编程序结构Android中使用的ARM汇编是GUN ARM汇编，用到的编译器是GAS(GUN assembler)他有一套自己的语法，具体的可以参考https://sourceware.org/binutils/docs/as/index.html
+解析ARM汇编1234567891011121314151617181920212223242526272829303132333435363">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> ARM汇编 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ARM汇编
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-10T17:18:12+00:00" content="2016-08-10">
+              2016-08-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ARM/" itemprop="url" rel="index">
+                    <span itemprop="name">ARM</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/10/arm-assembly/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/10/arm-assembly/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ARM汇编程序结构"><a href="#ARM汇编程序结构" class="headerlink" title="ARM汇编程序结构"></a>ARM汇编程序结构</h1><p>Android中使用的ARM汇编是GUN ARM汇编，用到的编译器是GAS(GUN assembler)他有一套自己的语法，具体的可以参考<a href="https://sourceware.org/binutils/docs/as/index.html" target="_blank" rel="external">https://sourceware.org/binutils/docs/as/index.html</a></p>
+<h1 id="解析ARM汇编"><a href="#解析ARM汇编" class="headerlink" title="解析ARM汇编"></a>解析ARM汇编</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div></pre></td><td class="code"><pre><div class="line">	.arch armv5te @处理器架构</div><div class="line">	.fpu softvfp @协处理类型</div><div class="line">	.eabi_attribute 20, 1 @接口属性</div><div class="line">	.eabi_attribute 21, 1</div><div class="line">	.eabi_attribute 23, 3</div><div class="line">	.eabi_attribute 24, 1</div><div class="line">	.eabi_attribute 25, 1</div><div class="line">	.eabi_attribute 26, 2</div><div class="line">	.eabi_attribute 30, 6</div><div class="line">	.eabi_attribute 34, 0</div><div class="line">	.eabi_attribute 18, 4</div><div class="line">	.file	&quot;hello.c&quot; @源文件名</div><div class="line">	.global	nums @全局符号nums</div><div class="line">	.data</div><div class="line">	.align	2 @对齐方式2^2=4字节=32位</div><div class="line">	.type	nums, %object @类型为对象</div><div class="line">	.size	nums, 20 @20个字节，5个int值</div><div class="line">nums:</div><div class="line">	.word	1</div><div class="line">	.word	2</div><div class="line">	.word	3</div><div class="line">	.word	4</div><div class="line">	.word	5</div><div class="line">	.text</div><div class="line">	.align	2</div><div class="line">	.global	for0</div><div class="line">	.type	for0, %function</div><div class="line">for0:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L2</div><div class="line">.L3:</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L2:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L3</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">	.size	for0, .-for0</div><div class="line">	.align	2</div><div class="line">	.global	for1</div><div class="line">	.type	for1, %function</div><div class="line">for1:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L6</div><div class="line">.L7:</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	mov	r3, r3, asl #1</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L6:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L7</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">	.size	for1, .-for1</div><div class="line">	.align	2</div><div class="line">	.global	for2</div><div class="line">	.type	for2, %function</div><div class="line">for2:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	ldr	r1, .L13</div><div class="line">.LPIC0:</div><div class="line">	add	r1, pc, r1</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L10</div><div class="line">.L11:</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	mul	r2, r3, r2</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	sub	r0, r3, #1</div><div class="line">	ldr	r3, .L13+4</div><div class="line">	ldr	r3, [r1, r3]</div><div class="line">	ldr	r3, [r3, r0, asl #2]</div><div class="line">	add	r3, r2, r3</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L10:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L11</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">.L14:</div><div class="line">	.align	2</div><div class="line">.L13:</div><div class="line">	.word	_GLOBAL_OFFSET_TABLE_-(.LPIC0+8)</div><div class="line">	.word	nums(GOT)</div><div class="line">	.size	for2, .-for2</div><div class="line">	.section	.rodata @声明只读数据段</div><div class="line">	.align	2</div><div class="line">.LC0: @标号LC0</div><div class="line">	.ascii	&quot;hello ARM!\000&quot; @声明字符串</div><div class="line">	.align	2</div><div class="line">.LC1:</div><div class="line">	.ascii	&quot;for0%d\012\000&quot;</div><div class="line">	.align	2</div><div class="line">.LC2:</div><div class="line">	.ascii	&quot;for1%d\012\000&quot;</div><div class="line">	.align	2</div><div class="line">.LC3:</div><div class="line">	.ascii	&quot;for2%d\012\000&quot;</div><div class="line">	.text @代码段</div><div class="line">	.align	2</div><div class="line">	.global	main @全局符号，main</div><div class="line">	.type	main, %function @main符号的类型为函数</div><div class="line">main:</div><div class="line">	@ args = 0, pretend = 0, frame = 8</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	stmfd	sp!, &#123;fp, lr&#125; @将fp,lr寄存器入栈</div><div class="line">	add	fp, sp, #4 @初始化fp寄存器，设置栈帧</div><div class="line">	sub	sp, sp, #8 @开辟栈控件</div><div class="line">	str	r0, [fp, #-8] @保存第一个参数</div><div class="line">	str	r1, [fp, #-12] @保存第二个参数</div><div class="line">	ldr	r3, .L17 @取标号L17处的内容，即“hello ARM!\n”</div><div class="line">.LPIC1: @标号.LPIC1</div><div class="line">	add	r3, pc, r3 @计算“hello ARM!\n”字符串的内存地址</div><div class="line">	mov	r0, r3 @设置参数1</div><div class="line">	bl	puts(PLT) @调用puts函数</div><div class="line">	mov	r0, #5 @程序返回结果为0</div><div class="line">	bl	for0(PLT) @调用函数for0</div><div class="line">	mov	r2, r0 @for0的返回结果</div><div class="line">	ldr	r3, .L17+4</div><div class="line">.LPIC2:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r0, #5</div><div class="line">	bl	for1(PLT)</div><div class="line">	mov	r2, r0</div><div class="line">	ldr	r3, .L17+8</div><div class="line">.LPIC3:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r0, #5</div><div class="line">	bl	for2(PLT)</div><div class="line">	mov	r2, r0</div><div class="line">	ldr	r3, .L17+12</div><div class="line">.LPIC4:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r3, #0</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #4</div><div class="line">	@ sp needed</div><div class="line">	ldmfd	sp!, &#123;fp, pc&#125; @回复，fp的值，并将lr寄存器的值赋值给pc寄存器</div><div class="line">.L18:</div><div class="line">	.align	2</div><div class="line">.L17:</div><div class="line">	.word	.LC0-(.LPIC1+8)</div><div class="line">	.word	.LC1-(.LPIC2+8)</div><div class="line">	.word	.LC2-(.LPIC3+8)</div><div class="line">	.word	.LC3-(.LPIC4+8)</div><div class="line">	.size	main, .-main</div><div class="line">	.ident	&quot;GCC: (GNU) 4.9 20150123 (prerelease)&quot;</div><div class="line">	.section	.note.GNU-stack,&quot;&quot;,%progbits</div></pre></td></tr></table></figure>
+<h2 id="处理器架构定义"><a href="#处理器架构定义" class="headerlink" title="处理器架构定义"></a>处理器架构定义</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">.arch armv5te @处理器架构</div><div class="line">.fpu softvfp @协处理类型</div><div class="line">.eabi_attribute 20, 1 @接口属性</div><div class="line">.eabi_attribute 21, 1</div><div class="line">.eabi_attribute 23, 3</div><div class="line">.eabi_attribute 24, 1</div><div class="line">.eabi_attribute 25, 1</div><div class="line">.eabi_attribute 26, 2</div><div class="line">.eabi_attribute 30, 6</div><div class="line">.eabi_attribute 34, 0</div><div class="line">.eabi_attribute 18, 4</div></pre></td></tr></table></figure>
+<p>这些指令定义了程序使用的处理器架构，协处理器类型，接口属性</p>
+<p>armv5te:表示本程序的代码可以在armv5te及以上的架构处理器上运行，包括armv6,armv7-a</p>
+<p>fpt:</p>
+<p>​    softvfp:表示使用浮点运算库来模拟协处理运算。取值vfpv2,vfpv3</p>
+<p>eabi_attribute：指定了接口属性(Embedded application binary interface,嵌入式应用二进制接口)是arm制订的一套接口规范，Android实现了这套规范</p>
+<h2 id="段定义"><a href="#段定义" class="headerlink" title="段定义"></a>段定义</h2><p>段都是很多年前的术语了，现在的高级语言基本上没有直接使用，而是由编译器字节生成的。</p>
+<p>使用.section指令来定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">.section name [, &quot;flags&quot; [,%type [,flag_specifice_arguments]]]</div></pre></td></tr></table></figure>
+<p>name:段名</p>
+<p>flags:段属性，读，写，可执行</p>
+<p>type:段的类型，如：progbits表示段中包含数据，note表示包含的数据非程序本身使用</p>
+<p>flag_specifice_arguments：指定平台相关的参数</p>
+<p>我们上面定义三个段</p>
+<p>.section    .rodata:定义只读段，属性采用默认值</p>
+<p>.text:代码段</p>
+<p>.section .note.GUN-stack,””,%progbits：定义了.note.GUN-stack段，他的作用是禁止生产可以执行堆栈，用来保护代码安全</p>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p>/<em> 多行注释 </em>/</p>
+<p>@单行注释</p>
+<h2 id="标号"><a href="#标号" class="headerlink" title="标号"></a>标号</h2><p>在汇编中标号十分常见，当程序跳转时就是使用标号作为跳转目的地，汇编器在编译时会将标号转为地址，标号申明格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;标号名&gt;:</div><div class="line">	代码...</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">for1:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L6</div></pre></td></tr></table></figure>
+<h2 id="汇编指令"><a href="#汇编指令" class="headerlink" title="汇编指令"></a>汇编指令</h2><p>程序中所有以“.”开头的指令都是汇编指令，他不属于ARM指令集。在GAS的文档<a href="https://sourceware.org/binutils/docs/as/Pseudo-Ops.html#Pseudo-Ops" target="_blank" rel="external">Assembler Directives</a>列出了所以得汇编指令</p>
+<p>在上面的示例中我们使用到的汇编指令有：</p>
+<p>.file:源文件名</p>
+<p>.align:代码定制方式，后面的数值为2^次数放</p>
+<p>.ascii:声明字符串</p>
+<p>.global:声明全局符号。全局符号是指在本程序外可以访问的符号</p>
+<p>.type：指定符号的类型。</p>
+<p>​    .type    for0, %function表示for0是一个函数</p>
+<p>.word：用来存放地址值</p>
+<p>​    .word    .LC0-(.LPIC1+8)表示存放一个与地址无关的偏移量</p>
+<p>.size:设置指定符号的大小</p>
+<p>​    .size    for2, .-for2表示当前地址减去for2符号的地址即为整个for2函数的大小</p>
+<p>.ident:编译器表示，没有实际用途，生成可执行程序后值被放到.comment段中</p>
+<h2 id="子程序间参数传递"><a href="#子程序间参数传递" class="headerlink" title="子程序间参数传递"></a>子程序间参数传递</h2><p>自程序一般用来完成一个独立的功能，汇编中的函数声明如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">.global 函数名</div><div class="line">.type 函数,%function</div><div class="line">函数名:</div><div class="line">	&lt;函数体&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.global myAdd</div><div class="line">.type myAdd,%function</div><div class="line">myAdd:</div><div class="line">	add r0, r0, r1 @两个参数相加</div><div class="line">	mov pc, lr @函数返回</div></pre></td></tr></table></figure>
+<p>在ARM汇编中参数传递规则:用R0-R3传递1-4个参数，如果超出用堆栈来传递，R0返回时并保存函数的返回值</p>
+<h1 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h1><p>通过一定的方法从给出的地址码寻找真实的操作数，叫寻址</p>
+<h2 id="立即寻址"><a href="#立即寻址" class="headerlink" title="立即寻址"></a>立即寻址</h2><p>最简单的一种寻址，只能做源操作数，为立即数(常量或常数)</p>
+<p>mov r0, #888</p>
+<p>mov r1,#0x888</p>
+<h2 id="寄存器寻址"><a href="#寄存器寻址" class="headerlink" title="寄存器寻址"></a>寄存器寻址</h2><p>操作数在寄存器中</p>
+<p>mov r0,r1</p>
+<h2 id="寄存器移位寻址"><a href="#寄存器移位寻址" class="headerlink" title="寄存器移位寻址"></a>寄存器移位寻址</h2><p>arm特有的寻址方法，他和寄存器寻址差不多，只是在寻址前先对操作数移位，它共有下面5种</p>
+<p>lsl:逻辑左移，低位补0</p>
+<p>lsr:逻辑右移，高位补0</p>
+<p>asr:算术右移，移位过程中符号不变，也就是源操作室为正数，移位后高位补0，负数补1</p>
+<p>ror：循环右移，移位后移除的低位填入移除的高位</p>
+<p>rrx:带扩展的循环右移，操作数右移一位，移位空出的高位用C标志(进位标志)的值填充</p>
+<p>mov r0, r1, lsl #2</p>
+<h2 id="寄存器间接寻址"><a href="#寄存器间接寻址" class="headerlink" title="寄存器间接寻址"></a>寄存器间接寻址</h2><p>源操作寄存器里面给出的是操作数的地址指针，将源寄存器值作为地址，并取出真实值赋值给目的寄存器</p>
+<p>ldr r0, [r1]</p>
+<h2 id="基址寻址"><a href="#基址寻址" class="headerlink" title="基址寻址"></a>基址寻址</h2><p>基址寄存器的值+偏移量在作为地址，取出来值。一般用于，数组，查表</p>
+<p>ldr r0, [r1, #-4] @将r1寄存器的值-4作为地址，然后在取出改地址的值赋值给r0寄存器</p>
+<h2 id="多寄存器寻址"><a href="#多寄存器寻址" class="headerlink" title="多寄存器寻址"></a>多寄存器寻址</h2><p>改指令最多可以完成16个通用寄存器值得传送</p>
+<p>ldmia r0, {r1,r2,r3,r4}</p>
+<p>ldm:数据加载指令，ia为指令后缀，表示每执行一次操作，r0寄存器的值自增1个字(arm中表示32的数值)</p>
+<p>上述指令结果为：r1=[r0],r2=[r0+#4],r3=[r0+#8],r4=[r0+#12]</p>
+<h2 id="堆栈寻址"><a href="#堆栈寻址" class="headerlink" title="堆栈寻址"></a>堆栈寻址</h2><p>arm特有的寻址，有ldmfa/stmfa,ldmea/stmea,ldmfd/stmfd,ldmed/stmed。ldm，stm为指令前缀，表示多寄存器寻址。fa,ea,fd,ed为指令后缀</p>
+<p>stmfd sp!, {r1-r7, lr} @将r1-r7,lr入栈。常用于调用子程序前的现场保护</p>
+<p>ldmfd sp!, {r1-r7,lr} @数据出栈，数据一次放入r1-r7,lr。常用于子程序调用完毕，现在恢复</p>
+<h2 id="块拷贝寻址"><a href="#块拷贝寻址" class="headerlink" title="块拷贝寻址"></a>块拷贝寻址</h2><p>连续地址数据在存储器从一个位置拷贝到另一位置。ldmia/stmia,ldmda/stmda,ldmid/stmid,ldmdb/stmdb</p>
+<p>ldmia r0!, {r1-r3} @从r0寄存器指向的存储单元中读取3个字到r1-r3</p>
+<p>stmia r0!, {r1-r3} @将存储器r1-r3的值一次存到r0寄存器指向的内存单元</p>
+<h2 id="相对寻址"><a href="#相对寻址" class="headerlink" title="相对寻址"></a>相对寻址</h2><p>以程序计数器pc的值为基址，指令中的地址作为偏移量，相加得到操作数的地址</p>
+<p>bl loop</p>
+<p>​    …</p>
+<p>loop:</p>
+<p>​    …</p>
+<p>这里的跳转就是相对寻址</p>
+<h1 id="arm指令集"><a href="#arm指令集" class="headerlink" title="arm指令集"></a>arm指令集</h1><h2 id="指令格式"><a href="#指令格式" class="headerlink" title="指令格式"></a>指令格式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;opcode&gt; &#123;&lt;cond&gt;&#125; &#123;s&#125;&#123;.w|.n&#125; &lt;rd&gt;,&lt;rn&gt;&#123;,&lt;operand2&gt;&#125;</div></pre></td></tr></table></figure>
+<p>opcode:指令助记符，mov,add</p>
+<p>cond:指令执行条件，取值如下</p>
+<table>
+<thead>
+<tr>
+<th>条件助记符</th>
+<th>标志位</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eq</td>
+<td>z=1</td>
+<td>等于</td>
+</tr>
+<tr>
+<td>ne</td>
+<td>z=0</td>
+<td>不等于</td>
+</tr>
+<tr>
+<td>cs/hs</td>
+<td>c=1</td>
+<td>无符号数大于或等于</td>
+</tr>
+<tr>
+<td>cc/lo</td>
+<td>c=0</td>
+<td>无符号数小于</td>
+</tr>
+<tr>
+<td>mi</td>
+<td>n=1</td>
+<td>负数</td>
+</tr>
+<tr>
+<td>pl</td>
+<td>n=0</td>
+<td>正数或0</td>
+</tr>
+<tr>
+<td>vs</td>
+<td>v=1</td>
+<td>溢出</td>
+</tr>
+<tr>
+<td>vc</td>
+<td>v=0</td>
+<td>没有溢出</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>c=1,z=0</td>
+<td>无符号数大于</td>
+</tr>
+<tr>
+<td>ls</td>
+<td>c=0，z=1</td>
+<td>无符号数大于或等于</td>
+</tr>
+<tr>
+<td>ge</td>
+<td>n=v</td>
+<td>有符号数大于</td>
+</tr>
+<tr>
+<td>lt</td>
+<td>n!=v</td>
+<td>有符号大于</td>
+</tr>
+<tr>
+<td>gt</td>
+<td>z=0,n=v</td>
+<td>有符号数大于</td>
+</tr>
+<tr>
+<td>le</td>
+<td>z=1，n!=v</td>
+<td>有符号数小于或等于</td>
+</tr>
+<tr>
+<td>al</td>
+<td>任何</td>
+<td>无条件执行(指令默认条件)</td>
+</tr>
+</tbody>
+</table>
+<p>s:指定这条指令是否影响CPSR寄存器的值，如：adds,subs</p>
+<p>.w/.n:指令宽度说明符，armv6t2及更高版本的thumb代码中，部分指令的编码为16位，也可以是32位，正常情况下代码都是有效的，默认会生成16为，如果想要生成32位的编码，则需要在指令后面加.w说明符。无论是arm代码还是thumb(armv6t2或更高)代码，都可以使用.w。如果需要将指令汇编为16位编码，则需要添加.n说明符号</p>
+<p>rd:目的寄存器</p>
+<p>rn：为第一个操作数寄存器</p>
+<p>operand2:第二个操作数，可以是立即数，寄存器，寄存器移位操作</p>
+<p>mov r0, #2</p>
+<p>add r1, r2, r3</p>
+<p>sub r2, r3, r4, lsl #2</p>
+<h2 id="跳转指令"><a href="#跳转指令" class="headerlink" title="跳转指令"></a>跳转指令</h2><p>也称分支指令，作用是改变指令的执行流程，arm中有两个方式可以实现，使用跳转指令和直接赋值pc寄存器</p>
+<h3 id="b"><a href="#b" class="headerlink" title="b"></a>b</h3><p>b{cond} label</p>
+<p>满足条件就跳转到标号出，bne label,表示z=0时跳转到label处</p>
+<h3 id="bl"><a href="#bl" class="headerlink" title="bl"></a>bl</h3><p>bl{cond} label</p>
+<p>带链接的跳转指令，如果条件满足，执行bl指令是，他先将当前指令的下调指令的地址拷贝到r14(lr)寄存器，然后跳转到label标号处，常用于子程序，在子程序末尾就可以使用mov pc,lr返回到主程序</p>
+<h3 id="bx"><a href="#bx" class="headerlink" title="bx"></a>bx</h3><p>带状态切换的跳转指令，如果条件满足，执行bx时，处理器会先判断rm的位[0]是否为1，如果为1则跳转时自动将cpsr寄存器的标志t置为1，并将目标地址出的代码解释为thumb代码来执行，即处理器切换到了thumb状态。反之rm的位[0]为0，则跳转时自动将cpsr寄存器t置为0，并将目标地址处的代码解释为arm代码执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">	.code 32</div><div class="line">	...</div><div class="line">	add r0, thumbcode+1</div><div class="line">	bx r0</div><div class="line">thumbcode:</div><div class="line">	.code 16</div><div class="line">	...</div></pre></td></tr></table></figure>
+<h3 id="blx"><a href="#blx" class="headerlink" title="blx"></a>blx</h3><p>带链接和状态切换的条状指令，就是bl和bx功能的结合，除了设置链接寄存器，还根据rm[0]的值来切换处理器状态</p>
+<h2 id="存储器访问指令"><a href="#存储器访问指令" class="headerlink" title="存储器访问指令"></a>存储器访问指令</h2><p>用于从存储器加载数据，存储数据到存储器，寄存器与存储器间数据交换</p>
+<h3 id="ldr"><a href="#ldr" class="headerlink" title="ldr"></a>ldr</h3><p>从存储器加载到数据到寄存器中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ldr&#123;type&#125;&#123;cond&#125; rd,label</div><div class="line"></div><div class="line">ldrd&#123;type&#125;&#123;cond&#125; rd,rd2,label</div></pre></td></tr></table></figure>
+<p>type：指定操作数的数据大小</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b</td>
+<td>无符号字节(加载时0扩展为32位)</td>
+</tr>
+<tr>
+<td>sb</td>
+<td>有符号字节(加载时符号位扩展为32位)</td>
+</tr>
+<tr>
+<td>h</td>
+<td>无符号半字(0扩展32位)</td>
+</tr>
+<tr>
+<td>sh</td>
+<td>有符号半字(符号位扩展为32位)</td>
+</tr>
+</tbody>
+</table>
+<p>cond：执行条件，取值为上面的表</p>
+<p>rd:加载完要存储到的寄存器</p>
+<p>label:要读取的内存地址，有三种表示方法</p>
+<p>​    直接偏移量:ldr r8,[r9,#04]、ldr r8,[r9],#04</p>
+<p>​    寄存器偏移:ldr r8,[r9,r10,#04]</p>
+<p>ldrd:一次加载双字数据，到r2,rd2寄存器中</p>
+<p>ldrd r0,r1,label12 @从标号label12指向的内存地址加载两个字</p>
+<h2 id="str"><a href="#str" class="headerlink" title="str"></a>str</h2><p>用于存储数据到指定的存储单元中</p>
+<p>str{type}{cond} rd,label</p>
+<p>strd{cond} rd,rd2,label</p>
+<p>str r0, [r2,#04] @将r0寄存器的数据存储到r2+4地址的值</p>
+<h2 id="ldm"><a href="#ldm" class="headerlink" title="ldm"></a>ldm</h2><p>可以从指定的存储单元加载多个数据到一个寄存器列表</p>
+<p>ldm{add_mode}{cond} rn{!} reglist</p>
+<p>add_mode:</p>
+<table>
+<thead>
+<tr>
+<th>addr_mode</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ia</td>
+<td>increase after,基址寄存器在执行指令之后增加，默认值</td>
+</tr>
+<tr>
+<td>ib</td>
+<td>increase before,之间增加(仅arm支持)</td>
+</tr>
+<tr>
+<td>da</td>
+<td>decrease after,之后减少(仅arm支持)</td>
+</tr>
+<tr>
+<td>db</td>
+<td>decrease before,之间减少</td>
+</tr>
+<tr>
+<td>fd</td>
+<td>满递减堆栈。高地址到低地址，堆栈指针指向最后一个入栈的有效数据项</td>
+</tr>
+<tr>
+<td>fa</td>
+<td>满递增堆栈。低地址到高地址，堆栈指针指向下一个要存放的空地址</td>
+</tr>
+<tr>
+<td>ed</td>
+<td>空递减堆栈。高地址到低地址</td>
+</tr>
+<tr>
+<td>ea</td>
+<td>空递增堆栈。低地址到高地址</td>
+</tr>
+</tbody>
+</table>
+<p>rn为基地存储器，</p>
+<p>!可选后缀：将最终地址协会rn寄存器</p>
+<p>reglist:用来存储数据的寄存器列表，用大括号括起来，可以用-表示多个连续的寄存器，如果不是连续的需要写出来</p>
+<p>ldm R0!, {r1-r3} @依次加载r0指向的存储单元的数据到r1,r2,r3</p>
+<h2 id="stm"><a href="#stm" class="headerlink" title="stm"></a>stm</h2><p>将一个寄存器列表数据存储到指定的存储单元</p>
+<p>stm{addr_mode}{cond} rn{!} reglist</p>
+<p>stmdb r1!, {r3-r6, r11} @将r3-r6,r11寄存器的内容存储到r1指向的存储单元</p>
+<p>stmfd sp!, {r3-r7} @r3-r7寄存器压入堆栈，等价于stmdb sp!, {r3-r7}</p>
+<h2 id="push"><a href="#push" class="headerlink" title="push"></a>push</h2><p>将寄存器的值推入满减堆栈</p>
+<p>push{cond} reglist</p>
+<p>push {r0, r4-r7} @r0,r4-r7寄存器内容入栈</p>
+<h2 id="pop"><a href="#pop" class="headerlink" title="pop"></a>pop</h2><p>从满递减堆栈中弹出数据到寄存器</p>
+<p>pop{cond} reglist</p>
+<p>pop {r0, r4-r7} @将r0,r4-r7寄存器从堆栈中弹出</p>
+<h2 id="swp"><a href="#swp" class="headerlink" title="swp"></a>swp</h2><p>寄存器之间交换数据</p>
+<p>swp{b}{cond} rd, rm, [rn]</p>
+<p>b：可选，交换字节，否则交换32位字</p>
+<p>rd:</p>
+<p>//TODO</p>
+<h2 id="数据处理指令"><a href="#数据处理指令" class="headerlink" title="数据处理指令"></a>数据处理指令</h2><p>包括传送，算术，逻辑，比较。除了比较指令其他的都可以选用s后缀，来决定是否影响标志位</p>
+<h3 id="mov"><a href="#mov" class="headerlink" title="mov"></a>mov</h3><p>将8位立即数或寄存器的内容传送到目标寄存器</p>
+<p>mov{cond}{s} rd,operand2</p>
+<p>mov r0, #8 @r0=8</p>
+<p>mov r1, r0 @r1=r0</p>
+<p>movs r2, r1, lsl #2 @r2=r1*4，影响状态标志位</p>
+<h3 id="mvn"><a href="#mvn" class="headerlink" title="mvn"></a>mvn</h3><p>将8位的立即数或寄存器的值按位取反后传递到目标</p>
+<p>mvn r0, #0xff @r0=ffffff00</p>
+<p>mvn r1, r2 @将寄存器数据取反后存入r1</p>
+<h3 id="add"><a href="#add" class="headerlink" title="add"></a>add</h3><p>加法</p>
+<p>add r0, r1 #2 @r0=r1+2</p>
+<p>adds r0, r1,r2 @r0=r1+r2,影响标志位</p>
+<p>add r0,r1,lsl #3 @r0=r1*8</p>
+<h3 id="adc"><a href="#adc" class="headerlink" title="adc"></a>adc</h3><p>带进位加法指令，功能为rn+operand2+cpsr寄存器c条件标志位的值，存入rd</p>
+<p>adc{cond}{s} rd,rn,operand2</p>
+<p>add r0,r0,r2</p>
+<p>add r1,r1,r3 @两条指令完成64位加法，r1,r0=r1,r0+r3,r2</p>
+<h3 id="sub"><a href="#sub" class="headerlink" title="sub"></a>sub</h3><p>减法，rn-operand2值，结果保存到rd</p>
+<p>sub r0,r1,#4 @r0=r1-4</p>
+<p>sub r0,r1,r2 @r0=r1-r2，影响标志位</p>
+<h3 id="rsb"><a href="#rsb" class="headerlink" title="rsb"></a>rsb</h3><p>逆向减法指令，operand2-rn，结果保存到rd</p>
+<p>rsb{cond}{s}rd,rn,opearand2</p>
+<p>rsb r0,r1 #0x1234 @r0=0x1234-r1</p>
+<p>rub r0,r1 @r0=-r1</p>
+<h4 id="sbc"><a href="#sbc" class="headerlink" title="sbc"></a>sbc</h4><p>带进位减法，rn-opearnad2,在减去cpsr寄存器c值</p>
+<p>sbc{cond}{s} rd,rn,operand2</p>
+<p>subs r0,r0,r2</p>
+<p>sbc r1,r1,r3 @64位减法，r1,r0=r1,r0-r2,r3</p>
+<h3 id="rsc"><a href="#rsc" class="headerlink" title="rsc"></a>rsc</h3><p>带进位逆向减法指令，operand2-rn-c=rd</p>
+<p>rsc{cond} rd,rn,operand2</p>
+<p>rsbs r2,r0,#0</p>
+<p>rsc r3,r1,#0 @64为数取反，r3,r2=r1,r0</p>
+<h3 id="mul"><a href="#mul" class="headerlink" title="mul"></a>mul</h3><p>32位乘法，rm*rn，结果低32位保存到rd</p>
+<p>mul{cond}{s} rd,rm ,rn</p>
+<p>mum r0,r1,r2 @r0=r1*r2</p>
+<p>muls r0,r2,r3 @r0=r2*r3,影响n和z</p>
+<h3 id="mls"><a href="#mls" class="headerlink" title="mls"></a>mls</h3><p>mls{cond}{s} rd,rm,rn,ra</p>
+<p>rm寄存器的值*rn寄存器的值，然后在从ra寄存器的值中减去上一步的乘积</p>
+<p>mls r0,r1,r2,r3 @r0=r3-r1*r2</p>
+<h3 id="mla"><a href="#mla" class="headerlink" title="mla"></a>mla</h3><p>mla{cond}{s} rd,rm,rn,ra</p>
+<p>将rm*rn在加ra</p>
+<p>mla r0,r1,r2,r3 @r0=r1*r2+r3</p>
+<h3 id="umull"><a href="#umull" class="headerlink" title="umull"></a>umull</h3><p>umull{cond}{s} rdLo,rdHi,rm,rn</p>
+<p>将无符号rm寄存器的值和无符号寄存器rn的值相乘，然后将结果的低32位存入rdLo,高32位存入rdHi寄存器</p>
+<p>umull r0,r1,r2,r3 @r1,r0=r2*r3</p>
+<h3 id="umlal"><a href="#umlal" class="headerlink" title="umlal"></a>umlal</h3><p>umlal{cond}{s} rdLo,rdHi,rm,rn</p>
+<p>将无符号rm寄存器的值和无符号寄存器rn的值相乘,然后将64位的结果与rdHi,rdLo组成的64位数相加，然后在按顺序放入寄存器</p>
+<p>umlal r0,r1,r2,r3 @r1,r0=r2*r3+(r1,r0)</p>
+<h3 id="smull"><a href="#smull" class="headerlink" title="smull"></a>smull</h3><p>smull{cond}{s} rdLo,rdHi,rm,rn</p>
+<p>将rm寄存器的值和寄存器rn的值做为有符号数相乘，结果低32位放入rdLo,高32位存入rdHi</p>
+<p>smull r0,r1,r2,r3 @r1,r0=r2*r3</p>
+<h3 id="smlal"><a href="#smlal" class="headerlink" title="smlal"></a>smlal</h3><p>将rm寄存器的值和寄存器rn的值做为有符号数相乘，然后将结果加上rdHi,rdLo组成的64位数，结果低32位放入rdLo,高32位存入rdHi</p>
+<p>smlal r0,r1,r2,r3 @r1,r0=r2*r3+(r1,r0)</p>
+<h3 id="smlad"><a href="#smlad" class="headerlink" title="smlad"></a>smlad</h3><p>smlad{cond}{s} rd,rm,rn,ra</p>
+<p>将rm寄存器低半字节和rn寄存器低半字节相乘，然后将rm寄存器的高半字节和rn的高半字节相乘，最后将两个乘积//TODO</p>
+<h3 id="smlsd"><a href="#smlsd" class="headerlink" title="smlsd"></a>smlsd</h3><h3 id="sdiv"><a href="#sdiv" class="headerlink" title="sdiv"></a>sdiv</h3><p>有符号除法指令</p>
+<p>sdiv{cond}rd,rm,rn</p>
+<p>sdiv r0,r1,r2 @r0=r1/r2</p>
+<h3 id="udiv"><a href="#udiv" class="headerlink" title="udiv"></a>udiv</h3><p>无符号除法</p>
+<p>udiv{cond} rd,rm,rn</p>
+<p>udiv r0,r1,r2 @r0=r1/r2</p>
+<h3 id="asr"><a href="#asr" class="headerlink" title="asr"></a>asr</h3><p>asr{cond}{s} rd,rm,opearnd2</p>
+<p>算术右移指令。rm寄存器算术右移opearnd2位，高位用符号位填充，结果保存到rd</p>
+<p>asr r0,r1,#2</p>
+<h3 id="and"><a href="#and" class="headerlink" title="and"></a>and</h3><p>逻辑与</p>
+<p>and{cond}{s} rd,rn,operand2</p>
+<p>and r0,r0,#1 @取r0得最低1位</p>
+<h3 id="orr"><a href="#orr" class="headerlink" title="orr"></a>orr</h3><p>逻辑或</p>
+<p>orr{cond}{s} rd,rn,operand2</p>
+<p>orr r0,r0,#0xf @保留r0低4位，其余位清0</p>
+<h3 id="eor"><a href="#eor" class="headerlink" title="eor"></a>eor</h3><p>异或</p>
+<p>eor{cond}{s} rd,rn,opearnd2</p>
+<p>eor r0,r1,r2 @r0=r1^r2</p>
+<h3 id="bic"><a href="#bic" class="headerlink" title="bic"></a>bic</h3><p>位清除指令。功能是讲operand2得值取反，然后与rn的值，结果保存到rd</p>
+<p>bic{cond}{s} rd,rn,operand2</p>
+<p>bic r0,r0,#0x0f @清除r0低4位</p>
+<h3 id="lsl"><a href="#lsl" class="headerlink" title="lsl"></a>lsl</h3><p>逻辑左移，rm的值左移operand2,空位补0</p>
+<p>lsl{cond}{s} rd,rm,operand2</p>
+<p>lsl r0,r1,#2 @r0=r1*2^2</p>
+<h3 id="lsr"><a href="#lsr" class="headerlink" title="lsr"></a>lsr</h3><p>逻辑右移指令。rm逻辑右移operand2位，空位补0</p>
+<p>lsr{cond}{s} rd,rm,operand2</p>
+<p>lsr r0,r1#2 @r0=r1/(2^2)</p>
+<h4 id="ror"><a href="#ror" class="headerlink" title="ror"></a>ror</h4><p>循环右移，rm的值循环右移operand2位，右边移除的值放回左边</p>
+<p>ror{cond}{s} rd,rm,operand2</p>
+<p>ror r1,r1,#1</p>
+<h3 id="rrx"><a href="#rrx" class="headerlink" title="rrx"></a>rrx</h3><p>带扩展位的循环右移，将rm寄存器右移1位，最高位用标志位填充</p>
+<p>rrx r1,r1</p>
+<h3 id="cmp"><a href="#cmp" class="headerlink" title="cmp"></a>cmp</h3><p>cmp{cond} rn,operand2</p>
+<p>rn-operand2和subs指令差不多，但是他不保存计算结果只设置标志位</p>
+<p>cmp r0,#0 @判断r0寄存器的值是否为0</p>
+<h3 id="cmn"><a href="#cmn" class="headerlink" title="cmn"></a>cmn</h3><p>cmn{cond} rn,operand2</p>
+<p>rn+operand2和adds差不多，但不保存计算结果，只设置标志位</p>
+<p>cmn r0,r1</p>
+<h3 id="tst"><a href="#tst" class="headerlink" title="tst"></a>tst</h3><p>tst{cond} rn,operand2</p>
+<p>rn&amp;operand2和ands差不多，但不保存结果，只设置标志位</p>
+<p>tst r0,#1 @判断r0寄存器最低位是否为1</p>
+<h3 id="teq"><a href="#teq" class="headerlink" title="teq"></a>teq</h3><p>teq{cond} rn,operand2</p>
+<p>rn^operand2和eors差不多，但不保存结果，只设置标志位</p>
+<p>teq r0,r1 @判断r0和r1是否相等</p>
+<h2 id="其他指令"><a href="#其他指令" class="headerlink" title="其他指令"></a>其他指令</h2><h3 id="swi"><a href="#swi" class="headerlink" title="swi"></a>swi</h3><p>软中断指令，用于产生中断，可以从用户模式切换的管理模式</p>
+<p>swi{cond},immed_24</p>
+<p>immed_24:24位的中断号，在Android中，系统调用为0号中断，使用r7寄存器存放系统调用，使用r0-r3传递前4个参数，对应大于4个参数的调用，剩余的采用堆栈传递，如：exit(0)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mov r0,#0</div><div class="line">mov r7,#1</div><div class="line">swi #0</div></pre></td></tr></table></figure>
+<h3 id="nop"><a href="#nop" class="headerlink" title="nop"></a>nop</h3><p>空操作，一般用于字节码对齐</p>
+<h3 id="mrs"><a href="#mrs" class="headerlink" title="mrs"></a>mrs</h3><p>读状态寄存器</p>
+<p>msr rd,psr</p>
+<p>psr取值可以是cpsr,spsr</p>
+<p>msr r0,cpsr @读取cpsr寄存器到r0寄存器中</p>
+<h3 id="msr"><a href="#msr" class="headerlink" title="msr"></a>msr</h3><p>写状态寄存器</p>
+<p>msr rd,psr_fields,operand2</p>
+<p>psr取值cpsr,spsr</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c</td>
+<td>控制域[7:0]</td>
+</tr>
+<tr>
+<td>x</td>
+<td>扩展域[15:8]</td>
+</tr>
+<tr>
+<td>s</td>
+<td>状态域[23:16]</td>
+</tr>
+<tr>
+<td>f</td>
+<td>标志位[31:24]</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mrs r0,cpsr @读取cpsr值到r0</div><div class="line"></div><div class="line">bic r0,r0,#0x80 @清除r0寄存器第7位</div><div class="line"></div><div class="line">msr cpsr_c,r0 @开启irq中断</div><div class="line"></div><div class="line">mov pc,lr @子程序返回</div></pre></td></tr></table></figure>
+<h1 id="hello-world"><a href="#hello-world" class="headerlink" title="hello world"></a>hello world</h1><p>这里我写一个arm版的hello world</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">	.arch armv5te</div><div class="line">	.fpu softvfp</div><div class="line">	.file	&quot;hello.c&quot;</div><div class="line">	.section	.rodata //只读数据段</div><div class="line">	.align	2 //4字节对齐</div><div class="line">.LC0:</div><div class="line">	.ascii	&quot;hello ARM!\000&quot; //字符串，一定要以\0结尾，不然他会一直读取直到\0才结束</div><div class="line">.LC1:</div><div class="line">	.ascii	&quot;hello world!\0&quot;</div><div class="line">.LC2:</div><div class="line">	.ascii	&quot;ha!&quot;</div><div class="line"></div><div class="line">	.text //指令段</div><div class="line">	.align	2</div><div class="line">	.global	main //申明为全局</div><div class="line">	.type	main, %function //类型为函数</div><div class="line">main:</div><div class="line">	@ args = 0, pretend = 0, frame = 8</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	stmfd	sp!, &#123;fp, lr&#125; //将fp,lr压栈</div><div class="line">	add	fp, sp, #4 @初始化fp寄存器，设置栈帧</div><div class="line">	sub	sp, sp, #8 @开辟栈控件</div><div class="line">	str	r0, [fp, #-8] @保存第一个参数</div><div class="line">	str	r1, [fp, #-12] @保存第二个参数</div><div class="line">	ldr	r3, .L3 @从l3标号加载一个字地址</div><div class="line">.LPIC0:</div><div class="line">	add r3, pc, r3 @把字符串的相对位置+pc地址就是这个字符串的绝对地址 </div><div class="line">	mov	r0, r3 @设置第一个参数</div><div class="line">	bl	puts(PLT) @调用puts函数</div><div class="line">	ldr	r3, .L3+4</div><div class="line">.LPIC1:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	bl	puts(PLT)</div><div class="line">	ldr	r3, .L3+8</div><div class="line">.LPIC2:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	bl	puts(PLT)</div><div class="line">	mov	r3, #0</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #4</div><div class="line">	@ sp needed</div><div class="line">	ldmfd	sp!, &#123;fp, pc&#125;</div><div class="line"></div><div class="line">.L3:</div><div class="line">	.word	.LC0-(.LPIC0+8)</div><div class="line">	.word	.LC1-(.LPIC1+8)</div><div class="line">	.word	.LC2-(.LPIC2+8)</div><div class="line">	.size	main, .-main</div><div class="line">	.ident	&quot;GCC: (GNU) 4.9 20150123 (prerelease)&quot;</div><div class="line">	.section	.note.GNU-stack,&quot;&quot;,%progbits</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ARM汇编/" rel="tag">#ARM汇编</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/10/about-arm/" rel="next" title="关于ARM你必须知道的">
+                <i class="fa fa-chevron-left"></i> 关于ARM你必须知道的
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/14/build-native-program/" rel="prev" title="android中原生代码的编译方式">
+                android中原生代码的编译方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/10/arm-assembly/"
+     data-title="ARM汇编"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/10/arm-assembly/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/10/arm-assembly/"
+           data-title="ARM汇编" data-url="http://i.woblog.cn/2016/08/10/arm-assembly/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ARM汇编程序结构"><span class="nav-number">1.</span> <span class="nav-text">ARM汇编程序结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解析ARM汇编"><span class="nav-number">2.</span> <span class="nav-text">解析ARM汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#处理器架构定义"><span class="nav-number">2.1.</span> <span class="nav-text">处理器架构定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#段定义"><span class="nav-number">2.2.</span> <span class="nav-text">段定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注释"><span class="nav-number">2.3.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标号"><span class="nav-number">2.4.</span> <span class="nav-text">标号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#汇编指令"><span class="nav-number">2.5.</span> <span class="nav-text">汇编指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子程序间参数传递"><span class="nav-number">2.6.</span> <span class="nav-text">子程序间参数传递</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#寻址方式"><span class="nav-number">3.</span> <span class="nav-text">寻址方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#立即寻址"><span class="nav-number">3.1.</span> <span class="nav-text">立即寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寄存器寻址"><span class="nav-number">3.2.</span> <span class="nav-text">寄存器寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寄存器移位寻址"><span class="nav-number">3.3.</span> <span class="nav-text">寄存器移位寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寄存器间接寻址"><span class="nav-number">3.4.</span> <span class="nav-text">寄存器间接寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基址寻址"><span class="nav-number">3.5.</span> <span class="nav-text">基址寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多寄存器寻址"><span class="nav-number">3.6.</span> <span class="nav-text">多寄存器寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆栈寻址"><span class="nav-number">3.7.</span> <span class="nav-text">堆栈寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#块拷贝寻址"><span class="nav-number">3.8.</span> <span class="nav-text">块拷贝寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相对寻址"><span class="nav-number">3.9.</span> <span class="nav-text">相对寻址</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#arm指令集"><span class="nav-number">4.</span> <span class="nav-text">arm指令集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#指令格式"><span class="nav-number">4.1.</span> <span class="nav-text">指令格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跳转指令"><span class="nav-number">4.2.</span> <span class="nav-text">跳转指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#b"><span class="nav-number">4.2.1.</span> <span class="nav-text">b</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bl"><span class="nav-number">4.2.2.</span> <span class="nav-text">bl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bx"><span class="nav-number">4.2.3.</span> <span class="nav-text">bx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#blx"><span class="nav-number">4.2.4.</span> <span class="nav-text">blx</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储器访问指令"><span class="nav-number">4.3.</span> <span class="nav-text">存储器访问指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ldr"><span class="nav-number">4.3.1.</span> <span class="nav-text">ldr</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#str"><span class="nav-number">4.4.</span> <span class="nav-text">str</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ldm"><span class="nav-number">4.5.</span> <span class="nav-text">ldm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stm"><span class="nav-number">4.6.</span> <span class="nav-text">stm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#push"><span class="nav-number">4.7.</span> <span class="nav-text">push</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pop"><span class="nav-number">4.8.</span> <span class="nav-text">pop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swp"><span class="nav-number">4.9.</span> <span class="nav-text">swp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据处理指令"><span class="nav-number">4.10.</span> <span class="nav-text">数据处理指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mov"><span class="nav-number">4.10.1.</span> <span class="nav-text">mov</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mvn"><span class="nav-number">4.10.2.</span> <span class="nav-text">mvn</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#add"><span class="nav-number">4.10.3.</span> <span class="nav-text">add</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adc"><span class="nav-number">4.10.4.</span> <span class="nav-text">adc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sub"><span class="nav-number">4.10.5.</span> <span class="nav-text">sub</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rsb"><span class="nav-number">4.10.6.</span> <span class="nav-text">rsb</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sbc"><span class="nav-number">4.10.6.1.</span> <span class="nav-text">sbc</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rsc"><span class="nav-number">4.10.7.</span> <span class="nav-text">rsc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mul"><span class="nav-number">4.10.8.</span> <span class="nav-text">mul</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mls"><span class="nav-number">4.10.9.</span> <span class="nav-text">mls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mla"><span class="nav-number">4.10.10.</span> <span class="nav-text">mla</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#umull"><span class="nav-number">4.10.11.</span> <span class="nav-text">umull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#umlal"><span class="nav-number">4.10.12.</span> <span class="nav-text">umlal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#smull"><span class="nav-number">4.10.13.</span> <span class="nav-text">smull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#smlal"><span class="nav-number">4.10.14.</span> <span class="nav-text">smlal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#smlad"><span class="nav-number">4.10.15.</span> <span class="nav-text">smlad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#smlsd"><span class="nav-number">4.10.16.</span> <span class="nav-text">smlsd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sdiv"><span class="nav-number">4.10.17.</span> <span class="nav-text">sdiv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#udiv"><span class="nav-number">4.10.18.</span> <span class="nav-text">udiv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#asr"><span class="nav-number">4.10.19.</span> <span class="nav-text">asr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#and"><span class="nav-number">4.10.20.</span> <span class="nav-text">and</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#orr"><span class="nav-number">4.10.21.</span> <span class="nav-text">orr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#eor"><span class="nav-number">4.10.22.</span> <span class="nav-text">eor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bic"><span class="nav-number">4.10.23.</span> <span class="nav-text">bic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsl"><span class="nav-number">4.10.24.</span> <span class="nav-text">lsl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsr"><span class="nav-number">4.10.25.</span> <span class="nav-text">lsr</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ror"><span class="nav-number">4.10.25.1.</span> <span class="nav-text">ror</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rrx"><span class="nav-number">4.10.26.</span> <span class="nav-text">rrx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cmp"><span class="nav-number">4.10.27.</span> <span class="nav-text">cmp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cmn"><span class="nav-number">4.10.28.</span> <span class="nav-text">cmn</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tst"><span class="nav-number">4.10.29.</span> <span class="nav-text">tst</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#teq"><span class="nav-number">4.10.30.</span> <span class="nav-text">teq</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他指令"><span class="nav-number">4.11.</span> <span class="nav-text">其他指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#swi"><span class="nav-number">4.11.1.</span> <span class="nav-text">swi</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nop"><span class="nav-number">4.11.2.</span> <span class="nav-text">nop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mrs"><span class="nav-number">4.11.3.</span> <span class="nav-text">mrs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#msr"><span class="nav-number">4.11.4.</span> <span class="nav-text">msr</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hello-world"><span class="nav-number">5.</span> <span class="nav-text">hello world</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

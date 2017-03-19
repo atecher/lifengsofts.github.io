@@ -1,0 +1,802 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="leb128," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="什么是lebLEB128即”Little-Endian Base 128”，基于128的小印第安序编码格式，是对任意有符号或者无符号整型数的可变长度的编码。
+也即，用LEB128编码的正数，会根据数字的大小改变所占字节数。在android的.dex文件中，他只用来编码32bits的整型数。
+那什么是leb呢：LITTLE-ENDIAN（小字节序、低字节序）,即低位字节排放在内存的低地址端，高位字节">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入到源码解析leb128数据类型">
+<meta property="og:url" content="http://i.woblog.cn/2016/07/23/leb128-format/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="什么是lebLEB128即”Little-Endian Base 128”，基于128的小印第安序编码格式，是对任意有符号或者无符号整型数的可变长度的编码。
+也即，用LEB128编码的正数，会根据数字的大小改变所占字节数。在android的.dex文件中，他只用来编码32bits的整型数。
+那什么是leb呢：LITTLE-ENDIAN（小字节序、低字节序）,即低位字节排放在内存的低地址端，高位字节">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入到源码解析leb128数据类型">
+<meta name="twitter:description" content="什么是lebLEB128即”Little-Endian Base 128”，基于128的小印第安序编码格式，是对任意有符号或者无符号整型数的可变长度的编码。
+也即，用LEB128编码的正数，会根据数字的大小改变所占字节数。在android的.dex文件中，他只用来编码32bits的整型数。
+那什么是leb呢：LITTLE-ENDIAN（小字节序、低字节序）,即低位字节排放在内存的低地址端，高位字节">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> 深入到源码解析leb128数据类型 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入到源码解析leb128数据类型
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-23T11:53:44+00:00" content="2016-07-23">
+              2016-07-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Dalvik/" itemprop="url" rel="index">
+                    <span itemprop="name">Dalvik</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/23/leb128-format/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/23/leb128-format/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="什么是leb"><a href="#什么是leb" class="headerlink" title="什么是leb"></a>什么是leb</h1><p>LEB128即”Little-Endian Base 128”，基于128的小印第安序编码格式，是对任意有符号或者无符号整型数的可变长度的编码。</p>
+<p>也即，用LEB128编码的正数，会根据数字的大小改变所占字节数。在android的.dex文件中，他只用来编码32bits的整型数。</p>
+<p>那什么是leb呢：LITTLE-ENDIAN（小字节序、低字节序）,即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。 与之对应的是：BIG-ENDIAN（大字节序、高字节序）</p>
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><p>每个LEB128由1~5字节组成，所有的字节组合在一起表示一个32位的数据，第一个的最高位为1，表示他还需要第二个字节，但是我们看第二个字节的最高位发现他是0，所以他不需要第三个字节了，如下图</p>
+<table class="leb128Bits"><br><thead><br><tr><th colspan="16">Bitwise diagram of a two-byte LEB128 value</th></tr><br><tr><br>  <th colspan="8">First byte<br>  </th><th colspan="8">Second byte<br></th></tr><br></thead><br><tbody><br><tr><br>  <td class="start1"><code>1</code></td><br>  <td>bit<sub>6</sub></td><br>  <td>bit<sub>5</sub></td><br>  <td>bit<sub>4</sub></td><br>  <td>bit<sub>3</sub></td><br>  <td>bit<sub>2</sub></td><br>  <td>bit<sub>1</sub></td><br>  <td>bit<sub>0</sub></td><br>  <td class="start2"><code>0</code></td><br>  <td>bit<sub>13</sub></td><br>  <td>bit<sub>12</sub></td><br>  <td>bit<sub>11</sub></td><br>  <td>bit<sub>10</sub></td><br>  <td>bit<sub>9</sub></td><br>  <td>bit<sub>8</sub></td><br>  <td class="end2">bit<sub>7</sub></td><br></tr><br></tbody><br></table>
+
+<h1 id="读取leb128"><a href="#读取leb128" class="headerlink" title="读取leb128"></a>读取leb128</h1><p>/dalvik/libdex/Leb128.h</p>
+<h2 id="读取uleb128"><a href="#读取uleb128" class="headerlink" title="读取uleb128"></a>读取uleb128</h2><p>读取无符号leb128的实现，可以在上面给的源码路径下看到如下方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function">DEX_INLINE <span class="keyword">int</span> <span class="title">readUnsignedLeb128</span><span class="params">(<span class="keyword">const</span> u1** pStream)</span> </span>&#123;</div><div class="line">    <span class="keyword">const</span> u1* ptr = *pStream;</div><div class="line">    <span class="keyword">int</span> result = *(ptr++); <span class="comment">//取第一个字节</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> (result &gt; <span class="number">0x7f</span>) &#123;  <span class="comment">//如果第1个字节大于0x7f,表示第一个字节最高位为1</span></div><div class="line">        <span class="keyword">int</span> cur = *(ptr++);  <span class="comment">//第2个字节</span></div><div class="line">        result = (result &amp; <span class="number">0x7f</span>) | ((cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">7</span>); <span class="comment">//与0x7f表示去掉这个这个字节的第8位。</span></div><div class="line">        <span class="keyword">if</span> (cur &gt; <span class="number">0x7f</span>) &#123;</div><div class="line">            cur = *(ptr++);</div><div class="line">            result |= (cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">14</span>;</div><div class="line">            <span class="keyword">if</span> (cur &gt; <span class="number">0x7f</span>) &#123;</div><div class="line">                cur = *(ptr++);</div><div class="line">                result |= (cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">21</span>;</div><div class="line">                <span class="keyword">if</span> (cur &gt; <span class="number">0x7f</span>) &#123;</div><div class="line">                    <span class="comment">/*</span></div><div class="line">                     * Note: We don't check to see if cur is out of</div><div class="line">                     * range here, meaning we tolerate garbage in the</div><div class="line">                     * high four-order bits.</div><div class="line">                     */</div><div class="line">                    cur = *(ptr++);</div><div class="line">                    result |= cur &lt;&lt; <span class="number">28</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    *pStream = ptr;</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面举例子：计算c0 83 92 25的uleb128值<br>  1100 0000 0xc0 //最高位为1，表示还需要第2个字节</p>
+<h2 id="0111-1111"><a href="#0111-1111" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0100 0000 0x40 //第一个字节的值</p>
+<p>  1000 0011 0x83 //最高位为1，表示还需要第3个字节</p>
+<h2 id="0111-1111-1"><a href="#0111-1111-1" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0000 0011 0x3 &lt;&lt; 7 = 0x180 //第2个字节的值</p>
+<p>  1001 0010 0x92 //最高位为1，表示还需要第4个字节</p>
+<h2 id="0111-1111-2"><a href="#0111-1111-2" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0001 0010 0x12 &lt;&lt; 14 = 0x48000,294912 //第3个字节的值</p>
+<p>  0010 0101 0x25</p>
+<h2 id="0111-1111-3"><a href="#0111-1111-3" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0010 0101 0x25 &lt;&lt; 21 = 0x4a00000,37x2^21 //第4个字节的值</p>
+<p>  结果为：0x4a481c0</p>
+<p>至于为什么要左移7，14位等，是因为这里所示的字节码是先排列低位字节码，所以第2个字节，应该在左边，依次类推</p>
+<h2 id="读取sleb128类型"><a href="#读取sleb128类型" class="headerlink" title="读取sleb128类型"></a>读取sleb128类型</h2><p>计算方法与无符号的leb128是一样的，只是对无符号leb128最后一个字节的最高位进行了符号扩展</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"> <span class="function">DEX_INLINE <span class="keyword">int</span> <span class="title">readSignedLeb128</span><span class="params">(<span class="keyword">const</span> u1** pStream)</span> </span>&#123;</div><div class="line">    <span class="keyword">const</span> u1* ptr = *pStream;</div><div class="line">    <span class="keyword">int</span> result = *(ptr++);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (result &lt;= <span class="number">0x7f</span>) &#123;</div><div class="line">        result = (result &lt;&lt; <span class="number">25</span>) &gt;&gt; <span class="number">25</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">int</span> cur = *(ptr++);</div><div class="line">        result = (result &amp; <span class="number">0x7f</span>) | ((cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">7</span>);</div><div class="line">        <span class="keyword">if</span> (cur &lt;= <span class="number">0x7f</span>) &#123;</div><div class="line">            result = (result &lt;&lt; <span class="number">18</span>) &gt;&gt; <span class="number">18</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            cur = *(ptr++);</div><div class="line">            result |= (cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">14</span>;</div><div class="line">            <span class="keyword">if</span> (cur &lt;= <span class="number">0x7f</span>) &#123;</div><div class="line">                result = (result &lt;&lt; <span class="number">11</span>) &gt;&gt; <span class="number">11</span>;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                cur = *(ptr++);</div><div class="line">                result |= (cur &amp; <span class="number">0x7f</span>) &lt;&lt; <span class="number">21</span>;</div><div class="line">                <span class="keyword">if</span> (cur &lt;= <span class="number">0x7f</span>) &#123;</div><div class="line">                    result = (result &lt;&lt; <span class="number">4</span>) &gt;&gt; <span class="number">4</span>;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="comment">/*</span></div><div class="line">                     * Note: We don't check to see if cur is out of</div><div class="line">                     * range here, meaning we tolerate garbage in the</div><div class="line">                     * high four-order bits.</div><div class="line">                     */</div><div class="line">                    cur = *(ptr++);</div><div class="line">                    result |= cur &lt;&lt; <span class="number">28</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    *pStream = ptr;</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面举例子：计算d1 c2 b3 40的sleb128值</p>
+<p>  1101 0001 0xd1</p>
+<h2 id="0111-1111-4"><a href="#0111-1111-4" class="headerlink" title="  0111 1111"></a>  0111 1111</h2><p>  0101 0001 0x51</p>
+<p>  1100 0010 0xc2</p>
+<h2 id="0111-1111-5"><a href="#0111-1111-5" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0100 0010 0x42,66*2^7=0x2100</p>
+<p>  1011 0011 0xb3</p>
+<h2 id="0111-1111-6"><a href="#0111-1111-6" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0011 0011 0x33,51*2^14=0xcc000</p>
+<p>  0100 0000 0x40</p>
+<h2 id="0111-1111-7"><a href="#0111-1111-7" class="headerlink" title=" +0111 1111"></a> +0111 1111</h2><p>  0100 0000 0x40,64*2^21=0x8000000</p>
+<p>把他没的结果加起来：<br>0x51+0x2100+0xcc000+0x8000000=0x80ce151,135061841*2^4=2160989456,在除以2^4</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/leb128/" rel="tag">#leb128</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/23/dex-format/" rel="next" title="Dex文件格式">
+                <i class="fa fa-chevron-left"></i> Dex文件格式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/25/mutf-8/" rel="prev" title="关于Dex特有编码MUTF-8的详细介绍">
+                关于Dex特有编码MUTF-8的详细介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/23/leb128-format/"
+     data-title="深入到源码解析leb128数据类型"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/07/23/leb128-format/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/23/leb128-format/"
+           data-title="深入到源码解析leb128数据类型" data-url="http://i.woblog.cn/2016/07/23/leb128-format/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是leb"><span class="nav-number">1.</span> <span class="nav-text">什么是leb</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#读取leb128"><span class="nav-number">3.</span> <span class="nav-text">读取leb128</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#读取uleb128"><span class="nav-number">3.1.</span> <span class="nav-text">读取uleb128</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111"><span class="nav-number">3.2.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-1"><span class="nav-number">3.3.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-2"><span class="nav-number">3.4.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-3"><span class="nav-number">3.5.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读取sleb128类型"><span class="nav-number">3.6.</span> <span class="nav-text">读取sleb128类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-4"><span class="nav-number">3.7.</span> <span class="nav-text">  0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-5"><span class="nav-number">3.8.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-6"><span class="nav-number">3.9.</span> <span class="nav-text"> +0111 1111</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0111-1111-7"><span class="nav-number">3.10.</span> <span class="nav-text"> +0111 1111</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

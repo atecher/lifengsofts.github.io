@@ -1,0 +1,880 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Collections," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="框架接口图
+Java的集合框架分为两类Collection和Map
+123456789101112Collection是集合，也就是存储对象的valueMap是用来存储键值对的容器List：有序集合，可以储存null值，值可以重复Set:无序集合，可以存储null值，值不能重复SortedSet:可以排序的set，不能存储null值，值不能重复。并提供了可以获取子Set的方法NavigableSe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java集合框架总结">
+<meta property="og:url" content="http://i.woblog.cn/2016/10/31/java-collections/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="框架接口图
+Java的集合框架分为两类Collection和Map
+123456789101112Collection是集合，也就是存储对象的valueMap是用来存储键值对的容器List：有序集合，可以储存null值，值可以重复Set:无序集合，可以存储null值，值不能重复SortedSet:可以排序的set，不能存储null值，值不能重复。并提供了可以获取子Set的方法NavigableSe">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/java-collection-interface">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/CollectionInterface-impl.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java集合框架总结">
+<meta name="twitter:description" content="框架接口图
+Java的集合框架分为两类Collection和Map
+123456789101112Collection是集合，也就是存储对象的valueMap是用来存储键值对的容器List：有序集合，可以储存null值，值可以重复Set:无序集合，可以存储null值，值不能重复SortedSet:可以排序的set，不能存储null值，值不能重复。并提供了可以获取子Set的方法NavigableSe">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/java-collection-interface">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> Java集合框架总结 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java集合框架总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-31T14:17:01+00:00" content="2016-10-31">
+              2016-10-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/31/java-collections/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/31/java-collections/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="框架接口图"><a href="#框架接口图" class="headerlink" title="框架接口图"></a>框架接口图</h1><p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/java-collection-interface" alt=""></p>
+<p>Java的集合框架分为两类Collection和Map</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Collection是集合，也就是存储对象的value</div><div class="line"></div><div class="line">Map是用来存储键值对的容器</div><div class="line"></div><div class="line">List：有序集合，可以储存<span class="keyword">null</span>值，值可以重复</div><div class="line"></div><div class="line">Set:无序集合，可以存储<span class="keyword">null</span>值，值不能重复</div><div class="line">SortedSet:可以排序的set，不能存储<span class="keyword">null</span>值，值不能重复。并提供了可以获取子Set的方法</div><div class="line">NavigableSet:提供方便搜索的一些方法，比如：返回小于某个元素的元素</div><div class="line"></div><div class="line">Queue：队列，可以存储<span class="keyword">null</span>值，值可以重复。先进先出，对头删除元素，队尾添加元素</div><div class="line">Deque:双端队列，也就是队头，对尾都可以删除元素</div></pre></td></tr></table></figure>
+<p>测试List</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">b</div><div class="line">null</div><div class="line">null</div><div class="line">aa</div></pre></td></tr></table></figure>
+<p>发现List确实是有序集合，且可以存储null值，并且值可以重复</p>
+<p>测试Set</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">HashSet&lt;String&gt; strings = <span class="keyword">new</span> HashSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">null</span></div><div class="line">aa</div><div class="line">a</div><div class="line">b</div></pre></td></tr></table></figure>
+<p>发现Set无序的，能储存null元素，值不能重复</p>
+<p>测试Queue:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">HashSet&lt;String&gt; strings = <span class="keyword">new</span> HashSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">b</div><div class="line">null</div><div class="line">null</div><div class="line">aa</div></pre></td></tr></table></figure>
+<p>可以发现输出和输入顺序都一样，并且能存储null。</p>
+<p>测试双端队列：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">LinkedList&lt;String&gt; strings = <span class="keyword">new</span> LinkedList&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="keyword">null</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line"></div><div class="line">strings.addFirst(<span class="string">"first"</span>);</div><div class="line">strings.addLast(<span class="string">"last"</span>);</div><div class="line"></div><div class="line">strings.forEach(e -&gt; System.out.println(e));</div><div class="line"></div><div class="line">System.out.println(<span class="string">"------------"</span>);</div><div class="line"></div><div class="line">System.out.println(strings.pollFirst());</div><div class="line">System.out.println(strings.pollLast());</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">first</div><div class="line">a</div><div class="line">b</div><div class="line">null</div><div class="line">null</div><div class="line">aa</div><div class="line">last</div><div class="line">------------</div><div class="line">first</div><div class="line">last</div></pre></td></tr></table></figure>
+<p>可以发现我们不仅可以在首尾添加元素，也能在首尾删除元素。</p>
+<p>测试SortedSet:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">TreeSet&lt;String&gt; strings = <span class="keyword">new</span> TreeSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">aa</div><div class="line">b</div></pre></td></tr></table></figure>
+<p>说明是有序的，并且不能存储null，元素也不能重复。在比较元素的时候还可以传入自定义比较器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">TreeSet&lt;String&gt; strings = <span class="keyword">new</span> TreeSet&lt;&gt;((o1, o2) -&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (o1.length() &lt; o2.length())</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (o1.length() &gt; o2.length())</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line">strings.add(<span class="string">"ab"</span>);</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">aa</div></pre></td></tr></table></figure>
+<p>我们发现相同的元素不能存储进去。</p>
+<p>测试SortedSet获取子集：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">TreeSet&lt;String&gt; strings = <span class="keyword">new</span> TreeSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line">strings.add(<span class="string">"ab"</span>);</div><div class="line"></div><div class="line">SortedSet&lt;String&gt; strings1 = strings.subSet(<span class="string">"a"</span>, <span class="string">"ab"</span>);</div><div class="line">strings1.forEach(e -&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">aa</div></pre></td></tr></table></figure>
+<p>subSet方法就定义到了SortedSet中，作用是返回元素a到元素ab中间的元素，不包括ab元素的不可修改set。</p>
+<p>测试NavigableSet:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">TreeSet&lt;String&gt; strings = <span class="keyword">new</span> TreeSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a"</span>);</div><div class="line">strings.add(<span class="string">"b"</span>);</div><div class="line">strings.add(<span class="string">"aa"</span>);</div><div class="line">strings.add(<span class="string">"ab"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div><div class="line">System.out.println(<span class="string">"------------"</span>);</div><div class="line">System.out.println(strings.lower(<span class="string">"ab"</span>));</div><div class="line">System.out.println(strings.higher(<span class="string">"ab"</span>));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">a</div><div class="line">aa</div><div class="line">ab</div><div class="line">b</div><div class="line">------------</div><div class="line">aa</div><div class="line">b</div></pre></td></tr></table></figure>
+<p>可以使用快速的搜索方法，比如使用lower找小于ab的元素，使用higher找大于ab的元素。</p>
+<h1 id="集合框架完整图"><a href="#集合框架完整图" class="headerlink" title="集合框架完整图"></a>集合框架完整图</h1><p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/CollectionInterface-impl.png" alt=""></p>
+<p>上面基本上列出了Java的所有集合框架了，但不包括并发包中的集合。下面我们一一讲解他们。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">AbstractCollection：是一个抽象类，实现了一些Collection接口的比较通用的方法，比如：contains，toArray，containsAll等方法，这样做的目的是，要再实现其他的集合，只需要继承AbstractCollection就行了，而不是用实现Collection接口，如果你觉得它的默认实现不好，可以在子类重写相应的方法。</div><div class="line">  </div><div class="line">ArrayDeque：是一个用循环数组实现的双端队列。实现了Deque接口。</div><div class="line">PriorityQueu：允许高效删除最大优先级的元素的队列</div><div class="line">  </div><div class="line">AbstractList：是一个抽象类，实现了AbstractCollection，并填加了一些特有的List方法，比如：indexOf等方法。</div><div class="line">ArrayList:一个使用数组实现的可增长有序列表。高效的索引</div><div class="line">LinkedList:一个使用链表实现的可增长有序列表。高效的删除和添加</div><div class="line"></div><div class="line">HashSet:使用Hash表实现的没有重复元素的无序集合</div><div class="line">TreeSet:使用二叉树结构实现的有序集合</div><div class="line">EnumSet:包含枚举类型的集合</div><div class="line">LinkedHashSet:使用Hash表实现的有序集合</div><div class="line">  </div><div class="line">HashMap:使用Hash表实现存储key/value结构的映射表，键是键的hashCode，通常情况下能直接定位到他的值(get),特殊特殊情况下也只需要遍历当前Key所对应的桶，所以有很高的随机访问速度，但是顺序是不确定的，最多允许一条记录键为<span class="keyword">null</span>，但可以运行多条值为<span class="keyword">null</span>的记录。他不是线程安全的，如果需要则用ConcurrentHashMap或者使用Collections中的synchronizedMap方法是HashMap也能线程安全。</div><div class="line">Hashtable:他是jdk以前提供的类，功能和HashMap类似，但是他是线程安全的，当然并发性能并没有ConcurrentHashMap好，所以新代码并不建议使用它。</div><div class="line">TreeMap：使用二叉树数据结构实现存储key/value结构的有序映射表。能按照用户自定义的比较器排序。</div><div class="line">EnumMap:高效存储枚举值的映射表</div><div class="line">LinkedHashMap:使用Hash表实现存储key/value结构的能记住插入顺序的映射表</div><div class="line">WeakHashMap:一种当值没有用的时候可以被拉机器回收的映射表</div><div class="line">IdentiryHashMap:使用==而不是equals比较键值的映射表</div></pre></td></tr></table></figure>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>有些集合有listIterator方法，返回一个ListIterator对象。可以实现前后遍历元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">strings.add(<span class="string">"a123234324"</span>);</div><div class="line">strings.add(<span class="string">"b34"</span>);</div><div class="line">strings.add(<span class="string">"c"</span>);</div><div class="line">strings.add(<span class="string">"d4"</span>);</div><div class="line">strings.add(<span class="string">"e"</span>);</div><div class="line"></div><div class="line">ListIterator&lt;String&gt; stringListIterator = strings.listIterator();</div><div class="line"><span class="keyword">while</span> (stringListIterator.hasNext()) &#123;</div><div class="line">    System.out.println(stringListIterator.next());</div><div class="line">&#125;</div><div class="line"></div><div class="line">System.out.println(<span class="string">"------"</span>);</div><div class="line"></div><div class="line"><span class="keyword">while</span> (stringListIterator.hasPrevious()) &#123;</div><div class="line">    System.out.println(stringListIterator.previous());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">a123234324</div><div class="line">b34</div><div class="line">c</div><div class="line">d4</div><div class="line">e</div><div class="line">------</div><div class="line">e</div><div class="line">d4</div><div class="line">c</div><div class="line">b34</div><div class="line">a123234324</div></pre></td></tr></table></figure>
+<h2 id="散列集"><a href="#散列集" class="headerlink" title="散列集"></a>散列集</h2><p>我们都知道数组和链表都可以安装我们想要的排序次序存放元素，但是如果想获取某个元素却又忘记了位置，区需要偏离每个元素，知道找到为止，如果集合元素太多了，那将有很多的性能问题。如果不在意元素的顺序，可以有很多种数据结构来实现这个需求。其中一种最常见的是散列表(hash table)。他为每个对象计算一个整数，称为散列码(hash code)，比如我们测试不同字符串的hash code:</p>
+<table>
+<thead>
+<tr>
+<th>字符串</th>
+<th>散列码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lee</td>
+<td>76268</td>
+</tr>
+<tr>
+<td>lee</td>
+<td>107020</td>
+</tr>
+<tr>
+<td>eel</td>
+<td>100300</td>
+</tr>
+</tbody>
+</table>
+<p>所以说如果自定义类，就要实现HashCode方法，同时HashCode方法应与equals方法相兼容。</p>
+<p>在Java中，散列表用链表数组实现，每个列表称为桶(bucket)。</p>
+<p>如果要添加元素，他的基本步骤为则先要计算他的散列码，然后与桶的总数取余就可以得到保存这个元素的得桶索引。例如：如果某个对象的散列码是76268，并且有128个捅，所以对象应该保存于108号桶中，计算方式是76268%128=108，这样就可以快速定位到这个元素的位置，当然如果你幸运，那么该位置没有其他元素，此时就可以插入该元素。如果这个地方已经有一个元素了，这种情况下称为散列码冲突(hash collision)。这时就需要将要插入的元素与同种所有的元素就行了比较，看这个对象是否存在，则替换value。</p>
+<p>从上面看到如果散列码分布合理，且桶数很大，发生散列码冲突的几率就越小，才能提高更好的性能。</p>
+<blockquote>
+<p>注意：在JavaSE8中，当桶的元素个数达到8时会变为平衡二叉树。来提高效率。</p>
+</blockquote>
+<p>其中有个很重要的指标就是桶数，通常设置为预计元素个数的75%~150%，且为一个素数。标准类库使用2的幂次方，默认值为16，下次会变为2^5。可以看到到JavaSE8的HashMap中初始化为16：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">1</span> &lt;&lt; <span class="number">4</span>; <span class="comment">// aka 16</span></div></pre></td></tr></table></figure>
+<p>如果元素装满了，就需要在散列(rehashed)，其实就是创建一个桶数更多的表，然后将原来的元素拷贝到新列表，并丢弃原来的列表。装填因子觉得什么时候在散列，默认是0.75也就是表中存储了超过75%的元素，这个表就会用双倍的桶数进行再散列。</p>
+<p>我们可以通过构造函数传递初始容量和装填因子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> HashSet&lt;String&gt;(<span class="number">10</span>, <span class="number">0.8F</span>);</div></pre></td></tr></table></figure>
+<h2 id="树集"><a href="#树集" class="headerlink" title="树集"></a>树集</h2><p>Treeset和HashSet十分类似，不过他改进了，是一个有序集合，任意顺序插入的元素遍历时都会自动按照排序好的顺序迭代。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">TreeSet&lt;String&gt; strings = <span class="keyword">new</span> TreeSet&lt;&gt;();</div><div class="line">strings.add(<span class="string">"c"</span>);</div><div class="line">strings.add(<span class="string">"d4"</span>);</div><div class="line">strings.add(<span class="string">"a123234324"</span>);</div><div class="line">strings.add(<span class="string">"b34"</span>);</div><div class="line">strings.add(<span class="string">"e"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">a123234324</div><div class="line">b34</div><div class="line">c</div><div class="line">d4</div><div class="line">e</div></pre></td></tr></table></figure>
+<p>排序使用的是树结构，当前实现用的是红黑树(red-black tree)。将一个元素添加到树要比添加到散列表中慢，因为他要排序，但是查找却要快的多，查找元素的时间为平均为log2N，例如：一棵树包含一个1000个元素，添加一个元素大约需要10次比较。</p>
+<p>使用树集必须要保证元素可比较，元素都实现Comparable接口，或者在构造树集是指定一个Comparator比较器。</p>
+<h2 id="队列和双端队列"><a href="#队列和双端队列" class="headerlink" title="队列和双端队列"></a>队列和双端队列</h2><h3 id="优先级队列"><a href="#优先级队列" class="headerlink" title="优先级队列"></a>优先级队列</h3><p>可以按照任意顺序插入，却总是按照排序的顺序进行检索，也就说无论何时调用remove方法，总会获得当前优先级队列中数字最小的元素，如果使用迭代器方式处理这些元素，并不需要排序，他使用一个优雅且高效的堆(heap)结构(是一个可以自我调整的二叉树，对树执行添加(add)和删除(remore)操作，可以让最小的元素移动到跟，而不必话费时间对元素排序)。</p>
+<p>典型的优先队列使用场景是任务调用。每一个任务都有一个优先级，任务以随机添加到队列中，每当启动一个新任务时，都将优先级最高的任务从队列中删除，通常1为最高，所以也说将最小的元素删除。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">PriorityQueue&lt;String&gt; strings = <span class="keyword">new</span> PriorityQueue&lt;&gt;();</div><div class="line">strings.add(<span class="string">"c"</span>);</div><div class="line">strings.add(<span class="string">"d4"</span>);</div><div class="line">strings.add(<span class="string">"a123234324"</span>);</div><div class="line">strings.add(<span class="string">"b34"</span>);</div><div class="line">strings.add(<span class="string">"e"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div><div class="line"></div><div class="line">System.out.println(<span class="string">"-------"</span>);</div><div class="line">System.out.println(strings.remove());</div><div class="line">System.out.println(<span class="string">"-------"</span>);</div><div class="line"></div><div class="line">strings.forEach(e-&gt; System.out.println(e));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">a123234324</div><div class="line">b34</div><div class="line">c</div><div class="line">d4</div><div class="line">e</div><div class="line">-------</div><div class="line">a123234324</div><div class="line">-------</div><div class="line">b34</div><div class="line">d4</div><div class="line">c</div><div class="line">e</div></pre></td></tr></table></figure>
+<p>可以看到删除的其实是最小的元素。</p>
+<h2 id="LinkedHashSet"><a href="#LinkedHashSet" class="headerlink" title="LinkedHashSet"></a>LinkedHashSet</h2><p>用来记住插入元素项顺序的集合。</p>
+<h1 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h1><h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">HashMap&lt;String, String&gt; strings = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line">strings.put(<span class="string">"3"</span>,<span class="string">"c"</span>);</div><div class="line">strings.put(<span class="string">"4"</span>,<span class="string">"d4"</span>);</div><div class="line">strings.put(<span class="string">"5"</span>,<span class="string">"e"</span>);</div><div class="line">strings.put(<span class="string">"1"</span>,<span class="string">"a123234324"</span>);</div><div class="line">strings.put(<span class="string">"2"</span>,<span class="string">"b34"</span>);</div><div class="line"></div><div class="line"></div><div class="line">strings.forEach((k,v)-&gt; System.out.println(k+<span class="string">":"</span>+v));</div><div class="line"></div><div class="line"></div><div class="line">System.out.println(<span class="string">"--------"</span>);</div><div class="line"></div><div class="line">HashMap&lt;Integer, String&gt; hashMap = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line">hashMap.put(<span class="number">10</span>,<span class="string">"d"</span>);</div><div class="line">hashMap.put(<span class="number">2</span>,<span class="string">"c"</span>);</div><div class="line">hashMap.put(<span class="number">1</span>,<span class="string">"a"</span>);</div><div class="line">hashMap.put(<span class="number">3</span>,<span class="string">"b"</span>);</div><div class="line"></div><div class="line">hashMap.forEach((k,v)-&gt; System.out.println(k+<span class="string">":"</span>+v));</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">1:a123234324</div><div class="line">2:b34</div><div class="line">3:c</div><div class="line">4:d4</div><div class="line">5:e</div><div class="line">--------</div><div class="line">1:a</div><div class="line">2:c</div><div class="line">3:b</div><div class="line">10:d</div></pre></td></tr></table></figure>
+<p>可以发现默认按照key排序的。</p>
+<h3 id="更新值"><a href="#更新值" class="headerlink" title="更新值"></a>更新值</h3><p>如我们需要使用某个Map统计某个单词出现的次数，可以这样做：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testWordCount</span><span class="params">()</span> </span>&#123;</div><div class="line">    String[] strings = &#123;<span class="string">"a"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>, <span class="string">"d"</span>, <span class="string">"c"</span>, <span class="string">"c"</span>, <span class="string">"a"</span>, <span class="string">"e"</span>&#125;;</div><div class="line">    HashMap&lt;String, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; strings.length; i++) &#123;</div><div class="line">        countWord(map, strings[i]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    map.forEach((k, v) -&gt; System.out.println(k + <span class="string">":"</span> + v));</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">countWord</span><span class="params">(Map&lt;String, Integer&gt; map, String word)</span> </span>&#123;</div><div class="line"><span class="comment">//        map.put(word,hashMap.get(word)+1); //第一次会空指针,可以通过下面的方式避免</span></div><div class="line"></div><div class="line"><span class="comment">//        map.put(word,hashMap.getOrDefault(word,0)+1); //可以这样</span></div><div class="line"></div><div class="line">    <span class="comment">//也可以这样</span></div><div class="line"><span class="comment">//        map.putIfAbsent(word,0); //当键不存在时才添加</span></div><div class="line"><span class="comment">//        map.put(word,hashMap.get(word)+1);</span></div><div class="line"></div><div class="line">    <span class="comment">//当然还有更好的方式</span></div><div class="line">    map.merge(word, <span class="number">1</span>, Integer::sum); <span class="comment">//如果不存在key word时，装入1，存在时将原来的值加1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">a:2</div><div class="line">c:3</div><div class="line">d:2</div><div class="line">e:1</div></pre></td></tr></table></figure>
+<h2 id="弱散列映射"><a href="#弱散列映射" class="headerlink" title="弱散列映射"></a>弱散列映射</h2><p>设计WeakHashMap是为了解决一个很特别的问题。假设一个键的最后一次引用没有了，那么也就无法删除对应的值了。</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Collections/" rel="tag">#Collections</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/19/debug-apk/" rel="next" title="全方位动态调试Apk">
+                <i class="fa fa-chevron-left"></i> 全方位动态调试Apk
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/14/react-native-env/" rel="prev" title="React Native">
+                React Native <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/31/java-collections/"
+     data-title="Java集合框架总结"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/10/31/java-collections/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/31/java-collections/"
+           data-title="Java集合框架总结" data-url="http://i.woblog.cn/2016/10/31/java-collections/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#框架接口图"><span class="nav-number">1.</span> <span class="nav-text">框架接口图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集合框架完整图"><span class="nav-number">2.</span> <span class="nav-text">集合框架完整图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">2.1.</span> <span class="nav-text">List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#散列集"><span class="nav-number">2.2.</span> <span class="nav-text">散列集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树集"><span class="nav-number">2.3.</span> <span class="nav-text">树集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#队列和双端队列"><span class="nav-number">2.4.</span> <span class="nav-text">队列和双端队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优先级队列"><span class="nav-number">2.4.1.</span> <span class="nav-text">优先级队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashSet"><span class="nav-number">2.5.</span> <span class="nav-text">LinkedHashSet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#映射"><span class="nav-number">3.</span> <span class="nav-text">映射</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap"><span class="nav-number">3.1.</span> <span class="nav-text">HashMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#更新值"><span class="nav-number">3.1.1.</span> <span class="nav-text">更新值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#弱散列映射"><span class="nav-number">3.2.</span> <span class="nav-text">弱散列映射</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

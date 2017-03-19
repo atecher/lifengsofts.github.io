@@ -1,0 +1,796 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="gcc,编译步骤," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="简介GNU编译器套件（GNU Compiler Collection），他提供了包括C、C++、Objective-C、Fortran、Java、Ada和Go语言的编译器，也包括了这些语言的库（如libstdc++、libgcj等等）。GCC的初衷是为GNU操作系统专门编写的一款编译器。GNU系统是彻底的自由软件。此处，“自由”的含义是它尊重用户的自由。
+gcc基本使用一般的命令格式为：gcc [">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解gcc的四个编译步骤">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/10/gcc-compile-step/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="简介GNU编译器套件（GNU Compiler Collection），他提供了包括C、C++、Objective-C、Fortran、Java、Ada和Go语言的编译器，也包括了这些语言的库（如libstdc++、libgcj等等）。GCC的初衷是为GNU操作系统专门编写的一款编译器。GNU系统是彻底的自由软件。此处，“自由”的含义是它尊重用户的自由。
+gcc基本使用一般的命令格式为：gcc [">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="详解gcc的四个编译步骤">
+<meta name="twitter:description" content="简介GNU编译器套件（GNU Compiler Collection），他提供了包括C、C++、Objective-C、Fortran、Java、Ada和Go语言的编译器，也包括了这些语言的库（如libstdc++、libgcj等等）。GCC的初衷是为GNU操作系统专门编写的一款编译器。GNU系统是彻底的自由软件。此处，“自由”的含义是它尊重用户的自由。
+gcc基本使用一般的命令格式为：gcc [">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> 详解gcc的四个编译步骤 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                详解gcc的四个编译步骤
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-10T11:16:21+00:00" content="2016-08-10">
+              2016-08-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Gcc/" itemprop="url" rel="index">
+                    <span itemprop="name">Gcc</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/10/gcc-compile-step/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/10/gcc-compile-step/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>GNU编译器套件（GNU Compiler Collection），他提供了包括C、C++、Objective-C、Fortran、Java、Ada和Go语言的编译器，也包括了这些语言的库（如libstdc++、libgcj等等）。GCC的初衷是为GNU操作系统专门编写的一款编译器。GNU系统是彻底的自由软件。此处，“自由”的含义是它尊重用户的自由。</p>
+<h1 id="gcc基本使用"><a href="#gcc基本使用" class="headerlink" title="gcc基本使用"></a>gcc基本使用</h1><p>一般的命令格式为：gcc [选项] 需要编译的文件 [选项] [编译后的文件]</p>
+<p>如：我们编译一个hello.c程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc hello.c #生成a.out </div><div class="line">gcc -o hello hello.c #生成hello,gcc hello.c -o hello</div></pre></td></tr></table></figure>
+<p>上面这一条指令其实执行了四个步骤，预处理，汇编，编译，链接。下面我们一步一步来分析下他每步完成了什么</p>
+<h1 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h1><p>处理预处理指令，他会把#include包含的头文件都拷贝进来，#defin，#if。可以通过-E来查看这一步</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -E hello.c -o hello.i</div></pre></td></tr></table></figure>
+<p>生成的hello.i文件内容如下</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div><div class="line">359</div><div class="line">360</div><div class="line">361</div><div class="line">362</div><div class="line">363</div><div class="line">364</div><div class="line">365</div><div class="line">366</div><div class="line">367</div><div class="line">368</div><div class="line">369</div><div class="line">370</div><div class="line">371</div><div class="line">372</div><div class="line">373</div><div class="line">374</div><div class="line">375</div><div class="line">376</div><div class="line">377</div><div class="line">378</div><div class="line">379</div><div class="line">380</div><div class="line">381</div><div class="line">382</div><div class="line">383</div><div class="line">384</div><div class="line">385</div><div class="line">386</div><div class="line">387</div><div class="line">388</div><div class="line">389</div><div class="line">390</div><div class="line">391</div><div class="line">392</div><div class="line">393</div><div class="line">394</div><div class="line">395</div><div class="line">396</div><div class="line">397</div><div class="line">398</div><div class="line">399</div><div class="line">400</div><div class="line">401</div><div class="line">402</div><div class="line">403</div><div class="line">404</div><div class="line">405</div><div class="line">406</div><div class="line">407</div><div class="line">408</div><div class="line">409</div><div class="line">410</div><div class="line">411</div><div class="line">412</div><div class="line">413</div><div class="line">414</div><div class="line">415</div><div class="line">416</div><div class="line">417</div><div class="line">418</div><div class="line">419</div><div class="line">420</div><div class="line">421</div><div class="line">422</div><div class="line">423</div><div class="line">424</div><div class="line">425</div><div class="line">426</div><div class="line">427</div><div class="line">428</div><div class="line">429</div><div class="line">430</div><div class="line">431</div><div class="line">432</div><div class="line">433</div><div class="line">434</div><div class="line">435</div><div class="line">436</div><div class="line">437</div><div class="line">438</div><div class="line">439</div><div class="line">440</div><div class="line">441</div><div class="line">442</div><div class="line">443</div><div class="line">444</div><div class="line">445</div><div class="line">446</div><div class="line">447</div><div class="line">448</div><div class="line">449</div><div class="line">450</div><div class="line">451</div><div class="line">452</div><div class="line">453</div><div class="line">454</div><div class="line">455</div><div class="line">456</div><div class="line">457</div><div class="line">458</div><div class="line">459</div><div class="line">460</div><div class="line">461</div><div class="line">462</div><div class="line">463</div><div class="line">464</div><div class="line">465</div><div class="line">466</div><div class="line">467</div><div class="line">468</div><div class="line">469</div><div class="line">470</div><div class="line">471</div><div class="line">472</div><div class="line">473</div><div class="line">474</div><div class="line">475</div><div class="line">476</div><div class="line">477</div><div class="line">478</div><div class="line">479</div><div class="line">480</div><div class="line">481</div><div class="line">482</div><div class="line">483</div><div class="line">484</div><div class="line">485</div><div class="line">486</div><div class="line">487</div><div class="line">488</div><div class="line">489</div><div class="line">490</div><div class="line">491</div><div class="line">492</div><div class="line">493</div><div class="line">494</div><div class="line">495</div><div class="line">496</div><div class="line">497</div><div class="line">498</div><div class="line">499</div><div class="line">500</div><div class="line">501</div><div class="line">502</div><div class="line">503</div><div class="line">504</div><div class="line">505</div><div class="line">506</div><div class="line">507</div><div class="line">508</div><div class="line">509</div><div class="line">510</div><div class="line">511</div><div class="line">512</div><div class="line">513</div><div class="line">514</div><div class="line">515</div><div class="line">516</div><div class="line">517</div><div class="line">518</div><div class="line">519</div><div class="line">520</div><div class="line">521</div><div class="line">522</div><div class="line">523</div><div class="line">524</div><div class="line">525</div><div class="line">526</div><div class="line">527</div><div class="line">528</div><div class="line">529</div><div class="line">530</div><div class="line">531</div><div class="line">532</div><div class="line">533</div><div class="line">534</div><div class="line">535</div><div class="line">536</div><div class="line">537</div><div class="line">538</div><div class="line">539</div><div class="line">540</div><div class="line">541</div><div class="line">542</div><div class="line">543</div><div class="line">544</div><div class="line">545</div><div class="line">546</div><div class="line">547</div><div class="line">548</div><div class="line">549</div><div class="line">550</div><div class="line">551</div><div class="line">552</div><div class="line">553</div><div class="line">554</div><div class="line">555</div><div class="line">556</div><div class="line">557</div><div class="line">558</div><div class="line">559</div><div class="line">560</div><div class="line">561</div><div class="line">562</div><div class="line">563</div><div class="line">564</div><div class="line">565</div><div class="line">566</div><div class="line">567</div><div class="line">568</div><div class="line">569</div><div class="line">570</div><div class="line">571</div><div class="line">572</div><div class="line">573</div><div class="line">574</div><div class="line">575</div><div class="line">576</div><div class="line">577</div><div class="line">578</div><div class="line">579</div><div class="line">580</div><div class="line">581</div><div class="line">582</div><div class="line">583</div><div class="line">584</div><div class="line">585</div><div class="line">586</div><div class="line">587</div><div class="line">588</div><div class="line">589</div><div class="line">590</div><div class="line">591</div><div class="line">592</div><div class="line">593</div><div class="line">594</div><div class="line">595</div><div class="line">596</div><div class="line">597</div><div class="line">598</div><div class="line">599</div></pre></td><td class="code"><pre><div class="line"># 1 "hello.c"</div><div class="line"># 1 "&lt;built-in&gt;"</div><div class="line"># 1 "&lt;command-line&gt;"</div><div class="line"># 1 "hello.c"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 1</div><div class="line"># 49 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs.h" 1</div><div class="line"># 77 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h" 1</div><div class="line"># 78 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs.h" 2</div><div class="line"># 547 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/android/api-level.h" 1</div><div class="line"># 548 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/cdefs.h" 2</div><div class="line"># 50 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 1</div><div class="line"># 33 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 1 3 4</div><div class="line"># 147 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 3 4</div><div class="line">typedef int ptrdiff_t;</div><div class="line"># 212 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 3 4</div><div class="line">typedef unsigned int size_t;</div><div class="line"># 34 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h" 1</div><div class="line"># 31 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 1 3 4</div><div class="line"># 324 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 3 4</div><div class="line">typedef unsigned int wchar_t;</div><div class="line"># 32 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/_types.h" 1</div><div class="line"># 40 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/_types.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/machine/_types.h" 1</div><div class="line"># 39 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/machine/_types.h"</div><div class="line">typedef signed char __int8_t;</div><div class="line">typedef unsigned char __uint8_t;</div><div class="line">typedef short __int16_t;</div><div class="line">typedef unsigned short __uint16_t;</div><div class="line">typedef int __int32_t;</div><div class="line">typedef unsigned int __uint32_t;</div><div class="line"></div><div class="line">typedef long long __int64_t;</div><div class="line"></div><div class="line">typedef unsigned long long __uint64_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef __int8_t __int_least8_t;</div><div class="line">typedef __uint8_t __uint_least8_t;</div><div class="line">typedef __int16_t __int_least16_t;</div><div class="line">typedef __uint16_t __uint_least16_t;</div><div class="line">typedef __int32_t __int_least32_t;</div><div class="line">typedef __uint32_t __uint_least32_t;</div><div class="line">typedef __int64_t __int_least64_t;</div><div class="line">typedef __uint64_t __uint_least64_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef __int32_t __int_fast8_t;</div><div class="line">typedef __uint32_t __uint_fast8_t;</div><div class="line">typedef __int32_t __int_fast16_t;</div><div class="line">typedef __uint32_t __uint_fast16_t;</div><div class="line">typedef __int32_t __int_fast32_t;</div><div class="line">typedef __uint32_t __uint_fast32_t;</div><div class="line">typedef __int64_t __int_fast64_t;</div><div class="line">typedef __uint64_t __uint_fast64_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef int __intptr_t;</div><div class="line">typedef unsigned int __uintptr_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef __int64_t __intmax_t;</div><div class="line">typedef __uint64_t __uintmax_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef __int32_t __register_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef unsigned long __vaddr_t;</div><div class="line">typedef unsigned long __paddr_t;</div><div class="line">typedef unsigned long __vsize_t;</div><div class="line">typedef unsigned long __psize_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef int __clock_t;</div><div class="line">typedef int __clockid_t;</div><div class="line">typedef long __ptrdiff_t;</div><div class="line">typedef int __time_t;</div><div class="line">typedef int __timer_t;</div><div class="line"></div><div class="line">typedef __builtin_va_list __va_list;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">typedef int __wchar_t;</div><div class="line"></div><div class="line">typedef int __wint_t;</div><div class="line">typedef int __rune_t;</div><div class="line">typedef void * __wctrans_t;</div><div class="line">typedef void * __wctype_t;</div><div class="line"># 41 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/_types.h" 2</div><div class="line"></div><div class="line">typedef unsigned long __cpuid_t;</div><div class="line">typedef __int32_t __dev_t;</div><div class="line">typedef __uint32_t __fixpt_t;</div><div class="line">typedef __uint32_t __gid_t;</div><div class="line">typedef __uint32_t __id_t;</div><div class="line">typedef __uint32_t __in_addr_t;</div><div class="line">typedef __uint16_t __in_port_t;</div><div class="line">typedef __uint32_t __ino_t;</div><div class="line">typedef long __key_t;</div><div class="line">typedef __uint32_t __mode_t;</div><div class="line">typedef __uint32_t __nlink_t;</div><div class="line">typedef __int32_t __pid_t;</div><div class="line">typedef __uint64_t __rlim_t;</div><div class="line">typedef __uint16_t __sa_family_t;</div><div class="line">typedef __int32_t __segsz_t;</div><div class="line">typedef __uint32_t __socklen_t;</div><div class="line">typedef __int32_t __swblk_t;</div><div class="line">typedef __uint32_t __uid_t;</div><div class="line">typedef __uint32_t __useconds_t;</div><div class="line">typedef __int32_t __suseconds_t;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">typedef union &#123;</div><div class="line"> char __mbstate8[128];</div><div class="line"> __int64_t __mbstateL;</div><div class="line">&#125; __mbstate_t;</div><div class="line"># 33 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h" 2</div><div class="line"># 42 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef __int8_t int8_t;</div><div class="line">typedef __uint8_t uint8_t;</div><div class="line">typedef __int16_t int16_t;</div><div class="line">typedef __uint16_t uint16_t;</div><div class="line">typedef __int32_t int32_t;</div><div class="line">typedef __uint32_t uint32_t;</div><div class="line">typedef __int64_t int64_t;</div><div class="line">typedef __uint64_t uint64_t;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">typedef int8_t int_least8_t;</div><div class="line">typedef int8_t int_fast8_t;</div><div class="line"></div><div class="line">typedef uint8_t uint_least8_t;</div><div class="line">typedef uint8_t uint_fast8_t;</div><div class="line"># 88 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef int16_t int_least16_t;</div><div class="line">typedef int32_t int_fast16_t;</div><div class="line"></div><div class="line">typedef uint16_t uint_least16_t;</div><div class="line">typedef uint32_t uint_fast16_t;</div><div class="line"># 121 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef int32_t int_least32_t;</div><div class="line">typedef int32_t int_fast32_t;</div><div class="line"></div><div class="line">typedef uint32_t uint_least32_t;</div><div class="line">typedef uint32_t uint_fast32_t;</div><div class="line"># 154 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef int64_t int_least64_t;</div><div class="line">typedef int64_t int_fast64_t;</div><div class="line"></div><div class="line">typedef uint64_t uint_least64_t;</div><div class="line">typedef uint64_t uint_fast64_t;</div><div class="line"># 198 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef int intptr_t;</div><div class="line">typedef unsigned int uintptr_t;</div><div class="line"># 220 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef uint64_t uintmax_t;</div><div class="line">typedef int64_t intmax_t;</div><div class="line"># 242 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/_wchar_limits.h" 1</div><div class="line"># 243 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h" 2</div><div class="line"># 254 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdint.h"</div><div class="line">typedef int ssize_t;</div><div class="line"># 35 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"></div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/posix_types.h" 1</div><div class="line"># 15 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/posix_types.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/stddef.h" 1</div><div class="line"># 21 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/stddef.h"</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/compiler.h" 1</div><div class="line"># 22 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/stddef.h" 2</div><div class="line"># 16 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/posix_types.h" 2</div><div class="line"># 32 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/posix_types.h"</div><div class="line">typedef struct &#123;</div><div class="line"> unsigned long fds_bits [(1024/(8 * sizeof(unsigned long)))];</div><div class="line">&#125; __kernel_fd_set;</div><div class="line"></div><div class="line">typedef void (*__kernel_sighandler_t)(int);</div><div class="line"></div><div class="line">typedef int __kernel_key_t;</div><div class="line">typedef int __kernel_mqd_t;</div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/asm/posix_types.h" 1</div><div class="line"># 15 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/asm/posix_types.h"</div><div class="line">typedef unsigned long __kernel_ino_t;</div><div class="line">typedef unsigned short __kernel_mode_t;</div><div class="line">typedef unsigned short __kernel_nlink_t;</div><div class="line">typedef long __kernel_off_t;</div><div class="line">typedef int __kernel_pid_t;</div><div class="line">typedef unsigned short __kernel_ipc_pid_t;</div><div class="line">typedef unsigned short __kernel_uid_t;</div><div class="line">typedef unsigned short __kernel_gid_t;</div><div class="line">typedef unsigned int __kernel_size_t;</div><div class="line">typedef int __kernel_ssize_t;</div><div class="line">typedef int __kernel_ptrdiff_t;</div><div class="line">typedef long __kernel_time_t;</div><div class="line">typedef long __kernel_suseconds_t;</div><div class="line">typedef long __kernel_clock_t;</div><div class="line">typedef int __kernel_timer_t;</div><div class="line">typedef int __kernel_clockid_t;</div><div class="line">typedef int __kernel_daddr_t;</div><div class="line">typedef char * __kernel_caddr_t;</div><div class="line">typedef unsigned short __kernel_uid16_t;</div><div class="line">typedef unsigned short __kernel_gid16_t;</div><div class="line">typedef unsigned int __kernel_uid32_t;</div><div class="line">typedef unsigned int __kernel_gid32_t;</div><div class="line"></div><div class="line">typedef unsigned short __kernel_old_uid_t;</div><div class="line">typedef unsigned short __kernel_old_gid_t;</div><div class="line">typedef unsigned short __kernel_old_dev_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef long long __kernel_loff_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef struct &#123;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"> int __val[2];</div><div class="line"></div><div class="line">&#125; __kernel_fsid_t;</div><div class="line"># 42 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/posix_types.h" 2</div><div class="line"># 38 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/asm/types.h" 1</div><div class="line"># 17 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/asm/types.h"</div><div class="line">typedef unsigned short umode_t;</div><div class="line"></div><div class="line">typedef __signed__ char __s8;</div><div class="line">typedef unsigned char __u8;</div><div class="line"></div><div class="line">typedef __signed__ short __s16;</div><div class="line">typedef unsigned short __u16;</div><div class="line"></div><div class="line">typedef __signed__ int __s32;</div><div class="line">typedef unsigned int __u32;</div><div class="line"></div><div class="line"></div><div class="line">typedef __signed__ long long __s64;</div><div class="line">typedef unsigned long long __u64;</div><div class="line"># 39 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/types.h" 1</div><div class="line"># 21 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/linux/types.h"</div><div class="line">typedef __u16 __le16;</div><div class="line">typedef __u16 __be16;</div><div class="line">typedef __u32 __le32;</div><div class="line">typedef __u32 __be32;</div><div class="line"></div><div class="line">typedef __u64 __le64;</div><div class="line">typedef __u64 __be64;</div><div class="line"></div><div class="line"></div><div class="line">struct ustat &#123;</div><div class="line"> __kernel_daddr_t f_tfree;</div><div class="line"> __kernel_ino_t f_tinode;</div><div class="line"> char f_fname[6];</div><div class="line"> char f_fpack[6];</div><div class="line">&#125;;</div><div class="line"># 40 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/machine/kernel.h" 1</div><div class="line"># 34 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/machine/kernel.h"</div><div class="line">typedef unsigned long __kernel_blkcnt_t;</div><div class="line">typedef unsigned long __kernel_blksize_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef unsigned long __kernel_fsblkcnt_t;</div><div class="line">typedef unsigned long __kernel_fsfilcnt_t;</div><div class="line">typedef unsigned int __kernel_id_t;</div><div class="line"># 41 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"></div><div class="line">typedef __u32 __kernel_dev_t;</div><div class="line"># 52 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h"</div><div class="line">typedef __kernel_blkcnt_t blkcnt_t;</div><div class="line">typedef __kernel_blksize_t blksize_t;</div><div class="line">typedef __kernel_clock_t clock_t;</div><div class="line">typedef __kernel_clockid_t clockid_t;</div><div class="line">typedef __kernel_dev_t dev_t;</div><div class="line">typedef __kernel_fsblkcnt_t fsblkcnt_t;</div><div class="line">typedef __kernel_fsfilcnt_t fsfilcnt_t;</div><div class="line">typedef __kernel_gid32_t gid_t;</div><div class="line">typedef __kernel_id_t id_t;</div><div class="line">typedef __kernel_ino_t ino_t;</div><div class="line">typedef __kernel_key_t key_t;</div><div class="line">typedef __kernel_mode_t mode_t;</div><div class="line">typedef __kernel_nlink_t nlink_t;</div><div class="line"></div><div class="line"></div><div class="line">typedef __kernel_off_t off_t;</div><div class="line"></div><div class="line">typedef __kernel_loff_t loff_t;</div><div class="line">typedef loff_t off64_t;</div><div class="line"></div><div class="line">typedef __kernel_pid_t pid_t;</div><div class="line"># 93 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h"</div><div class="line">typedef __kernel_suseconds_t suseconds_t;</div><div class="line">typedef __kernel_time_t time_t;</div><div class="line">typedef __kernel_uid32_t uid_t;</div><div class="line">typedef signed long useconds_t;</div><div class="line"></div><div class="line">typedef __kernel_daddr_t daddr_t;</div><div class="line">typedef __kernel_timer_t timer_t;</div><div class="line">typedef __kernel_mqd_t mqd_t;</div><div class="line"></div><div class="line">typedef __kernel_caddr_t caddr_t;</div><div class="line">typedef unsigned int uint_t;</div><div class="line">typedef unsigned int uint;</div><div class="line"></div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h" 1</div><div class="line"># 36 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h"</div><div class="line">static __inline__ int major(dev_t _dev)</div><div class="line">&#123;</div><div class="line">  return (_dev &gt;&gt; 8) &amp; 0xfff;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static __inline__ int minor(dev_t _dev)</div><div class="line">&#123;</div><div class="line">  return (_dev &amp; 0xff) | ((_dev &gt;&gt; 12) &amp; 0xfff00);</div><div class="line">&#125;</div><div class="line"></div><div class="line">static __inline__ dev_t makedev(int __ma, int __mi)</div><div class="line">&#123;</div><div class="line">  return ((__ma &amp; 0xfff) &lt;&lt; 8) | (__mi &amp; 0xff) | ((__mi &amp; 0xfff00) &lt;&lt; 12);</div><div class="line">&#125;</div><div class="line"># 108 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/sys/types.h" 2</div><div class="line"></div><div class="line"></div><div class="line">typedef unsigned char u_char;</div><div class="line">typedef unsigned short u_short;</div><div class="line">typedef unsigned int u_int;</div><div class="line">typedef unsigned long u_long;</div><div class="line"></div><div class="line">typedef uint32_t u_int32_t;</div><div class="line">typedef uint16_t u_int16_t;</div><div class="line">typedef uint8_t u_int8_t;</div><div class="line">typedef uint64_t u_int64_t;</div><div class="line"># 51 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 2</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stdarg.h" 1 3 4</div><div class="line"># 40 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stdarg.h" 3 4</div><div class="line">typedef __builtin_va_list __gnuc_va_list;</div><div class="line"># 55 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 2</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 1 3 4</div><div class="line"># 59 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 2</div><div class="line"></div><div class="line"></div><div class="line"># 1 "/Users/renpingqing/Documents/android/android-ndk-r11c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.9/include/stddef.h" 1 3 4</div><div class="line"># 62 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h" 2</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">typedef off_t fpos_t;</div><div class="line"># 74 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h"</div><div class="line">struct __sbuf &#123;</div><div class="line"> unsigned char *_base;</div><div class="line"> int _size;</div><div class="line">&#125;;</div><div class="line"># 106 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h"</div><div class="line">typedef struct __sFILE &#123;</div><div class="line"> unsigned char *_p;</div><div class="line"> int _r;</div><div class="line"> int _w;</div><div class="line"> short _flags;</div><div class="line"> short _file;</div><div class="line"> struct __sbuf _bf;</div><div class="line"> int _lbfsize;</div><div class="line"></div><div class="line"></div><div class="line"> void *_cookie;</div><div class="line"> int (*_close)(void *);</div><div class="line"> int (*_read)(void *, char *, int);</div><div class="line"> fpos_t (*_seek)(void *, fpos_t, int);</div><div class="line"> int (*_write)(void *, const char *, int);</div><div class="line"></div><div class="line"></div><div class="line"> struct __sbuf _ext;</div><div class="line"></div><div class="line"> unsigned char *_up;</div><div class="line"> int _ur;</div><div class="line"></div><div class="line"></div><div class="line"> unsigned char _ubuf[3];</div><div class="line"> unsigned char _nbuf[1];</div><div class="line"></div><div class="line"></div><div class="line"> struct __sbuf _lb;</div><div class="line"></div><div class="line"></div><div class="line"> int _blksize;</div><div class="line"> fpos_t _offset;</div><div class="line">&#125; FILE;</div><div class="line"></div><div class="line"></div><div class="line">extern FILE __sF[];</div><div class="line"></div><div class="line"># 210 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h"</div><div class="line"></div><div class="line">void clearerr(FILE *);</div><div class="line">int fclose(FILE *);</div><div class="line">int feof(FILE *);</div><div class="line">int ferror(FILE *);</div><div class="line">int fflush(FILE *);</div><div class="line">int fgetc(FILE *);</div><div class="line">int fgetpos(FILE *, fpos_t *);</div><div class="line">char *fgets(char *, int, FILE *);</div><div class="line">FILE *fopen(const char *, const char *);</div><div class="line">int fprintf(FILE *, const char *, ...);</div><div class="line">int fputc(int, FILE *);</div><div class="line">int fputs(const char *, FILE *);</div><div class="line">size_t fread(void *, size_t, size_t, FILE *);</div><div class="line">FILE *freopen(const char *, const char *, FILE *);</div><div class="line">int fscanf(FILE *, const char *, ...);</div><div class="line">int fseek(FILE *, long, int);</div><div class="line">int fseeko(FILE *, off_t, int);</div><div class="line">int fsetpos(FILE *, const fpos_t *);</div><div class="line">long ftell(FILE *);</div><div class="line">off_t ftello(FILE *);</div><div class="line">size_t fwrite(const void *, size_t, size_t, FILE *);</div><div class="line">int getc(FILE *);</div><div class="line">int getchar(void);</div><div class="line">char *gets(char *);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">extern int sys_nerr;</div><div class="line">extern char *sys_errlist[];</div><div class="line"></div><div class="line">void perror(const char *);</div><div class="line">int printf(const char *, ...);</div><div class="line">int putc(int, FILE *);</div><div class="line">int putchar(int);</div><div class="line">int puts(const char *);</div><div class="line">int remove(const char *);</div><div class="line">int rename(const char *, const char *);</div><div class="line">void rewind(FILE *);</div><div class="line">int scanf(const char *, ...);</div><div class="line">void setbuf(FILE *, char *);</div><div class="line">int setvbuf(FILE *, char *, int, size_t);</div><div class="line">int sprintf(char *, const char *, ...);</div><div class="line">int sscanf(const char *, const char *, ...);</div><div class="line">FILE *tmpfile(void);</div><div class="line">char *tmpnam(char *);</div><div class="line">int ungetc(int, FILE *);</div><div class="line">int vfprintf(FILE *, const char *, __va_list);</div><div class="line">int vprintf(const char *, __va_list);</div><div class="line">int vsprintf(char *, const char *, __va_list);</div><div class="line"></div><div class="line"></div><div class="line">int snprintf(char *, size_t, const char *, ...)</div><div class="line">  __attribute__((__format__ (printf, 3, 4)))</div><div class="line">  __attribute__((__nonnull__ (3)));</div><div class="line">int vfscanf(FILE *, const char *, __va_list)</div><div class="line">  __attribute__((__format__ (scanf, 2, 0)))</div><div class="line">  __attribute__((__nonnull__ (2)));</div><div class="line">int vscanf(const char *, __va_list)</div><div class="line">  __attribute__((__format__ (scanf, 1, 0)))</div><div class="line">  __attribute__((__nonnull__ (1)));</div><div class="line">int vsnprintf(char *, size_t, const char *, __va_list)</div><div class="line">  __attribute__((__format__ (printf, 3, 0)))</div><div class="line">  __attribute__((__nonnull__ (3)));</div><div class="line">int vsscanf(const char *, const char *, __va_list)</div><div class="line">  __attribute__((__format__ (scanf, 2, 0)))</div><div class="line">  __attribute__((__nonnull__ (2)));</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># 289 "/Users/renpingqing/Documents/android/android-ndk-r11c/platforms/android-14/arch-arm/usr/include/stdio.h"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">FILE *fdopen(int, const char *);</div><div class="line">int fileno(FILE *);</div><div class="line"></div><div class="line"></div><div class="line">int pclose(FILE *);</div><div class="line">FILE *popen(const char *, const char *);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">void flockfile(FILE *);</div><div class="line">int ftrylockfile(FILE *);</div><div class="line">void funlockfile(FILE *);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">int getc_unlocked(FILE *);</div><div class="line">int getchar_unlocked(void);</div><div class="line">int putc_unlocked(int, FILE *);</div><div class="line">int putchar_unlocked(int);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">char *tempnam(const char *, const char *);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">int asprintf(char **, const char *, ...)</div><div class="line">  __attribute__((__format__ (printf, 2, 3)))</div><div class="line">  __attribute__((__nonnull__ (2)));</div><div class="line">char *fgetln(FILE *, size_t *);</div><div class="line">int fpurge(FILE *);</div><div class="line">int getw(FILE *);</div><div class="line">int putw(int, FILE *);</div><div class="line">void setbuffer(FILE *, char *, int);</div><div class="line">int setlinebuf(FILE *);</div><div class="line">int vasprintf(char **, const char *, __va_list)</div><div class="line">  __attribute__((__format__ (printf, 2, 0)))</div><div class="line">  __attribute__((__nonnull__ (2)));</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">FILE *funopen(const void *,</div><div class="line">  int (*)(void *, char *, int),</div><div class="line">  int (*)(void *, const char *, int),</div><div class="line">  fpos_t (*)(void *, fpos_t, int),</div><div class="line">  int (*)(void *));</div><div class="line"></div><div class="line"># 2 "hello.c" 2</div><div class="line"></div><div class="line">int nums[5] = &#123;1,2,3,4,5&#125;;</div><div class="line"></div><div class="line">int for0(int n)</div><div class="line">&#123;</div><div class="line">    int i = 0;</div><div class="line">    int s = 0;</div><div class="line">    for(i = 0;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i;</div><div class="line">    &#125;</div><div class="line">    return s;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int for1(int n)</div><div class="line">&#123;</div><div class="line">    int i = 0;</div><div class="line">    int s = 0;</div><div class="line">    for(i = 0;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i*2;</div><div class="line">    &#125;</div><div class="line">    return s;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int for2(int n)</div><div class="line">&#123;</div><div class="line">    int i = 0;</div><div class="line">    int s = 0;</div><div class="line">    for(i = 0;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i*i+nums[n-1];</div><div class="line">    &#125;</div><div class="line">    return s;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc,char* argv[])</div><div class="line">&#123;</div><div class="line">    printf("hello ARM!\n");</div><div class="line">    printf("for0%d\n", for0(5));</div><div class="line">    printf("for1%d\n", for1(5));</div><div class="line">    printf("for2%d\n", for2(5));</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看见他确实包含进来了stdio.h的内容，printf的申明就在其中</p>
+<h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><p>检查的代码的规范性和语法错误等。确认无误后将.i文件翻译为ARM汇编，可以通过-S查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -S hello.i -o hello.s</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div></pre></td><td class="code"><pre><div class="line">	.arch armv5te</div><div class="line">	.fpu softvfp</div><div class="line">	.eabi_attribute 20, 1</div><div class="line">	.eabi_attribute 21, 1</div><div class="line">	.eabi_attribute 23, 3</div><div class="line">	.eabi_attribute 24, 1</div><div class="line">	.eabi_attribute 25, 1</div><div class="line">	.eabi_attribute 26, 2</div><div class="line">	.eabi_attribute 30, 6</div><div class="line">	.eabi_attribute 34, 0</div><div class="line">	.eabi_attribute 18, 4</div><div class="line">	.file	&quot;hello.c&quot;</div><div class="line">	.global	nums</div><div class="line">	.data</div><div class="line">	.align	2</div><div class="line">	.type	nums, %object</div><div class="line">	.size	nums, 20</div><div class="line">nums:</div><div class="line">	.word	1</div><div class="line">	.word	2</div><div class="line">	.word	3</div><div class="line">	.word	4</div><div class="line">	.word	5</div><div class="line">	.text</div><div class="line">	.align	2</div><div class="line">	.global	for0</div><div class="line">	.type	for0, %function</div><div class="line">for0:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L2</div><div class="line">.L3:</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L2:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L3</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">	.size	for0, .-for0</div><div class="line">	.align	2</div><div class="line">	.global	for1</div><div class="line">	.type	for1, %function</div><div class="line">for1:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L6</div><div class="line">.L7:</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	mov	r3, r3, asl #1</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L6:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L7</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">	.size	for1, .-for1</div><div class="line">	.align	2</div><div class="line">	.global	for2</div><div class="line">	.type	for2, %function</div><div class="line">for2:</div><div class="line">	@ args = 0, pretend = 0, frame = 16</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	@ link register save eliminated.</div><div class="line">	str	fp, [sp, #-4]!</div><div class="line">	add	fp, sp, #0</div><div class="line">	sub	sp, sp, #20</div><div class="line">	str	r0, [fp, #-16]</div><div class="line">	ldr	r1, .L13</div><div class="line">.LPIC0:</div><div class="line">	add	r1, pc, r1</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	mov	r3, #0</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">	b	.L10</div><div class="line">.L11:</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	mul	r2, r3, r2</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	sub	r0, r3, #1</div><div class="line">	ldr	r3, .L13+4</div><div class="line">	ldr	r3, [r1, r3]</div><div class="line">	ldr	r3, [r3, r0, asl #2]</div><div class="line">	add	r3, r2, r3</div><div class="line">	ldr	r2, [fp, #-12]</div><div class="line">	add	r3, r2, r3</div><div class="line">	str	r3, [fp, #-12]</div><div class="line">	ldr	r3, [fp, #-8]</div><div class="line">	add	r3, r3, #1</div><div class="line">	str	r3, [fp, #-8]</div><div class="line">.L10:</div><div class="line">	ldr	r2, [fp, #-8]</div><div class="line">	ldr	r3, [fp, #-16]</div><div class="line">	cmp	r2, r3</div><div class="line">	blt	.L11</div><div class="line">	ldr	r3, [fp, #-12]</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #0</div><div class="line">	@ sp needed</div><div class="line">	ldr	fp, [sp], #4</div><div class="line">	bx	lr</div><div class="line">.L14:</div><div class="line">	.align	2</div><div class="line">.L13:</div><div class="line">	.word	_GLOBAL_OFFSET_TABLE_-(.LPIC0+8)</div><div class="line">	.word	nums(GOT)</div><div class="line">	.size	for2, .-for2</div><div class="line">	.section	.rodata</div><div class="line">	.align	2</div><div class="line">.LC0:</div><div class="line">	.ascii	&quot;hello ARM!\000&quot;</div><div class="line">	.align	2</div><div class="line">.LC1:</div><div class="line">	.ascii	&quot;for0%d\012\000&quot;</div><div class="line">	.align	2</div><div class="line">.LC2:</div><div class="line">	.ascii	&quot;for1%d\012\000&quot;</div><div class="line">	.align	2</div><div class="line">.LC3:</div><div class="line">	.ascii	&quot;for2%d\012\000&quot;</div><div class="line">	.text</div><div class="line">	.align	2</div><div class="line">	.global	main</div><div class="line">	.type	main, %function</div><div class="line">main:</div><div class="line">	@ args = 0, pretend = 0, frame = 8</div><div class="line">	@ frame_needed = 1, uses_anonymous_args = 0</div><div class="line">	stmfd	sp!, &#123;fp, lr&#125;</div><div class="line">	add	fp, sp, #4</div><div class="line">	sub	sp, sp, #8</div><div class="line">	str	r0, [fp, #-8]</div><div class="line">	str	r1, [fp, #-12]</div><div class="line">	ldr	r3, .L17</div><div class="line">.LPIC1:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	bl	puts(PLT)</div><div class="line">	mov	r0, #5</div><div class="line">	bl	for0(PLT)</div><div class="line">	mov	r2, r0</div><div class="line">	ldr	r3, .L17+4</div><div class="line">.LPIC2:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r0, #5</div><div class="line">	bl	for1(PLT)</div><div class="line">	mov	r2, r0</div><div class="line">	ldr	r3, .L17+8</div><div class="line">.LPIC3:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r0, #5</div><div class="line">	bl	for2(PLT)</div><div class="line">	mov	r2, r0</div><div class="line">	ldr	r3, .L17+12</div><div class="line">.LPIC4:</div><div class="line">	add	r3, pc, r3</div><div class="line">	mov	r0, r3</div><div class="line">	mov	r1, r2</div><div class="line">	bl	printf(PLT)</div><div class="line">	mov	r3, #0</div><div class="line">	mov	r0, r3</div><div class="line">	sub	sp, fp, #4</div><div class="line">	@ sp needed</div><div class="line">	ldmfd	sp!, &#123;fp, pc&#125;</div><div class="line">.L18:</div><div class="line">	.align	2</div><div class="line">.L17:</div><div class="line">	.word	.LC0-(.LPIC1+8)</div><div class="line">	.word	.LC1-(.LPIC2+8)</div><div class="line">	.word	.LC2-(.LPIC3+8)</div><div class="line">	.word	.LC3-(.LPIC4+8)</div><div class="line">	.size	main, .-main</div><div class="line">	.ident	&quot;GCC: (GNU) 4.9 20150123 (prerelease)&quot;</div><div class="line">	.section	.note.GNU-stack,&quot;&quot;,%progbits</div></pre></td></tr></table></figure>
+<p>完成这一步只是将.i文件转为了汇编，但还不是二进制</p>
+<h1 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h1><p>这一步才将汇编代码转为二进制，可以通过-c查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -c hello.s -o hello.o</div></pre></td></tr></table></figure>
+<p>这一步会生成.o，但是还不能执行，因为程序执行还得依赖其他库，不然上面的print他的真实实现在哪里</p>
+<h1 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h1><p>这一步就是讲上面编译的二进制文件和他依赖的库链接成可以执行文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc hello.o -o hello</div></pre></td></tr></table></figure>
+<p>这一步就可以生成hello文件了，我们将他上传到手机，就可以执行了</p>
+<blockquote>
+<p>注意：由于我们是在mac上编译出arm可执行文件，所以得用交叉编译器ndk里面的gcc,所以我们还需要如下makefile</p>
+</blockquote>
+<p>makefile</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">NDK_ROOT=/Users/renpingqing/Documents/android/android-ndk-r11c</div><div class="line">TOOLCHAINS_ROOT=<span class="variable">$(NDK_ROOT)</span>/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64</div><div class="line">TOOLCHAINS_PREFIX=<span class="variable">$(TOOLCHAINS_ROOT)</span>/bin/arm-linux-androideabi</div><div class="line">TOOLCHAINS_INCLUDE=<span class="variable">$(TOOLCHAINS_ROOT)</span>/lib/gcc/arm-linux-androideabi/4.9/include-fixed</div><div class="line"></div><div class="line">PLATFORM_ROOT=<span class="variable">$(NDK_ROOT)</span>/platforms/android-14/arch-arm</div><div class="line">PLATFORM_INCLUDE=<span class="variable">$(PLATFORM_ROOT)</span>/usr/include</div><div class="line">PLATFORM_LIB=<span class="variable">$(PLATFORM_ROOT)</span>/usr/lib</div><div class="line"></div><div class="line">MODULE_NAME=hello</div><div class="line">RM=rm -rf</div><div class="line"></div><div class="line">FLAGS=-I<span class="variable">$(TOOLCHAINS_INCLUDE)</span> \</div><div class="line">	-I<span class="variable">$(PLATFORM_INCLUDE)</span> \</div><div class="line">	-L<span class="variable">$(PLATFORM_LIB)</span> \</div><div class="line">	-nostdlib \</div><div class="line">	-lgcc \</div><div class="line">	-Bdynamic \</div><div class="line">	-lc</div><div class="line"></div><div class="line">OBJS=<span class="variable">$(MODULE_NAME)</span>.o \</div><div class="line">	<span class="variable">$(PLATFORM_LIB)</span>/crtbegin_dynamic.o \</div><div class="line">	<span class="variable">$(PLATFORM_LIB)</span>/crtend_android.o</div><div class="line"></div><div class="line"><span class="section">all:</span></div><div class="line">	#<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -c <span class="variable">$(MODULE_NAME)</span>.c -o <span class="variable">$(MODULE_NAME)</span>.o</div><div class="line">	#<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> <span class="variable">$(OBJS)</span> -o <span class="variable">$(MODULE_NAME)</span></div><div class="line"></div><div class="line">	#预处理</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -E <span class="variable">$(MODULE_NAME)</span>.c -o <span class="variable">$(MODULE_NAME)</span>.i</div><div class="line"></div><div class="line">	#编译</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -S <span class="variable">$(MODULE_NAME)</span>.i -o <span class="variable">$(MODULE_NAME)</span>.s</div><div class="line"></div><div class="line">	#汇编</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -c <span class="variable">$(MODULE_NAME)</span>.s -o <span class="variable">$(MODULE_NAME)</span>.o</div><div class="line"></div><div class="line">	#链接</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> <span class="variable">$(OBJS)</span> -o <span class="variable">$(MODULE_NAME)</span></div><div class="line"><span class="section">clean:</span></div><div class="line">	<span class="variable">$(RM)</span> *.o</div><div class="line"><span class="section">install:</span></div><div class="line">	adb push <span class="variable">$(MODULE_NAME)</span> /data/local/</div><div class="line">	adb shell chmod 755 /data/local/<span class="variable">$(MODULE_NAME)</span></div></pre></td></tr></table></figure>
+<p>hello.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">int</span> nums[<span class="number">5</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">for0</span><span class="params">(<span class="keyword">int</span> n)</span></span></div><div class="line">&#123;   </div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> s;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">for1</span><span class="params">(<span class="keyword">int</span> n)</span></span></div><div class="line">&#123;   </div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i*<span class="number">2</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> s;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">for2</span><span class="params">(<span class="keyword">int</span> n)</span></span></div><div class="line">&#123;   </div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>;i&lt;n;i++)</div><div class="line">    &#123;</div><div class="line">        s+=i*i+nums[n<span class="number">-1</span>];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> s;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span>* argv[])</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"hello ARM!\n"</span>);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"for0%d\n"</span>, for0(<span class="number">5</span>));</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"for1%d\n"</span>, for1(<span class="number">5</span>));</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"for2%d\n"</span>, for2(<span class="number">5</span>));</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gcc/" rel="tag">#gcc</a>
+          
+            <a href="/tags/编译步骤/" rel="tag">#编译步骤</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/08/use-androguard/" rel="next" title="androguard的基本使用">
+                <i class="fa fa-chevron-left"></i> androguard的基本使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/10/about-arm/" rel="prev" title="关于ARM你必须知道的">
+                关于ARM你必须知道的 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/10/gcc-compile-step/"
+     data-title="详解gcc的四个编译步骤"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/10/gcc-compile-step/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/10/gcc-compile-step/"
+           data-title="详解gcc的四个编译步骤" data-url="http://i.woblog.cn/2016/08/10/gcc-compile-step/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gcc基本使用"><span class="nav-number">2.</span> <span class="nav-text">gcc基本使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预处理"><span class="nav-number">3.</span> <span class="nav-text">预处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译"><span class="nav-number">4.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#汇编"><span class="nav-number">5.</span> <span class="nav-text">汇编</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#链接"><span class="nav-number">6.</span> <span class="nav-text">链接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

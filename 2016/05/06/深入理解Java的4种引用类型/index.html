@@ -1,0 +1,820 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="引用类型,StrongReference,SoftReference,WeakReference,PhantomReference,ReferenceQueue," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="简介首先大家应该都知道Java从1.2起提供了四种引用类型，他们分别是其引用(StrongReference)，软引用(SoftReference)，弱引用(WeakReference)以及PhantomReference(虚引用)，他们被GC回收的可能性从大到小排列。如下图
+
+可以看到Reference是继承自Object，而又有三个直接的子类，就是我们要介绍的几个类了。另外还有一个Refere">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Java的4种引用类型">
+<meta property="og:url" content="http://i.woblog.cn/2016/05/06/深入理解Java的4种引用类型/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="简介首先大家应该都知道Java从1.2起提供了四种引用类型，他们分别是其引用(StrongReference)，软引用(SoftReference)，弱引用(WeakReference)以及PhantomReference(虚引用)，他们被GC回收的可能性从大到小排列。如下图
+
+可以看到Reference是继承自Object，而又有三个直接的子类，就是我们要介绍的几个类了。另外还有一个Refere">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/nksi4ny4al15rh2ckn1abe3o9a.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/xkxcswuaxen1xipiyw9j7uhoxb.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.672Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Java的4种引用类型">
+<meta name="twitter:description" content="简介首先大家应该都知道Java从1.2起提供了四种引用类型，他们分别是其引用(StrongReference)，软引用(SoftReference)，弱引用(WeakReference)以及PhantomReference(虚引用)，他们被GC回收的可能性从大到小排列。如下图
+
+可以看到Reference是继承自Object，而又有三个直接的子类，就是我们要介绍的几个类了。另外还有一个Refere">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/nksi4ny4al15rh2ckn1abe3o9a.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> 深入理解Java的4种引用类型 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入理解Java的4种引用类型
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-06T11:29:00+00:00" content="2016-05-06">
+              2016-05-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/06/深入理解Java的4种引用类型/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/06/深入理解Java的4种引用类型/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>首先大家应该都知道Java从1.2起提供了四种引用类型，他们分别是其引用(StrongReference)，软引用(SoftReference)，弱引用(WeakReference)以及PhantomReference(虚引用)，他们被GC回收的可能性从大到小排列。如下图</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/nksi4ny4al15rh2ckn1abe3o9a.png" alt=""></p>
+<p>可以看到Reference是继承自Object，而又有三个直接的子类，就是我们要介绍的几个类了。另外还有一个ReferenceQueue我想大家就不一定知道了</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/xkxcswuaxen1xipiyw9j7uhoxb.png" alt=""></p>
+<p>他是用来的保存即将释放的引用对象，具体用户下面有实例代码</p>
+<p>下面就来分别介绍每个引用，并附上测试代码，方便大家的深入理解</p>
+<h2 id="StrongReference"><a href="#StrongReference" class="headerlink" title="StrongReference"></a>StrongReference</h2><p>就可以他的名字一样，任何时候GC是不能回收他的，哪怕内存不足时，系统会直接抛出异常OutOfMemoryError，也不会去回收，首先要说明的是java中默认就是强引用，比如如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Persion p = <span class="keyword">new</span> Persion();</div></pre></td></tr></table></figure>
+<p>其中p就是一个强引用，任何时候都不会被gc回收<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 测试强类型，可以看到我们调用多次gc他还是没有回收</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testStrongReference</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    System.gc();</div><div class="line">    System.gc();</div><div class="line">    System.out.println(jack);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="SoftReference"><a href="#SoftReference" class="headerlink" title="SoftReference"></a>SoftReference</h2><p>软引用他的特点是当内存足够时不会回收这种引用类型的对象，只有当内存不够用时才会回收，这种特点很适合最一些缓存，比如android中图片的缓存<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 测试软类型引用</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testSoftReference</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    SoftReference&lt;Person&gt; personSoftReference = <span class="keyword">new</span> SoftReference&lt;&gt;(jack);</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">    jack = <span class="keyword">null</span>;</div><div class="line">    System.gc();</div><div class="line">    System.gc();</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Person&#123;name=&apos;Jack&apos;&#125;</div><div class="line">Person&#123;name=&apos;Jack&apos;&#125;</div></pre></td></tr></table></figure>
+<p>可以看到虽然我们手动调用了GC但是引用类型没有被回收</p>
+<h2 id="WeakReference"><a href="#WeakReference" class="headerlink" title="WeakReference"></a>WeakReference</h2><p>虚引用的特点是只要GC一运行就会把给回收了，个人感觉没多大用处，因为只要GC一运行他就会被回收了‘<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testWeakReference</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    WeakReference&lt;Person&gt; personSoftReference = <span class="keyword">new</span> WeakReference&lt;Person&gt;(jack);</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">    System.gc();</div><div class="line">    System.gc();</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们运行代码发现对象还是没被回收，因为我们虽然调用了GC，这个方法只是通知他执行，但是什么执行还得看他心情。当然上面的代码有个很重要的原因是Jack对象他是强引用，所以在怎么调用GC他还是不会回收的，为啥呢？因为jack这个变量他还强引用着对象，我们给他置空，在调用GC他就回收了，如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testWeakReference</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    WeakReference&lt;Person&gt; personSoftReference = <span class="keyword">new</span> WeakReference&lt;Person&gt;(jack);</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">    jack = <span class="keyword">null</span>;</div><div class="line">    System.gc();</div><div class="line">    System.gc();</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Person&#123;name=&apos;Jack&apos;&#125;</div><div class="line">null</div></pre></td></tr></table></figure>
+<p>可以看到结果正如我们所料</p>
+<h2 id="PhantomReference"><a href="#PhantomReference" class="headerlink" title="PhantomReference"></a>PhantomReference</h2><p>虚引用就相应没引用似得，主要以创建这种类型的引用，那么他所引用类型就回收了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testPhantomReference</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    ReferenceQueue&lt;Person&gt; personReferenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</div><div class="line">    PhantomReference&lt;Person&gt; personSoftReference = <span class="keyword">new</span> PhantomReference&lt;Person&gt;(jack,personReferenceQueue);</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line"><span class="comment">//        jack = null;</span></div><div class="line"><span class="comment">//        System.gc();</span></div><div class="line"><span class="comment">//        System.gc();</span></div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">null</div><div class="line">null</div></pre></td></tr></table></figure>
+<p>可以看到只要一创建完就直接给回收了</p>
+<h2 id="ReferenceQueue"><a href="#ReferenceQueue" class="headerlink" title="ReferenceQueue"></a>ReferenceQueue</h2><p>他是一个引用对列，可以监控被回收的Reference对象，具体的就是当一个引用对象他所引用的值被回收了，那么系统就会把这个引用添加到这个对列里面，如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReferenceQueue</span><span class="params">()</span> </span>&#123;</div><div class="line">    Person jack = <span class="keyword">new</span> Person(<span class="string">"Jack"</span>);</div><div class="line">    ReferenceQueue&lt;Person&gt; personReferenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</div><div class="line">    WeakReference&lt;Person&gt; personSoftReference = <span class="keyword">new</span> WeakReference&lt;Person&gt;(jack, personReferenceQueue);</div><div class="line">    jack = <span class="keyword">null</span>;</div><div class="line">    System.gc();</div><div class="line">    System.out.println(personSoftReference.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当personSoftReference所引用的Jack对象回收了，系统就会把personSoftReference对象添加到personReferenceQueue里，具体有什么作用呢，想象下这种情景，一个hashMap他的key是一个byte[]数组，我们需要创建一万个这样的key将他添加到hashMap，这是如果机器的内存小那么他就可以内存不足，但是当我们用一个引用来包裹这个key，然后在添加到hashMap就不会了：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReferenceQueue1</span><span class="params">()</span> </span>&#123;</div><div class="line">    ReferenceQueue&lt;Object&gt; weakReferenceReferenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">int</span> M1 = <span class="number">1024</span>;</div><div class="line">    Object o = <span class="keyword">new</span> Object();</div><div class="line">    Map&lt;WeakReference&lt;<span class="keyword">byte</span>[]&gt;, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="comment">//创建一个线程监听回收的对象</span></div><div class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">int</span> cnt = <span class="number">0</span>;</div><div class="line">                WeakReference&lt;<span class="keyword">byte</span>[]&gt; k;</div><div class="line">                <span class="keyword">while</span>((k = (WeakReference) weakReferenceReferenceQueue.remove()) != <span class="keyword">null</span>) &#123;</div><div class="line">                    System.out.println((cnt++) + <span class="string">"recycle:"</span> + k+<span class="string">","</span>+k.get());</div><div class="line">                    System.out.println(<span class="string">"map.size:"</span> + map.size());</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125; <span class="keyword">catch</span>(InterruptedException e) &#123;</div><div class="line">                <span class="comment">//结束循环</span></div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;).start();</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</div><div class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[M1];</div><div class="line">        map.put(<span class="keyword">new</span> WeakReference&lt;&gt;(bytes,weakReferenceReferenceQueue),o);</div><div class="line">    &#125;</div><div class="line">    System.gc();</div><div class="line">    System.out.println(<span class="string">"map.size:"</span> + map.size());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">9997recycle:java.lang.ref.WeakReference@2a62b5bc,null</div><div class="line">map.size:10000</div><div class="line">9998recycle:java.lang.ref.WeakReference@27e47833,null</div><div class="line">map.size:10000</div><div class="line">9999recycle:java.lang.ref.WeakReference@18e8473e,null</div><div class="line">map.size:10000</div></pre></td></tr></table></figure></p>
+<p>可以看到他回收了这么多对象，因为我们调用get()时返回的为null，但是问题来了，这时候map的size还是10000，这不是我们期望的，因为他所引用的对象都被回首了，那这个map里面的可以相当于失效了，我们希望的是把reference对象也回收了，意思是map的size变成真实可用对象的size<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReferenceQueue2</span><span class="params">()</span> </span>&#123;</div><div class="line">    ReferenceQueue&lt;Object&gt; weakReferenceReferenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">int</span> M1 = <span class="number">1024</span>;</div><div class="line">    Object o = <span class="keyword">new</span> Object();</div><div class="line">    Map&lt;WeakReference&lt;<span class="keyword">byte</span>[]&gt;, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="comment">//创建一个线程监听回收的对象</span></div><div class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">int</span> cnt = <span class="number">0</span>;</div><div class="line">                WeakReference&lt;<span class="keyword">byte</span>[]&gt; k;</div><div class="line">                <span class="keyword">while</span> ((k = (WeakReference) weakReferenceReferenceQueue.remove()) != <span class="keyword">null</span>) &#123;</div><div class="line">                    map.remove(k); <span class="comment">//在这里我们移除被回收对象的引用</span></div><div class="line">                    System.out.println((cnt++) + <span class="string">"recycle:"</span> + k);</div><div class="line">                    System.out.println(<span class="string">"map.size:"</span> + map.size());</div><div class="line">                &#125;</div><div class="line"></div><div class="line"></div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                <span class="comment">//结束循环</span></div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;).start();</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</div><div class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[M1];</div><div class="line">        map.put(<span class="keyword">new</span> WeakReference&lt;&gt;(bytes, weakReferenceReferenceQueue), o);</div><div class="line">    &#125;</div><div class="line">    System.gc();</div><div class="line">    System.out.println(<span class="string">"map.size:"</span> + map.size());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">9996recycle:java.lang.ref.WeakReference@1608bcbd</div><div class="line">map.size:3</div><div class="line">9997recycle:java.lang.ref.WeakReference@777c9dc9</div><div class="line">map.size:2</div><div class="line">9998recycle:java.lang.ref.WeakReference@535779e4</div><div class="line">map.size:1</div><div class="line">9999recycle:java.lang.ref.WeakReference@6f6745d6</div><div class="line">map.size:0</div></pre></td></tr></table></figure></p>
+<p>可以看见被回收了的对象，我们将它的key也从map里面移除了</p>
+<h2 id="WeakHashMap"><a href="#WeakHashMap" class="headerlink" title="WeakHashMap"></a>WeakHashMap</h2><p>他的效果是和上面差不多，当一个key的引用对象被回收时他会自动的移除这个key</p>
+<p>我们将下表是偶数的值装到了list，这样做是不让他回收这些对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testWeakHashMap</span><span class="params">()</span> </span>&#123;</div><div class="line">    ReferenceQueue&lt;Object&gt; weakReferenceReferenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">int</span> M1 = <span class="number">1024</span>;</div><div class="line">    Object o = <span class="keyword">new</span> Object();</div><div class="line">    Map&lt;<span class="keyword">byte</span>[], Object&gt; map = <span class="keyword">new</span> WeakHashMap&lt;&gt;();</div><div class="line"></div><div class="line">    ArrayList&lt;<span class="keyword">byte</span>[]&gt; bytes1 = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</div><div class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[M1];</div><div class="line">        <span class="keyword">if</span> (i%<span class="number">2</span>==<span class="number">0</span>)&#123;</div><div class="line">            bytes1.add(bytes);</div><div class="line">        &#125;</div><div class="line">        map.put(bytes, o);</div><div class="line">        bytes  = <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">    System.gc();</div><div class="line">    System.out.println(<span class="string">"map.size:"</span> + map.size());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">map.size:5000</div></pre></td></tr></table></figure>
+<p>可以看到正如我们上面说的，他会移除哪些被回收的key。</p>
+<p>参考：<a href="http://www.iflym.com/index.php/java-programe/201407140001.html" target="_blank" rel="external">http://www.iflym.com/index.php/java-programe/201407140001.html</a></p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/引用类型/" rel="tag">#引用类型</a>
+          
+            <a href="/tags/StrongReference/" rel="tag">#StrongReference</a>
+          
+            <a href="/tags/SoftReference/" rel="tag">#SoftReference</a>
+          
+            <a href="/tags/WeakReference/" rel="tag">#WeakReference</a>
+          
+            <a href="/tags/PhantomReference/" rel="tag">#PhantomReference</a>
+          
+            <a href="/tags/ReferenceQueue/" rel="tag">#ReferenceQueue</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/06/从源码的角度带你分析Glide整体加载流程以及设计模式/" rel="next" title="从源码的角度带你分析Glide整体加载流程以及设计模式">
+                <i class="fa fa-chevron-left"></i> 从源码的角度带你分析Glide整体加载流程以及设计模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/06/Win10不能启动WampServer图标呈橘黄色的解决方法/" rel="prev" title="Win10不能启动WampServer图标呈橘黄色的解决方法">
+                Win10不能启动WampServer图标呈橘黄色的解决方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/06/深入理解Java的4种引用类型/"
+     data-title="深入理解Java的4种引用类型"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/05/06/深入理解Java的4种引用类型/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/06/深入理解Java的4种引用类型/"
+           data-title="深入理解Java的4种引用类型" data-url="http://i.woblog.cn/2016/05/06/深入理解Java的4种引用类型/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StrongReference"><span class="nav-number">2.</span> <span class="nav-text">StrongReference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SoftReference"><span class="nav-number">3.</span> <span class="nav-text">SoftReference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WeakReference"><span class="nav-number">4.</span> <span class="nav-text">WeakReference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PhantomReference"><span class="nav-number">5.</span> <span class="nav-text">PhantomReference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReferenceQueue"><span class="nav-number">6.</span> <span class="nav-text">ReferenceQueue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WeakHashMap"><span class="nav-number">7.</span> <span class="nav-text">WeakHashMap</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

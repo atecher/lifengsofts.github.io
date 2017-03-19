@@ -1,0 +1,1009 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="odex," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="为什么有odex因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+如何生成odex文件他有两种存在方式：
+一种是从apk程序提取出来了的与apk放在同一目录且后缀为odex,这类odex多事Android ROM的程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="odex文件详解">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/04/odex-format/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="为什么有odex因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+如何生成odex文件他有两种存在方式：
+一种是从apk程序提取出来了的与apk放在同一目录且后缀为odex,这类odex多事Android ROM的程序">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="odex文件详解">
+<meta name="twitter:description" content="为什么有odex因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。
+如何生成odex文件他有两种存在方式：
+一种是从apk程序提取出来了的与apk放在同一目录且后缀为odex,这类odex多事Android ROM的程序">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> odex文件详解 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                odex文件详解
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-04T22:19:25+00:00" content="2016-08-04">
+              2016-08-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Dalvik/" itemprop="url" rel="index">
+                    <span itemprop="name">Dalvik</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/04/odex-format/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/04/odex-format/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="为什么有odex"><a href="#为什么有odex" class="headerlink" title="为什么有odex"></a>为什么有odex</h1><p>因为apk实际为zip压缩包，虚拟机每次加载都需要从apk中读取classes.dex文件，这样会耗费很多的时间，而如果采用了odex方式优化的dex文件，他包含了加载dex必须的依赖库文件列表，只需要直接加载而不需要再去解析。</p>
+<h1 id="如何生成odex文件"><a href="#如何生成odex文件" class="headerlink" title="如何生成odex文件"></a>如何生成odex文件</h1><p>他有两种存在方式：</p>
+<p>一种是从apk程序提取出来了的与apk放在同一目录且后缀为odex,这类odex多事Android ROM的程序</p>
+<p>另一种是保存在/data/dalvik-cache/目录下的缓存文件，这类odex文件仍然以dex作为后缀，文件名为apk路径@apk名称@classes.dex,如：</p>
+<p>system@app@Email.apk@classes.dex：安装在system/app目录下面的Email.apk</p>
+<blockquote>
+<p>上面说的都是由系统自动生成的，我们下面说说怎么手动生成</p>
+</blockquote>
+<p>首先在Android的源码里面提供了一个dexopt-wrapper，在build/tools/dexpreopt/dexopt-wrapper/目录下，查看了DexOptWrapper.cpp文件发现他最终调用的是/system/bin/dexopt命令。所以说我们可以自己编译或者下载一个dexopt-wrapper到手机，就可以手动将dex转为odex了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">adb push dexopt-wrapper /data/local/</div><div class="line">adb shell chmod 777 /data/local/dexopt-wrapper</div></pre></td></tr></table></figure>
+<p>接下来把我们前面写的HelloWorld.smali编译成dex为classes.dex在打包为HelloWorld.zip，并push到手机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb push HelloWorld.zip /data/local/</div></pre></td></tr></table></figure>
+<p>下面我们进入到/data/local/目录下面执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./dexopt-wrapper HelloWorld.zip HelloWorld.odex</div></pre></td></tr></table></figure>
+<p>不出意外的话会输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">--- BEGIN &apos;HelloWorld.zip&apos; (bootstrap=0) ---</div><div class="line">--- waiting for verify+opt, pid=2535</div><div class="line">--- would reduce privs here</div><div class="line">--- END &apos;HelloWorld.zip&apos; (success) ---</div></pre></td></tr></table></figure>
+<p>说明转换成功了，我们将HelloWorld.odex下载到本地，以便后面的分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb pull /data/local/HelloWorld.odex .</div></pre></td></tr></table></figure>
+<h1 id="odex文件整体结构"><a href="#odex文件整体结构" class="headerlink" title="odex文件整体结构"></a>odex文件整体结构</h1><p>odex可以理解为一个dex文件的超集，因为他包含完整的dex数据，不过他文件的写入和读取并没有像dex文件哪有定义全部的数据结构，只能通过查看源码分析，dalvik虚拟机最终将dex文件映射到内存中后是DexFile格式，我们查看他的定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> DexFile &#123;</div><div class="line">    <span class="comment">/* directly-mapped "opt" header */</span></div><div class="line">    <span class="keyword">const</span> DexOptHeader* pOptHeader;</div><div class="line"></div><div class="line">    <span class="comment">/* pointers to directly-mapped structs and arrays in base DEX */</span></div><div class="line">    <span class="keyword">const</span> DexHeader*    pHeader;</div><div class="line">    <span class="keyword">const</span> DexStringId*  pStringIds;</div><div class="line">    <span class="keyword">const</span> DexTypeId*    pTypeIds;</div><div class="line">    <span class="keyword">const</span> DexFieldId*   pFieldIds;</div><div class="line">    <span class="keyword">const</span> DexMethodId*  pMethodIds;</div><div class="line">    <span class="keyword">const</span> DexProtoId*   pProtoIds;</div><div class="line">    <span class="keyword">const</span> DexClassDef*  pClassDefs;</div><div class="line">    <span class="keyword">const</span> DexLink*      pLinkData;</div><div class="line"></div><div class="line">    <span class="comment">/*</span></div><div class="line">     * These are mapped out of the "auxillary" section, and may not be</div><div class="line">     * included in the file.</div><div class="line">     */</div><div class="line">    <span class="keyword">const</span> DexClassLookup* pClassLookup;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">void</span>*         pRegisterMapPool;       <span class="comment">// RegisterMapClassPool</span></div><div class="line"></div><div class="line">    <span class="comment">/* points to start of DEX file data */</span></div><div class="line">    <span class="keyword">const</span> u1*           baseAddr;</div><div class="line"></div><div class="line">    <span class="comment">/* track memory overhead for auxillary structures */</span></div><div class="line">    <span class="keyword">int</span>                 overhead;</div><div class="line"></div><div class="line">    <span class="comment">/* additional app-specific data structures associated with the DEX */</span></div><div class="line">    <span class="comment">//void*               auxData;</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>他存入的多位其他结构的指针。DexOptHeader就是odex的头，DexLink以下的是辅助数据段，也就是dex优化后的添加的数据，dexFile中有些是不会加载进内存的，所以下面就是odex定义个结构：</p>
+<h2 id="ODEXFile"><a href="#ODEXFile" class="headerlink" title="ODEXFile"></a>ODEXFile</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> ODEXFile &#123;</div><div class="line">    DexOptHeader header; <span class="comment">//文件头</span></div><div class="line">    DEXFile dexfile; <span class="comment">//dex文件</span></div><div class="line">    Dependences deps; <span class="comment">//依赖库列表</span></div><div class="line">    ChunkDexClassLookup lookup; <span class="comment">//类索引结构</span></div><div class="line">    ChunkRegisterMapPool mappool; <span class="comment">//映射池</span></div><div class="line">    ChunkEnd end; <span class="comment">//结束标志位</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="DexOptHeader"><a href="#DexOptHeader" class="headerlink" title="DexOptHeader"></a>DexOptHeader</h2><p>他的定义在DexFile.h中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> DexOptHeader &#123;</div><div class="line">    u1  magic[<span class="number">8</span>]; <span class="comment">/* 标识是一个odex文件，包含版本号 */</span></div><div class="line"></div><div class="line">    u4  dexOffset; <span class="comment">/* dex文件的偏移 */</span></div><div class="line">    u4  dexLength; <span class="comment">/* dex文件长度 */</span></div><div class="line">    u4  depsOffset; <span class="comment">/* odex依赖库的偏移 */</span></div><div class="line">    u4  depsLength; <span class="comment">/* 依赖库长度 */</span></div><div class="line">    u4  optOffset; <span class="comment">/* 辅助数据偏移 */</span></div><div class="line">    u4  optLength; <span class="comment">/* 辅助数据长度 */</span></div><div class="line"></div><div class="line">    u4  flags; <span class="comment">/* 标志位 */</span></div><div class="line">    u4  checksum; <span class="comment">/* 依赖库和辅助数据的校验值 */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>mgic：和DexHeader结构中的magic字段类似，标识一个特定类型的文件，当前(Android 4.4,api19)的固定值为64 65 79 0a 30 33 36 00，转为字符串为d   e   y  \n   0   3   6  \0</p>
+<p>dexOffset：为dex文件头的偏移，当前的值为DexOptHeader结构大小0x28</p>
+<p>flag:取值为DexoptFlags中的常量值，标识了虚拟机加载odex时的优化与验证选项</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>偏移值</th>
+<th>长度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>magic</td>
+<td>0x0</td>
+<td>8</td>
+</tr>
+<tr>
+<td>dexOffset</td>
+<td>8</td>
+<td>4</td>
+</tr>
+<tr>
+<td>dexLength</td>
+<td>c</td>
+<td>4</td>
+</tr>
+<tr>
+<td>depsOffset</td>
+<td>10</td>
+<td>4</td>
+</tr>
+<tr>
+<td>depsLength</td>
+<td>14</td>
+<td>4</td>
+</tr>
+<tr>
+<td>optOffset</td>
+<td>18</td>
+<td>4</td>
+</tr>
+<tr>
+<td>optLength</td>
+<td>20</td>
+<td>4</td>
+</tr>
+<tr>
+<td>flags</td>
+<td>24</td>
+<td>4</td>
+</tr>
+<tr>
+<td>checksum</td>
+<td>28</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="DexFile"><a href="#DexFile" class="headerlink" title="DexFile"></a>DexFile</h2><p>这一部分和上一篇文章将的格式是一样的</p>
+<h2 id="Dependences"><a href="#Dependences" class="headerlink" title="Dependences"></a>Dependences</h2><p>这一部分没有在源码中明确的定义，他不会被加载进内存，只能通过源码分析他的结构</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> Dependences&#123;</div><div class="line">	u4 modWhen; <span class="comment">//时间戳</span></div><div class="line">	u4 crc; <span class="comment">//校验值</span></div><div class="line">	u4 DALVIK_VM_BUILD; <span class="comment">//Dalvik虚拟机版本号</span></div><div class="line">	U4 numDeps; <span class="comment">//依赖库个数</span></div><div class="line">	<span class="keyword">struct</span>&#123;</div><div class="line">		u4 len; <span class="comment">//name字符串长度</span></div><div class="line">		u1 name[len]; <span class="comment">//依赖库名称</span></div><div class="line">		kSHA1DigestLen signature; <span class="comment">//sha-1值,20，在DexFile.h中定义</span></div><div class="line">	&#125; table[numDeps];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面我们从源码分析生成Dependences结构的代码，是由/dalvik/vm/analysis/DexPrepare.cpp#writeDependencies中完成的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">writeDependencies</span><span class="params">(<span class="keyword">int</span> fd, u4 modWhen, u4 crc)</span></span></div><div class="line">&#123;</div><div class="line">    u1* buf = <span class="literal">NULL</span>;</div><div class="line">    <span class="keyword">int</span> result = <span class="number">-1</span>;</div><div class="line">    <span class="keyword">ssize_t</span> bufLen;</div><div class="line">    ClassPathEntry* cpe;</div><div class="line">    <span class="keyword">int</span> numDeps;</div><div class="line"></div><div class="line">    <span class="comment">/*</span></div><div class="line">     * Count up the number of completed entries in the bootclasspath.</div><div class="line">     */</div><div class="line">    numDeps = <span class="number">0</span>;</div><div class="line">    bufLen = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span> (cpe = gDvm.bootClassPath; cpe-&gt;ptr != <span class="literal">NULL</span>; cpe++) &#123; <span class="comment">//计算依赖库个数</span></div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span>* cacheFileName =</div><div class="line">            dvmPathToAbsolutePortion(getCacheFileName(cpe));</div><div class="line">        assert(cacheFileName != <span class="literal">NULL</span>); <span class="comment">/* guaranteed by Class.c */</span></div><div class="line"></div><div class="line">        ALOGV(<span class="string">"+++ DexOpt: found dep '%s'"</span>, cacheFileName);</div><div class="line"></div><div class="line">        numDeps++; <span class="comment">//依赖库格式</span></div><div class="line">        bufLen += <span class="built_in">strlen</span>(cacheFileName) +<span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    bufLen += <span class="number">4</span>*<span class="number">4</span> + numDeps * (<span class="number">4</span>+kSHA1DigestLen);</div><div class="line"></div><div class="line">    buf = (u1*)<span class="built_in">malloc</span>(bufLen); <span class="comment">//动态开辟Dependencies结构的长度</span></div><div class="line"></div><div class="line">    set4LE(buf+<span class="number">0</span>, modWhen); <span class="comment">//写入时间戳</span></div><div class="line">    set4LE(buf+<span class="number">4</span>, crc); <span class="comment">//写入crc</span></div><div class="line">    set4LE(buf+<span class="number">8</span>, DALVIK_VM_BUILD); <span class="comment">//写入虚拟机版本</span></div><div class="line">    set4LE(buf+<span class="number">12</span>, numDeps); <span class="comment">//写入依赖库的个数</span></div><div class="line"></div><div class="line">    <span class="comment">// <span class="doctag">TODO:</span> do we want to add dvmGetInlineOpsTableLength() here?  Won't</span></div><div class="line">    <span class="comment">// help us if somebody replaces an existing entry, but it'd catch</span></div><div class="line">    <span class="comment">// additions/removals.</span></div><div class="line"></div><div class="line">    u1* ptr = buf + <span class="number">4</span>*<span class="number">4</span>;</div><div class="line">    <span class="keyword">for</span> (cpe = gDvm.bootClassPath; cpe-&gt;ptr != <span class="literal">NULL</span>; cpe++) &#123; <span class="comment">//循环写入所有依赖库</span></div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span>* cacheFileName =</div><div class="line">            dvmPathToAbsolutePortion(getCacheFileName(cpe));</div><div class="line">        assert(cacheFileName != <span class="literal">NULL</span>); <span class="comment">/* guaranteed by Class.c */</span></div><div class="line"></div><div class="line">        <span class="keyword">const</span> u1* signature = getSignature(cpe);<span class="comment">//计算sha1值</span></div><div class="line">        <span class="keyword">int</span> len = <span class="built_in">strlen</span>(cacheFileName) +<span class="number">1</span>;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (ptr + <span class="number">4</span> + len + kSHA1DigestLen &gt; buf + bufLen) &#123;</div><div class="line">            ALOGE(<span class="string">"DexOpt: overran buffer"</span>);</div><div class="line">            dvmAbort();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        set4LE(ptr, len);</div><div class="line">        ptr += <span class="number">4</span>;</div><div class="line">        <span class="built_in">memcpy</span>(ptr, cacheFileName, len); <span class="comment">//写入依赖库的名词</span></div><div class="line">        ptr += len;</div><div class="line">        <span class="built_in">memcpy</span>(ptr, signature, kSHA1DigestLen); <span class="comment">//写入依赖库的sha1值</span></div><div class="line">        ptr += kSHA1DigestLen;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    assert(ptr == buf + bufLen);</div><div class="line"></div><div class="line">    result = sysWriteFully(fd, buf, bufLen, <span class="string">"DexOpt dep info"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">free</span>(buf);</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>modWhen:记录优化前classes.dex的时间戳</p>
+<p>crc:优化前classes.dex的校验值</p>
+<p>他们是通过/dalvik/libdex/ZipArchive.cpp#dexZipGetEntryInfo函数来获取的</p>
+<p>DALVIK_VM_BUILD：是虚拟机版本号，定义在/dalvik/vm/DalvikVersion.h</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> DALVIK_VM_BUILD         27</span></div></pre></td></tr></table></figure>
+<p>2.2.3 = 19</p>
+<p>2.3~2.3.7 = 23</p>
+<p>4.0~5.1.1 = 27</p>
+<p>6.0.0~后面没有这个常量了</p>
+<p>numDeps:依赖库个数</p>
+<p>table：为连续numDeps个真实依赖信息结构组成</p>
+<p>​    len:指定第2个字段name暂用的字节数</p>
+<p>​    name:依赖库的完整路径名</p>
+<p>​    signature:依赖库的sha1值</p>
+<p>下面我们就用上次的HelloWorld.odex来分析Dependences结构并验证上述是否正确：</p>
+<p>首先我们读取depsOffset字段值：0x3d0，depsLength值为：0x373，所以我们计算可知，依赖结构暂用的偏移为0x3d0~0x743</p>
+<p>继续从0x3d0分析：</p>
+<p>读取4个字节：</p>
+<p>modWhen=55 67 f9 48</p>
+<p>crc=ec 48 c7 05</p>
+<p>DALVIK_VM_BUILD=1b 00 00 00=27</p>
+<p>numDeps=0f 00 00 00=15</p>
+<p>根据上面的信息我们分析所以得依赖如下：</p>
+<p>我们手动分析一个依赖</p>
+<p>读取0x3e0 ，值为：1c 00 00 00，表示文件吗长度为0x1c,我们读取28个字符值为/system/framework/core.odex，这就是完整文件名，从0x400读取20位，值为d6 bb 96 dc 78 1a 55 38  f2 6d b5 d5 84 5a 6e 64 87 a6 35 72，这就是依赖库的sha-1值，根据上面的步骤，我们分析出所有的依赖信息</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>文件吗长度</th>
+<th>依赖库名称</th>
+<th>sha1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x1c</td>
+<td>/system/framework/core.odex</td>
+<td>d6bb96dc781a5538f26db5d5845a6e6487a63572</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x21</td>
+<td>/system/framework/conscrypt.odex</td>
+<td>1f33546e3ca68e8c3ba1c111a47e1b08ee4854cd</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1e</td>
+<td>/system/framework/okhttp.odex</td>
+<td>30372c6bfffddac82b262ccd85bbbe00fe119a35</td>
+</tr>
+<tr>
+<td>3</td>
+<td>22</td>
+<td>/system/framework/core-junit.odex</td>
+<td>468e68afd635b716c77a1ade97e6ac906f995057</td>
+</tr>
+<tr>
+<td>4</td>
+<td>24</td>
+<td>/system/framework/bouncycastle.odex</td>
+<td>7b93bde38862bf719b9f4054b91522d8d3647d91</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1b</td>
+<td>/system/framework/ext.odex</td>
+<td>65d2a8066071edff6d5c67eef0fac632cfef23b0</td>
+</tr>
+<tr>
+<td>6</td>
+<td>21</td>
+<td>/system/framework/framework.odex</td>
+<td>4b43246e783414fa0537c9a3560874dad17467b6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>22</td>
+<td>/system/framework/framework2.odex</td>
+<td>4d752b219a4b4309ca154ed7135cc76857fde3aa</td>
+</tr>
+<tr>
+<td>8</td>
+<td>28</td>
+<td>/system/framework/telephony-common.odex</td>
+<td>3011022a0fd5bd01b45f47927410f116d3fb7eac</td>
+</tr>
+<tr>
+<td>9</td>
+<td>23</td>
+<td>/system/framework/voip-common.odex</td>
+<td>c4e5082b04e40b8a63f4fcb03c5e65c5b0ac632a</td>
+</tr>
+<tr>
+<td>10</td>
+<td>22</td>
+<td>/system/framework/mms-common.odex</td>
+<td>4c2d0a0b65dd9a8cc7d68474076588356b16fbab</td>
+</tr>
+<tr>
+<td>11</td>
+<td>26</td>
+<td>/system/framework/android.policy.odex</td>
+<td>659f32295f35fbbdd88db6019fec7313000c3ece</td>
+</tr>
+<tr>
+<td>12</td>
+<td>20</td>
+<td>/system/framework/services.odex</td>
+<td>7534cc6d79d1d9464bd45dfe0a976ceb94b3ceae</td>
+</tr>
+<tr>
+<td>13</td>
+<td>22</td>
+<td>/system/framework/apache-xml.odex</td>
+<td>289e934d21ca9a5c99d6e52dd6024274cbebfdce</td>
+</tr>
+<tr>
+<td>14</td>
+<td>27</td>
+<td>/system/framework/webviewchromium.odex</td>
+<td>1305e97aaf378db3d94acdc88beddec0aa9feed8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="辅助数据"><a href="#辅助数据" class="headerlink" title="辅助数据"></a>辅助数据</h2><p>ChunkDexClassLookup，ChunkRegisterMapPool,ChunkEnd这个三个Chunk快，他们被Dalvik虚拟机加载到一个称为auxiliary的端中，他们都是由DexPrepare.cpp#writeOptData</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">writeOptData</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> DexClassLookup* pClassLookup,</span></span></div><div class="line">    <span class="keyword">const</span> RegisterMapBuilder* pRegMapBuilder)</div><div class="line">&#123;</div><div class="line">    <span class="comment">/* 写入DexChunkClassLookup数据库 */</span></div><div class="line">    <span class="keyword">if</span> (!writeChunk(fd, (u4) kDexChunkClassLookup,</div><div class="line">            pClassLookup, pClassLookup-&gt;size))</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* 写入DexChunkRegisterMaps(可选) */</span></div><div class="line">    <span class="keyword">if</span> (pRegMapBuilder != <span class="literal">NULL</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (!writeChunk(fd, (u4) kDexChunkRegisterMaps,</div><div class="line">                pRegMapBuilder-&gt;data, pRegMapBuilder-&gt;size))</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* 写入DexChunkEnd */</span></div><div class="line">    <span class="keyword">if</span> (!writeChunk(fd, (u4) kDexChunkEnd, <span class="literal">NULL</span>, <span class="number">0</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到数据其实是通过writeChunk函数写入的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">writeChunk</span><span class="params">(<span class="keyword">int</span> fd, u4 type, <span class="keyword">const</span> <span class="keyword">void</span>* data, <span class="keyword">size_t</span> size)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">union</span> &#123;             <span class="comment">/* save a syscall by grouping these together */</span></div><div class="line">        <span class="keyword">char</span> raw[<span class="number">8</span>];</div><div class="line">        <span class="keyword">struct</span> &#123;</div><div class="line">            u4 type;</div><div class="line">            u4 size;</div><div class="line">        &#125; ts;</div><div class="line">    &#125; header;</div><div class="line"></div><div class="line">    assert(<span class="keyword">sizeof</span>(header) == <span class="number">8</span>);</div><div class="line"></div><div class="line">    ALOGV(<span class="string">"Writing chunk, type=%.4s size=%d"</span>, (<span class="keyword">char</span>*) &amp;type, size);</div><div class="line"></div><div class="line">    header.ts.type = type;</div><div class="line">    header.ts.size = (u4) size;</div><div class="line">    <span class="keyword">if</span> (sysWriteFully(fd, &amp;header, <span class="keyword">sizeof</span>(header),</div><div class="line">            <span class="string">"DexOpt opt chunk header write"</span>) != <span class="number">0</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (size &gt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (sysWriteFully(fd, data, size, <span class="string">"DexOpt opt chunk write"</span>) != <span class="number">0</span>)</div><div class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* if necessary, pad to 64-bit alignment */</span></div><div class="line">    <span class="keyword">if</span> ((size &amp; <span class="number">7</span>) != <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">int</span> padSize = <span class="number">8</span> - (size &amp; <span class="number">7</span>);</div><div class="line">        ALOGV(<span class="string">"size was %d, inserting %d pad bytes"</span>, size, padSize);</div><div class="line">        lseek(fd, padSize, SEEK_CUR);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    assert( ((<span class="keyword">int</span>)lseek(fd, <span class="number">0</span>, SEEK_CUR) &amp; <span class="number">7</span>) == <span class="number">0</span>);</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到函数中定义了一个共同体Header，共暂用8字节，写入时会根据具体的结构填充这个结构，type字段为1一个以KDexChunk开头的枚举，在DexFile.h中定义如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">enum</span> &#123;</div><div class="line">    kDexChunkClassLookup            = <span class="number">0x434c4b50</span>,   <span class="comment">/* CLKP */</span></div><div class="line">    kDexChunkRegisterMaps           = <span class="number">0x524d4150</span>,   <span class="comment">/* RMAP */</span></div><div class="line"></div><div class="line">    kDexChunkEnd                    = <span class="number">0x41454e44</span>,   <span class="comment">/* AEND */</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>size是要填充的数据的字节数。</p>
+<h3 id="ChunkClassLookup"><a href="#ChunkClassLookup" class="headerlink" title="ChunkClassLookup"></a>ChunkClassLookup</h3><p>写入DexChunkClassLookup时向writeChunk函数传递了一个DexClassLookup结构指针，在DexFile.h定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> DexClassLookup &#123;</div><div class="line">    <span class="keyword">int</span>     size;                       <span class="comment">// total size, including "size"</span></div><div class="line">    <span class="keyword">int</span>     numEntries;                 <span class="comment">// size of table[]; always power of 2</span></div><div class="line">    <span class="keyword">struct</span> &#123;</div><div class="line">        u4      classDescriptorHash;    <span class="comment">// class descriptor hash code</span></div><div class="line">        <span class="keyword">int</span>     classDescriptorOffset;  <span class="comment">// in bytes, from start of DEX</span></div><div class="line">        <span class="keyword">int</span>     classDefOffset;         <span class="comment">// in bytes, from start of DEX</span></div><div class="line">    &#125; table[<span class="number">1</span>];</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>虚拟机通过DexClassLookup结构来检索所有类</p>
+<p>size:为本结构体的字节数</p>
+<p>numEntries：接下来table结构的项数，值为2</p>
+<p>table:是用来描述类的信息</p>
+<p>​    classDescriptorHash：为类的hash值</p>
+<p>​    classDescriptorOffset：类的描述</p>
+<p>​    classDefOffset：为指向DexClassDef结构体的指针的偏移</p>
+<p>根据上面我们可以分析出ChunkDexClassLookup的结构为</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> ChunkDexClassLookup &#123;</div><div class="line">	Header header; <span class="comment">//这个就是writeChunk函数中定义的header</span></div><div class="line">	DexClassLoopup lookup;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ChunkRegisterMapPool"><a href="#ChunkRegisterMapPool" class="headerlink" title="ChunkRegisterMapPool"></a>ChunkRegisterMapPool</h3><p>写入他时像writeChunk函数传递了一个RegisterMapBuilder结构，定义在/dalvik/vm/analysis/RegisterMap.h中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> RegisterMapBuilder &#123;</div><div class="line">    <span class="comment">/* public */</span></div><div class="line">    <span class="keyword">void</span>*       data;</div><div class="line">    <span class="keyword">size_t</span>      size;</div><div class="line"></div><div class="line">    <span class="comment">/* private */</span></div><div class="line">    MemMapping  memMap;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>//TODO</p>
+<h3 id="ChunkEnd"><a href="#ChunkEnd" class="headerlink" title="ChunkEnd"></a>ChunkEnd</h3><p>写入他时向writeChunk函数传递了一个NULL指针，并且传递了kDexChunkEnd类型，所以他只有一个header，最后得出结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> ChunkEnd &#123;</div><div class="line">   	Header header;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/odex/" rel="tag">#odex</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/26/configuration-kotlin-for-android/" rel="next" title="搭建使用Kotlin语言开发Android的环境">
+                <i class="fa fa-chevron-left"></i> 搭建使用Kotlin语言开发Android的环境
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/05/dex-format-image/" rel="prev" title="一张图带你搞明白Dex文件格式">
+                一张图带你搞明白Dex文件格式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/04/odex-format/"
+     data-title="odex文件详解"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/04/odex-format/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/04/odex-format/"
+           data-title="odex文件详解" data-url="http://i.woblog.cn/2016/08/04/odex-format/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么有odex"><span class="nav-number">1.</span> <span class="nav-text">为什么有odex</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何生成odex文件"><span class="nav-number">2.</span> <span class="nav-text">如何生成odex文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#odex文件整体结构"><span class="nav-number">3.</span> <span class="nav-text">odex文件整体结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ODEXFile"><span class="nav-number">3.1.</span> <span class="nav-text">ODEXFile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DexOptHeader"><span class="nav-number">3.2.</span> <span class="nav-text">DexOptHeader</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DexFile"><span class="nav-number">3.3.</span> <span class="nav-text">DexFile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependences"><span class="nav-number">3.4.</span> <span class="nav-text">Dependences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辅助数据"><span class="nav-number">3.5.</span> <span class="nav-text">辅助数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ChunkClassLookup"><span class="nav-number">3.5.1.</span> <span class="nav-text">ChunkClassLookup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ChunkRegisterMapPool"><span class="nav-number">3.5.2.</span> <span class="nav-text">ChunkRegisterMapPool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ChunkEnd"><span class="nav-number">3.5.3.</span> <span class="nav-text">ChunkEnd</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

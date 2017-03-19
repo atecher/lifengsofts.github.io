@@ -1,0 +1,842 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,微信支付," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="今天来聊聊，android中接入微信支付的需求，肯定有人会说，这多简单呀，还在这里扯什么，赶快去洗洗睡吧~~
+那我就不服了，要是说这简单的，你知道微信支付官网多少吗，要是你一百度，下面全是广告，哈哈，你一不小心就掉坑去了，在简单的事，只要你想把他做好，其实也是很复杂的~
+简介首先我们来到微信支付官网瞅瞅：
+
+可以看到这就是微信支付首页，下面有几种支付方式，而我们今天的主角就是APP支付，我们可以直">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android接入微信支付完全解析，太全了~">
+<meta property="og:url" content="http://i.woblog.cn/2016/04/15/Android接入微信支付完全解析，太全了/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="今天来聊聊，android中接入微信支付的需求，肯定有人会说，这多简单呀，还在这里扯什么，赶快去洗洗睡吧~~
+那我就不服了，要是说这简单的，你知道微信支付官网多少吗，要是你一百度，下面全是广告，哈哈，你一不小心就掉坑去了，在简单的事，只要你想把他做好，其实也是很复杂的~
+简介首先我们来到微信支付官网瞅瞅：
+
+可以看到这就是微信支付首页，下面有几种支付方式，而我们今天的主角就是APP支付，我们可以直">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/1.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/2.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/3.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/4.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/5.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/6.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/7.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/8.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/9.png">
+<meta property="og:image" content="https://pay.weixin.qq.com/wiki/doc/api/img/chapter8_3_1.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android接入微信支付完全解析，太全了~">
+<meta name="twitter:description" content="今天来聊聊，android中接入微信支付的需求，肯定有人会说，这多简单呀，还在这里扯什么，赶快去洗洗睡吧~~
+那我就不服了，要是说这简单的，你知道微信支付官网多少吗，要是你一百度，下面全是广告，哈哈，你一不小心就掉坑去了，在简单的事，只要你想把他做好，其实也是很复杂的~
+简介首先我们来到微信支付官网瞅瞅：
+
+可以看到这就是微信支付首页，下面有几种支付方式，而我们今天的主角就是APP支付，我们可以直">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> Android接入微信支付完全解析，太全了~ | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android接入微信支付完全解析，太全了~
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-15T15:25:07+00:00" content="2016-04-15">
+              2016-04-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/15/Android接入微信支付完全解析，太全了/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/15/Android接入微信支付完全解析，太全了/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天来聊聊，android中接入微信支付的需求，肯定有人会说，这多简单呀，还在这里扯什么，赶快去洗洗睡吧~~</p>
+<p>那我就不服了，要是说这简单的，你知道微信支付官网多少吗，要是你一百度，下面全是广告，哈哈，你一不小心就掉坑去了，在简单的事，只要你想把他做好，其实也是很复杂的~</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>首先我们来到<a href="https://pay.weixin.qq.com/index.php" target="_blank" rel="external">微信支付官网</a>瞅瞅：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/1.png" alt="Paste_Image.png"></p>
+<p>可以看到这就是微信支付首页，下面有几种支付方式，而我们今天的主角就是APP支付，我们可以直接点进去，或者从左上角接入指引-APP支付，进去的文档式样的，<a href="http://kf.qq.com/faq/120911VrYVrA150906F3qqY3.html" target="_blank" rel="external">这是这个文档的位置</a>如下图所示：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/2.png" alt="Paste_Image.png"></p>
+<p>肯定有人说，你贴这么有毛用呀，还浪费我流量…</p>
+<p>别急让我给你说说这图有什么用，首先从这图你能看出从注册开发平台账号到完成支付接入需要哪些步骤，哪些资料，这样你可以让相关的人员事先去准备这些资料，而不是填完一步资料，在去找下一步资料，记住时间就是金钱，另外你领导说来给我讲讲微信支付那准备哪些资料，你没看过这文档，那我就只能呵呵了O(∩_∩)O~。另外哪些说支付简单的，有几个知道这张图，又有谁认真看过~~</p>
+<p>可以看到是要加300块的，还需要企业的一些资料。</p>
+<p>另外微信支付有两个平台分别是<a href="https://open.weixin.qq.com/" target="_blank" rel="external">开发者平台</a>和<a href="https://pay.weixin.qq.com" target="_blank" rel="external">商户平台</a></p>
+<p>开发者平台：主要是针对开发者，比如：创建应用，获取appid<br>商户平台：主要是商户上面的一些管理，比如：可以查看流水，订单呀</p>
+<h2 id="创建应用"><a href="#创建应用" class="headerlink" title="创建应用"></a>创建应用</h2><p>这里我只是演示怎么创建应用，最后不会用这个账号的，因为我这是个人账号，没法申请支付，只是给不会创建的朋友做一个演示，需要哪些资料而已，会的可略过~</p>
+<p>首先我们来到<a href="https://open.weixin.qq.com/" target="_blank" rel="external">开发者平台</a>，没有账号的先注册，这个我想不用演示了，直接演示怎么创建应用，首先你的登录完账号，点击管理中心-移动应用：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/3.png" alt="Paste_Image.png"></p>
+<p>点击左上角的创建移动应用，到如下界面，因为这里是测试，所有资料都是随便填啦</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/4.png" alt="Paste_Image.png"></p>
+<p>点击下一步就来到了</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/5.png" alt="Paste_Image.png"></p>
+<p>这一步让你填写，需要的平台，以及平台信息，我这里只悬着android，填入包名和签名，另外这里他没有想微博那样可以填入多个签名，那么这里我建议你一开始填入debug的签名，等调试通过了在填写正式签名，签名的获取方法和接入第三方登录是一样的。最后提交审核，等审核完以后，我们点击到应用详情，应该是这样的效果</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/6.png" alt="Paste_Image.png"></p>
+<p>个人账号创建的应用审核通过后只有，分享功能，如果还需要支付，可以点击申请，然后认证账号并上传一些资料，这又是一个漫长的过程，这里我们就不了那么多了，现在直接说怎么在代码实现吧</p>
+<h2 id="运行官方demo"><a href="#运行官方demo" class="headerlink" title="运行官方demo"></a>运行官方demo</h2><p>记住这里的支付demo是在商户平台的帮助里面下载，<a href="https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=11_1" target="_blank" rel="external">地址在这里</a>，而不是开发者平台下载的那个demo（以前是可以，现在这里下载的demo，里面剔除了支付），如下图，是这个页面：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/7.png" alt="Paste_Image.png"></p>
+<p>第一个是基础库，点击后会跳到开发者平台，第二个参数支付demo，当然里面也包含了分享等一些功能，可以说如果你既要做支付又要做分享，那么你只需要这个一个demo就行了，当然还得需要我这篇文章呀</p>
+<p>下载完导入eclipse，替换debug.keystore然后运行，就可以看到如下界面，终于看到支付了，激动不已是不是</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/8.png" alt="Paste_Image.png"></p>
+<p>然后我们就可以点击“跳转到支付界面”，看看什么效果呀，是骡子是马总的溜溜吧，看到这一面，感觉神清气爽，因为demo跑通了，呵呵~</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/9.png" alt="Paste_Image.png"></p>
+<p>demo也看了，钱也付了，那我们现在就该开始接入支付了</p>
+<h2 id="正式接入支付"><a href="#正式接入支付" class="headerlink" title="正式接入支付"></a>正式接入支付</h2><p>首先还是得上一张流程图呀，不然你知道怎么个逻辑？</p>
+<p>这是这个文档的<a href="https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_3" target="_blank" rel="external">官方地址</a></p>
+<p><img src="https://pay.weixin.qq.com/wiki/doc/api/img/chapter8_3_1.png" alt="">，这是官方的解释</p>
+<blockquote>
+<p>商户系统和微信支付系统主要交互说明：</p>
+<p>步骤1：用户在商户APP中选择商品，提交订单，选择微信支付。</p>
+<p>步骤2：商户后台收到用户支付单，调用微信支付统一下单接口。参见【统一下单API】。</p>
+<p>步骤3：统一下单接口返回正常的prepay_id，再按签名规范重新生成签名后，将数据传输给APP。参与签名的字段名为appId，partnerId，prepayId，nonceStr，timeStamp，package。注意：package的值格式为Sign=WXPay </p>
+<p>步骤4：商户APP调起微信支付。api参见本章节【app端开发步骤说明】</p>
+<p>步骤5：商户后台接收支付通知。api参见【支付结果通知API】</p>
+<p>步骤6：商户后台查询支付结果。，api参见【查询订单API】</p>
+</blockquote>
+<p>首要微信支付暴露给我的是两步，一步是生成预支付订单，然后那个预支付订单id再去调用微信支付，所以说这里就有两种实现方式了，一种是客户端处理这所有步骤，另外一种肯定是服务端创建与支付订单和签名，然后返回给我们，我们才拿着这些参数去调用微信支付。实际应用中，推荐使用服务那种，但是我这里讲的是本地怎么实现支付，如果你们是在服务端支付，那么你的告诉他你需要什么参数，他怎么创建预支付订单等<a href="https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1" target="_blank" rel="external">服务端下单参考这里</a></p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>这是<a href="https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_5" target="_blank" rel="external">官方的app支付开发步骤</a>，另外这里由于我没有可用的支付所以，写demo我用的包名和key都是微信demo的</p>
+<p>配置权限</p>
+<p>配置activity</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.INTERNET"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>配置回调activity<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">activity</span></span></div><div class="line">    <span class="attr">android:name</span>=<span class="string">".wxapi.WXPayEntryActivity"</span></div><div class="line">    <span class="attr">android:exported</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">android:launchMode</span>=<span class="string">"singleTop"</span>/&gt;</div></pre></td></tr></table></figure></p>
+<p>调用支付</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWxPay</span><span class="params">(View view)</span> </span>&#123;</div><div class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            String url = <span class="string">"http://wxpay.weixin.qq.com/pub_v2/app/app_pay.php?plat=android"</span>;</div><div class="line">            ToastUtil.shortToastInBackgroundThread(getActivity(), <span class="string">"获取订单中..."</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">byte</span>[] buf = Util.httpGet(url);</div><div class="line">                <span class="keyword">if</span> (buf != <span class="keyword">null</span> &amp;&amp; buf.length &gt; <span class="number">0</span>) &#123;</div><div class="line">                    String content = <span class="keyword">new</span> String(buf);</div><div class="line">                    Log.e(<span class="string">"get server pay params:"</span>, content);</div><div class="line">                    JSONObject json = <span class="keyword">new</span> JSONObject(content);</div><div class="line">                    <span class="keyword">if</span> (<span class="keyword">null</span> != json &amp;&amp; !json.has(<span class="string">"retcode"</span>)) &#123;</div><div class="line">                        req = <span class="keyword">new</span> PayReq();</div><div class="line">                        <span class="comment">//req.appId = "wxf8b4f85f3a794e77";  // 测试用appId</span></div><div class="line">                        req.appId = json.getString(<span class="string">"appid"</span>);</div><div class="line">                        req.partnerId = json.getString(<span class="string">"partnerid"</span>);</div><div class="line">                        req.prepayId = json.getString(<span class="string">"prepayid"</span>);</div><div class="line">                        req.nonceStr = json.getString(<span class="string">"noncestr"</span>);</div><div class="line">                        req.timeStamp = json.getString(<span class="string">"timestamp"</span>);</div><div class="line">                        req.packageValue = json.getString(<span class="string">"package"</span>);</div><div class="line">                        req.sign = json.getString(<span class="string">"sign"</span>);</div><div class="line">                        req.extData = <span class="string">"app data"</span>; <span class="comment">// optional</span></div><div class="line">                        ToastUtil.shortToastInBackgroundThread(getActivity(), <span class="string">"正常调起支付"</span>);</div><div class="line">                        toPay();</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        Log.d(<span class="string">"PAY_GET"</span>, <span class="string">"返回错误"</span> + json.getString(<span class="string">"retmsg"</span>));</div><div class="line">                        ToastUtil.shortToastInBackgroundThread(getActivity(), <span class="string">"返回错误"</span> + json.getString(<span class="string">"retmsg"</span>));</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    Log.d(<span class="string">"PAY_GET"</span>, <span class="string">"服务器请求错误"</span>);</div><div class="line">                    ToastUtil.shortToastInBackgroundThread(getActivity(), <span class="string">"服务器请求错误"</span>);</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                Log.e(<span class="string">"PAY_GET"</span>, <span class="string">"异常："</span> + e.getMessage());</div><div class="line">                ToastUtil.shortToastInBackgroundThread(getActivity(), <span class="string">"异常："</span> + e.getMessage());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;).start();</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">toPay</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信</span></div><div class="line">    api.sendReq(req);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>到这里如果你按照我的配置的话，正常情况下试可用调起支付界面了，如果出现-1，请检查是不是替换了debug.keystore，如果替换了，还是这样记得清空微信缓存</p>
+<p>以上测试代码都在<a href="https://github.com/lifengsofts/TestThirdPartyFunction" target="_blank" rel="external">github</a>上，官方的下载的sdk包也在该仓库的docs目录下</p>
+<p>如果我的文章对来带来的帮助，可加我微信，微博，QQ什么啥的交个朋友也是不错的，另外微信，微博都会不定期发一些优质的文章，感谢大家的支持~~，联系方式在我的个人介绍里啦</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/微信支付/" rel="tag">#微信支付</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/13/android-third-party-login-share/" rel="next" title="史上最详细Android集成QQ，微信，微博分享（不用第三方）持续更新中">
+                <i class="fa fa-chevron-left"></i> 史上最详细Android集成QQ，微信，微博分享（不用第三方）持续更新中
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/15/超详细Android接入支付宝支付实现，有图有真相/" rel="prev" title="超详细Android接入支付宝支付实现，有图有真相">
+                超详细Android接入支付宝支付实现，有图有真相 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/04/15/Android接入微信支付完全解析，太全了/"
+     data-title="Android接入微信支付完全解析，太全了~"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/04/15/Android接入微信支付完全解析，太全了/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/04/15/Android接入微信支付完全解析，太全了/"
+           data-title="Android接入微信支付完全解析，太全了~" data-url="http://i.woblog.cn/2016/04/15/Android接入微信支付完全解析，太全了/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建应用"><span class="nav-number">2.</span> <span class="nav-text">创建应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行官方demo"><span class="nav-number">3.</span> <span class="nav-text">运行官方demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正式接入支付"><span class="nav-number">4.</span> <span class="nav-text">正式接入支付</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.1.</span> <span class="nav-text">配置</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

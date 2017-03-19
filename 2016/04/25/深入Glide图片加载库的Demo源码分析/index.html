@@ -1,0 +1,824 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Glide," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="简介上一篇我们聊了怎么运行官方的示例和一些基本使用，这一篇我们要学习下Glide库中自带的几个Demo，并深入学习下，其中的配置和一些高级使用
+Gallery首先我们来分析下Gallery这个demo工程，我们先看看他的结构：
+
+我们通过清单文件可以看到主界面是MainActivity，好的那我们打开看看啦，可以看到只是在onCreate方法中添加了如下代码：
+1Glide.get(this).s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入Glide图片加载库的Demo源码分析">
+<meta property="og:url" content="http://i.woblog.cn/2016/04/25/深入Glide图片加载库的Demo源码分析/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="简介上一篇我们聊了怎么运行官方的示例和一些基本使用，这一篇我们要学习下Glide库中自带的几个Demo，并深入学习下，其中的配置和一些高级使用
+Gallery首先我们来分析下Gallery这个demo工程，我们先看看他的结构：
+
+我们通过清单文件可以看到主界面是MainActivity，好的那我们打开看看啦，可以看到只是在onCreate方法中添加了如下代码：
+1Glide.get(this).s">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/kg844wimpy0evjefbfcitu6tdf.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/fd90w13mbihpvsj5cnirh1cwka.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/n2ez18hnqe2hjvyhg36vjm8rja.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/liuthi2vlt1kbu638iyk7ti9vy.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.672Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入Glide图片加载库的Demo源码分析">
+<meta name="twitter:description" content="简介上一篇我们聊了怎么运行官方的示例和一些基本使用，这一篇我们要学习下Glide库中自带的几个Demo，并深入学习下，其中的配置和一些高级使用
+Gallery首先我们来分析下Gallery这个demo工程，我们先看看他的结构：
+
+我们通过清单文件可以看到主界面是MainActivity，好的那我们打开看看啦，可以看到只是在onCreate方法中添加了如下代码：
+1Glide.get(this).s">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/kg844wimpy0evjefbfcitu6tdf.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> 深入Glide图片加载库的Demo源码分析 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入Glide图片加载库的Demo源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-25T19:43:12+00:00" content="2016-04-25">
+              2016-04-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/25/深入Glide图片加载库的Demo源码分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/25/深入Glide图片加载库的Demo源码分析/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>上一篇我们聊了怎么运行官方的示例和一些基本使用，这一篇我们要学习下Glide库中自带的几个Demo，并深入学习下，其中的配置和一些高级使用</p>
+<h3 id="Gallery"><a href="#Gallery" class="headerlink" title="Gallery"></a>Gallery</h3><p>首先我们来分析下Gallery这个demo工程，我们先看看他的结构：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/kg844wimpy0evjefbfcitu6tdf.png" alt=""></p>
+<p>我们通过清单文件可以看到主界面是MainActivity，好的那我们打开看看啦，可以看到只是在onCreate方法中添加了如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Glide.get(<span class="keyword">this</span>).setMemoryCategory(MemoryCategory.HIGH);</div></pre></td></tr></table></figure>
+<p>他用来动态调整内存，可以看到代码最终实现在LruBitmapPool类中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setSizeMultiplier</span><span class="params">(<span class="keyword">float</span> sizeMultiplier)</span> </span>&#123;</div><div class="line">  maxSize = Math.round(initialMaxSize * sizeMultiplier);</div><div class="line">  evict();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到会把我们传进来的值和初始大小相乘，然后调用evict方法处理剩余的逻辑，他有调用了trimToSize(maxSize)，在这个方法中才真正开始处理逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">trimToSize</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</div><div class="line">    <span class="keyword">while</span> (currentSize &gt; size) &#123; <span class="comment">//如果当前值大于最大值</span></div><div class="line">        <span class="keyword">final</span> Bitmap removed = strategy.removeLast();<span class="comment">//移除最后一个，依次内推，知道当前值小于最大值时停止</span></div><div class="line">        <span class="comment">// <span class="doctag">TODO:</span> This shouldn't ever happen, see #331.</span></div><div class="line">        <span class="keyword">if</span> (removed == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">if</span> (Log.isLoggable(TAG, Log.WARN)) &#123;</div><div class="line">                Log.w(TAG, <span class="string">"Size mismatch, resetting"</span>);</div><div class="line">                dumpUnchecked();</div><div class="line">            &#125;</div><div class="line">            currentSize = <span class="number">0</span>;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        tracker.remove(removed);</div><div class="line">        currentSize -= strategy.getSize(removed);</div><div class="line">        removed.recycle();</div><div class="line">        evictions++;</div><div class="line">        <span class="keyword">if</span> (Log.isLoggable(TAG, Log.DEBUG)) &#123;</div><div class="line">            Log.d(TAG, <span class="string">"Evicting bitmap="</span> + strategy.logBitmap(removed));</div><div class="line">        &#125;</div><div class="line">        dump();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>好了，主界面基本没什么说的了，因为他就嵌入一个Fragment，叫HorizontalGalleryFragment，我们来看看他的实现吧：</p>
+<p>可以看到他在onCreate方法中使用了LoaderManager来加载手机里面的媒体，并封装成MediaStoreData类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getLoaderManager().initLoader(R.id.loader_id_media_store_data, <span class="keyword">null</span>, <span class="keyword">this</span>);</div></pre></td></tr></table></figure>
+<p>然后在onCreateLoader中创建了我们自定义的Loader，让他去加载我们需要的内容，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">public</span> Loader&lt;List&lt;MediaStoreData&gt;&gt; onCreateLoader(<span class="keyword">int</span> i, Bundle bundle) &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> MediaStoreDataLoader(getActivity());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当Loader加载完数据后就会调用onLoadFinished，并将需要的数据传给你，在这里可以设置到adapter等</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadFinished</span><span class="params">(Loader&lt;List&lt;MediaStoreData&gt;&gt; loader,</span></span></div><div class="line">    List&lt;MediaStoreData&gt; mediaStoreData) &#123;</div><div class="line">  RequestManager requestManager = Glide.with(<span class="keyword">this</span>);</div><div class="line">  RecyclerAdapter adapter =</div><div class="line">      <span class="keyword">new</span> RecyclerAdapter(getActivity(), mediaStoreData, requestManager);</div><div class="line">  RecyclerViewPreloader&lt;MediaStoreData&gt; preloader =</div><div class="line">      <span class="keyword">new</span> RecyclerViewPreloader&lt;&gt;(requestManager, adapter, adapter, <span class="number">3</span>);</div><div class="line">  recyclerView.addOnScrollListener(preloader);</div><div class="line">  recyclerView.setAdapter(adapter);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到这里使用了RecyclerViewPreloader来预加载媒体，想要深入的可以查看Demo源码，另外附上一段在getView方法中获取view的宽高方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (actualDimensions == <span class="keyword">null</span>) &#123;</div><div class="line">  view.getViewTreeObserver().addOnPreDrawListener(<span class="keyword">new</span> ViewTreeObserver.OnPreDrawListener() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onPreDraw</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="keyword">if</span> (actualDimensions == <span class="keyword">null</span>) &#123;</div><div class="line">        actualDimensions = <span class="keyword">new</span> <span class="keyword">int</span>[] &#123; view.getWidth(), view.getHeight() &#125;;</div><div class="line">      &#125;</div><div class="line">      view.getViewTreeObserver().removeOnPreDrawListener(<span class="keyword">this</span>);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最后来一张这个Demo运行的截图</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/fd90w13mbihpvsj5cnirh1cwka.png" alt=""></p>
+<p>下载来分析一个，另外一个Demo了</p>
+<h3 id="giphy"><a href="#giphy" class="headerlink" title="giphy"></a>giphy</h3><blockquote>
+<p>Giphy是一个动图搜索引擎，被誉为 “GIF 中的 Google”。<br>Giphy 创建以来做了很多尝试，比如提供”live GIFing（实况 GIF）”工具帮媒体和内容出版者在自己的内容中快速添加动图，在直播发布会时非常<br>好使。不过最有趣的还是 Giphy 能集成到 Slack 和 Facebook Messenger 等聊天应用中，也可以直接添加到 Twitter 和 Facebook 等社交媒体的内容中。</p>
+</blockquote>
+<p>这是来自百科的说明，而这个demo就是基于他显示gif的一个应用，首先来一张效果图，因为我们截图，所以不会动啦~</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/n2ez18hnqe2hjvyhg36vjm8rja.png" alt=""></p>
+<p>首先这个Demo主要讲的就是配置GlideModules，首先我们要说明的就是这里为什么要配置GlideModules，因为在这个示例中我们想实现的是效果是，用户在不同的分辨率下，显示不同的图片，就这么简单，下面是Demo里面请求接口返回的数据，可以看到他返回了很多种类型，有固定宽度的，有固定高度的等</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/liuthi2vlt1kbu638iyk7ti9vy.png" alt=""></p>
+<p>那怎么来实现这样的需求呢，答案肯定是要自定义BaseGlideUrlLoader，然后在getUrl方法里面处理，这个方法返回一个url，就是最终图片显示的url</p>
+<p>GiphyGlideModule.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.bumptech.glide.samples.giphy;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.content.Context;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.bumptech.glide.GlideBuilder;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.Registry;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.<span class="keyword">module</span>.GlideModule;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * &#123;<span class="doctag">@link</span> com.bumptech.glide.module.GlideModule&#125; implementation for the Giphy sample app.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GiphyGlideModule</span> <span class="keyword">implements</span> <span class="title">GlideModule</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">applyOptions</span><span class="params">(Context context, GlideBuilder builder)</span> </span>&#123;</div><div class="line">    <span class="comment">// Do nothing.</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerComponents</span><span class="params">(Context context, Registry registry)</span> </span>&#123;</div><div class="line">    registry.append(Api.GifResult.class, InputStream.class, <span class="keyword">new</span> GiphyModelLoader.Factory()); <span class="comment">//这里一定要注册</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面这个可以说是一个全局配置吧，比如：缓存位置，缓存大小等通用设置可以直接在applyOptions里面设置</p>
+<p>GiphyModelLoader.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.bumptech.glide.samples.giphy;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.content.Context;</div><div class="line"><span class="keyword">import</span> android.text.TextUtils;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.Options;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.model.GlideUrl;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.model.ModelLoader;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.model.ModelLoaderFactory;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.model.MultiModelLoaderFactory;</div><div class="line"><span class="keyword">import</span> com.bumptech.glide.load.model.stream.BaseGlideUrlLoader;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * A model loader that translates a POJO mirroring a JSON object representing a single image from</div><div class="line"> * Giphy's api into an &#123;<span class="doctag">@link</span> java.io.InputStream&#125; that can be decoded into an</div><div class="line"> * &#123;<span class="doctag">@link</span> android.graphics.drawable.Drawable&#125;.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GiphyModelLoader</span> <span class="keyword">extends</span> <span class="title">BaseGlideUrlLoader</span>&lt;<span class="title">Api</span>.<span class="title">GifResult</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handles</span><span class="params">(Api.GifResult model)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * The default factory for &#123;<span class="doctag">@link</span> com.bumptech.glide.samples.giphy.GiphyModelLoader&#125;s.</div><div class="line">   */</div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">ModelLoaderFactory</span>&lt;<span class="title">Api</span>.<span class="title">GifResult</span>, <span class="title">InputStream</span>&gt; </span>&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">public</span> ModelLoader&lt;Api.GifResult, InputStream&gt; build(Context context,</div><div class="line">        MultiModelLoaderFactory multiFactory) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">new</span> GiphyModelLoader(multiFactory.build(GlideUrl.class, InputStream.class));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">teardown</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="comment">// Do nothing.</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="title">GiphyModelLoader</span><span class="params">(ModelLoader&lt;GlideUrl, InputStream&gt; urlLoader)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>(urlLoader);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">protected</span> String <span class="title">getUrl</span><span class="params">(Api.GifResult model, <span class="keyword">int</span> width, <span class="keyword">int</span> height, Options options)</span> </span>&#123;</div><div class="line">    Api.GifImage fixedHeight = model.images.fixed_height;</div><div class="line">    <span class="keyword">int</span> fixedHeightDifference = getDifference(fixedHeight, width, height);</div><div class="line">    Api.GifImage fixedWidth = model.images.fixed_width;</div><div class="line">    <span class="keyword">int</span> fixedWidthDifference = getDifference(fixedWidth, width, height);</div><div class="line">    <span class="keyword">if</span> (fixedHeightDifference &lt; fixedWidthDifference &amp;&amp; !TextUtils.isEmpty(fixedHeight.url)) &#123;</div><div class="line">      <span class="keyword">return</span> fixedHeight.url;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!TextUtils.isEmpty(fixedWidth.url)) &#123;</div><div class="line">      <span class="keyword">return</span> fixedWidth.url;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!TextUtils.isEmpty(model.images.original.url)) &#123;</div><div class="line">      <span class="keyword">return</span> model.images.original.url;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getDifference</span><span class="params">(Api.GifImage gifImage, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> Math.abs(width - gifImage.width) + Math.abs(height - gifImage.height);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到在上面的getUrl方法中处理了不同的分辨率然后返回不同的url。但是问题来了现在的图片CDN都提供缩略图功能，那么基于这种需求，大家觉得怎么实现好呢，欢迎评论留言讨论~~</p>
+<p>现在最重要的部分来了，虽然我自定义了，但Glide肯定还不知道呀，那怎么才能让他知道呢。答案是的配置，没错：</p>
+<p>清单文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">meta-data</span></span></div><div class="line">    <span class="attr">android:name</span>=<span class="string">"com.bumptech.glide.samples.giphy.GiphyGlideModule"</span></div><div class="line">    <span class="attr">android:value</span>=<span class="string">"GlideModule"</span>/&gt;</div></pre></td></tr></table></figure>
+<h3 id="flickr"><a href="#flickr" class="headerlink" title="flickr"></a>flickr</h3><blockquote>
+<p>Flickr，雅虎旗下图片分享网站。为一家提供免费及付费数位照片储存、分享方案之线上服务，也提供网络社群服务的平台</p>
+</blockquote>
+<p>Demo分析就说道这里吧，下一篇说说Glide核心源码部分，感谢你的观看~~</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Glide/" rel="tag">#Glide</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/15/超详细Android接入支付宝支付实现，有图有真相/" rel="next" title="超详细Android接入支付宝支付实现，有图有真相">
+                <i class="fa fa-chevron-left"></i> 超详细Android接入支付宝支付实现，有图有真相
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/25/初探Google推荐Android图片加载框架Glide/" rel="prev" title="初探Google推荐Android图片加载框架Glide">
+                初探Google推荐Android图片加载框架Glide <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/04/25/深入Glide图片加载库的Demo源码分析/"
+     data-title="深入Glide图片加载库的Demo源码分析"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/04/25/深入Glide图片加载库的Demo源码分析/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/04/25/深入Glide图片加载库的Demo源码分析/"
+           data-title="深入Glide图片加载库的Demo源码分析" data-url="http://i.woblog.cn/2016/04/25/深入Glide图片加载库的Demo源码分析/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Gallery"><span class="nav-number">1.1.</span> <span class="nav-text">Gallery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#giphy"><span class="nav-number">1.2.</span> <span class="nav-text">giphy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flickr"><span class="nav-number">1.3.</span> <span class="nav-text">flickr</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

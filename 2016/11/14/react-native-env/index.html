@@ -1,0 +1,941 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="React,React Native," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="搭建React Native开发环境安装xcode可以从app Store下载或者在苹果开发者中心下载。
+安装Command Line Tools里面包括git这样的命令
+1xcode-select --install
+安装homebrewmac上的一个软件包管理器，和linux上的yum,apt-get差不多
+1/usr/bin/ruby -e &amp;quot;$(curl -fsSL https:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Native">
+<meta property="og:url" content="http://i.woblog.cn/2016/11/14/react-native-env/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="搭建React Native开发环境安装xcode可以从app Store下载或者在苹果开发者中心下载。
+安装Command Line Tools里面包括git这样的命令
+1xcode-select --install
+安装homebrewmac上的一个软件包管理器，和linux上的yum,apt-get差不多
+1/usr/bin/ruby -e &amp;quot;$(curl -fsSL https:">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/Screen%20Shot%202016-12-01%20at%2011.09.48%20PM.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React Native">
+<meta name="twitter:description" content="搭建React Native开发环境安装xcode可以从app Store下载或者在苹果开发者中心下载。
+安装Command Line Tools里面包括git这样的命令
+1xcode-select --install
+安装homebrewmac上的一个软件包管理器，和linux上的yum,apt-get差不多
+1/usr/bin/ruby -e &amp;quot;$(curl -fsSL https:">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/Screen%20Shot%202016-12-01%20at%2011.09.48%20PM.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> React Native | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                React Native
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-14T23:07:23+00:00" content="2016-11-14">
+              2016-11-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/React-Native/" itemprop="url" rel="index">
+                    <span itemprop="name">React Native</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/14/react-native-env/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/14/react-native-env/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="搭建React-Native开发环境"><a href="#搭建React-Native开发环境" class="headerlink" title="搭建React Native开发环境"></a>搭建React Native开发环境</h1><h2 id="安装xcode"><a href="#安装xcode" class="headerlink" title="安装xcode"></a>安装xcode</h2><p>可以从app Store下载或者在苹果开发者中心下载。</p>
+<h2 id="安装Command-Line-Tools"><a href="#安装Command-Line-Tools" class="headerlink" title="安装Command Line Tools"></a>安装Command Line Tools</h2><p>里面包括git这样的命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcode-select --install</div></pre></td></tr></table></figure>
+<h2 id="安装homebrew"><a href="#安装homebrew" class="headerlink" title="安装homebrew"></a>安装homebrew</h2><p>mac上的一个软件包管理器，和linux上的yum,apt-get差不多</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</div></pre></td></tr></table></figure>
+<h2 id="安装watchman"><a href="#安装watchman" class="headerlink" title="安装watchman"></a>安装watchman</h2><p>facebook的一个开源项目，用来监视文件并且记录文件改动情况的一个库。</p>
+<h2 id="安装flow"><a href="#安装flow" class="headerlink" title="安装flow"></a>安装flow</h2><p>JavaScript的静态类检查器，用于找出JavaScript代码中的类型错误。</p>
+<p>当然推荐是安装完在nodejs开发中常见的依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install flow git gcc pkg-config cairo libpng jpeg mongodb</div></pre></td></tr></table></figure>
+<p>注意：安装mongodb前先要安装pkg-config，makedepend。如果报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Error: You must `brew link pkg-config makedepend` before mongodb can be installed</div></pre></td></tr></table></figure>
+<p>就要链接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">brew link makedepend</div><div class="line">brew link pkg-config</div></pre></td></tr></table></figure>
+<h2 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h2><p>建议使用nvm，因为他可以管理多个版本</p>
+<p>官方仓库：<a href="https://github.com/creationix/nvm" target="_blank" rel="external">https://github.com/creationix/nvm</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash</div></pre></td></tr></table></figure>
+<p>安装完成后就可以执行nvm命令了。</p>
+<p>安装nodejs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nvm install v4.2.3</div><div class="line">nvm alias default v4.2.3</div></pre></td></tr></table></figure>
+<p>当前版本为：</p>
+<p>➜  ~ node -v<br>v4.2.3</p>
+<p>➜  ~ npm -v<br>2.14.7</p>
+<p>由于国内有时npm仓库有点慢，所以切换淘宝源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install cnpm -g</div></pre></td></tr></table></figure>
+<h2 id="安装react-native"><a href="#安装react-native" class="headerlink" title="安装react native"></a>安装react native</h2><p>安装脚手架</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cnpm install -g react-native-cli@0.1.10 -g</div><div class="line">react-native -v</div></pre></td></tr></table></figure>
+<h2 id="创建第一个项目"><a href="#创建第一个项目" class="headerlink" title="创建第一个项目"></a>创建第一个项目</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">react-native init firstApp</div></pre></td></tr></table></figure>
+<p>创建完成后会有如下信息:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">To run your app on iOS:</div><div class="line">   cd /Users/renpingqing/Documents/work/react/fistApp</div><div class="line">   react-native run-ios</div><div class="line">   - or -</div><div class="line">   Open /Users/renpingqing/Documents/work/react/fistApp/ios/fistApp.xcodeproj in Xcode</div><div class="line">   Hit the Run button</div><div class="line">To run your app on Android:</div><div class="line">   Have an Android emulator running (quickest way to get started), or a device connected</div><div class="line">   cd /Users/renpingqing/Documents/work/react/fistApp</div><div class="line">   react-native run-android</div></pre></td></tr></table></figure>
+<p>现在就可以运行试试看。</p>
+<p>运行完后，我可以尝试修改一些代码，来看看效果，但是如果每次修改都刷新模拟器(command+r)这很痛苦的，我们可以通过(command+d)，开启live reload，就可以实现每次保存源代码就自动刷新的功能了。</p>
+<h2 id="配置subline"><a href="#配置subline" class="headerlink" title="配置subline"></a>配置subline</h2><p>首选安装package control(<a href="https://packagecontrol.io),这是一个专门管理sb的包网站。安装方法" target="_blank" rel="external">https://packagecontrol.io),这是一个专门管理sb的包网站。安装方法</a></p>
+<p>点击网页的install now，左边会显示安装代码，只需要将这些复制到sb，按control+~贴入代码，安装完成后可以通过command+shift+p呼出package control的窗口。</p>
+<p>输入install，然后输入要安装的包，回车就可以安装了。这里安装babel,sublimelinter-jsxhint(安装了就不会提示)。</p>
+<p>安装完成后就可以通过sb的view-syntax-open all*-babel-javaScript(babel)，就能将当前语法识别为jsx。</p>
+<p>还可以安装gitgutter，sublimelinter,sublimelinter-contrib-eslint。</p>
+<h2 id="安装全局exhint检查"><a href="#安装全局exhint检查" class="headerlink" title="安装全局exhint检查"></a>安装全局exhint检查</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g eslint babel-eslint --registry=http:<span class="comment">//registry.npm.taobao.org</span></div></pre></td></tr></table></figure>
+<h1 id="react-native项目结构"><a href="#react-native项目结构" class="headerlink" title="react-native项目结构"></a>react-native项目结构</h1><p>可以看做是一个node js项目因为根目录有一个package.json文件，对应一个node_modules的文件夹是该项目的依赖。他下面有个react-native下面又有local-cli和packager(终端打开启动的package就是他)，同时还有一个node_modules，他就是react-native框架所依赖的库。</p>
+<p>在最外层可以看到有ios和android目录分别对应相应平台的代码。</p>
+<p>.flowconfig：js语法检查规则</p>
+<p>.gitignore:版本控制忽略文件</p>
+<p>.watchmanconfig：watchman配置文件</p>
+<p>index.ios.js结构：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</div><div class="line"><span class="keyword">import</span> &#123;</div><div class="line">  AppRegistry,</div><div class="line">  StyleSheet,</div><div class="line">  Text,</div><div class="line">  View</div><div class="line">&#125; <span class="keyword">from</span> <span class="string">'react-native'</span>;</div></pre></td></tr></table></figure>
+<p>导入要用到的模块语法，结构赋值es6语法。表示从react-native导出了Text，View等。有点像python的导入。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">fistApp</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</div><div class="line">  render() &#123;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span>&gt;</span></div><div class="line">          Welcome to React a!</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">          To get started, edit index.ios.js</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">          Press Cmd+R to reload,&#123;'\n'&#125;</div><div class="line">          Cmd+D or shake for dev menu</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>继承Component实现一个类，并实现render方法，返回一些jsx语法的内容。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> styles = StyleSheet.create(&#123;</div><div class="line">  <span class="attr">container</span>: &#123;</div><div class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</div><div class="line">    <span class="attr">justifyContent</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">alignItems</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">backgroundColor</span>: <span class="string">'#F5FCFF'</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">welcome</span>: &#123;</div><div class="line">    <span class="attr">fontSize</span>: <span class="number">20</span>,</div><div class="line">    <span class="attr">textAlign</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">margin</span>: <span class="number">10</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">instructions</span>: &#123;</div><div class="line">    <span class="attr">textAlign</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">color</span>: <span class="string">'#333333'</span>,</div><div class="line">    <span class="attr">marginBottom</span>: <span class="number">5</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>样式代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">AppRegistry.registerComponent(<span class="string">'fistApp'</span>, () =&gt; fistApp);</div></pre></td></tr></table></figure>
+<p>注册RN的入口代码。</p>
+<h1 id="统计按钮点击次数"><a href="#统计按钮点击次数" class="headerlink" title="统计按钮点击次数"></a>统计按钮点击次数</h1><p>现在项目已经跑起来了，我做一个统计屏幕点击次数的例子</p>
+<p>index.ios.js</p>
+<p>我们将render方法改为如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">render() &#123;</div><div class="line">  <span class="keyword">return</span> (</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timesPlus.bind(this)&#125;</span>&gt;</span></div><div class="line">        你敢点击我吗</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">        点击了 &#123;this.state.times&#125; 次</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">  );</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>并给第一个Text绑定了一个onPress事件，点击时就会调用timesPlus方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">timesPlus()&#123;</div><div class="line">  <span class="keyword">let</span> times=<span class="keyword">this</span>.state.times</div><div class="line"></div><div class="line">  times++</div><div class="line"></div><div class="line">  <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:times</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>逻辑就是拿到当前state里面的times加1，然后在赋值回去。完整代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Sample React Native App</div><div class="line"> * https://github.com/facebook/react-native</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="keyword">import</span> React, &#123;</div><div class="line">  AppRegistry,</div><div class="line">  Component,</div><div class="line">  StyleSheet,</div><div class="line">  Text,</div><div class="line">  View</div><div class="line">&#125; <span class="keyword">from</span> <span class="string">'react-native'</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">dog</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(props)&#123;</div><div class="line">    <span class="keyword">super</span>(props)</div><div class="line">    <span class="keyword">this</span>.state=&#123;<span class="attr">times</span>:<span class="number">0</span>&#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  timesPlus()&#123;</div><div class="line">    <span class="keyword">let</span> times=<span class="keyword">this</span>.state.times</div><div class="line"></div><div class="line">    times++</div><div class="line"></div><div class="line">    <span class="keyword">this</span>.setState(&#123;</div><div class="line">      <span class="attr">times</span>:times</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timesPlus.bind(this)&#125;</span>&gt;</span></div><div class="line">          你敢点击我吗</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">          点击了 &#123;this.state.times&#125; 次</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> styles = StyleSheet.create(&#123;</div><div class="line">  <span class="attr">container</span>: &#123;</div><div class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</div><div class="line">    <span class="attr">justifyContent</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">alignItems</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">backgroundColor</span>: <span class="string">'#F5FCFF'</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">welcome</span>: &#123;</div><div class="line">    <span class="attr">fontSize</span>: <span class="number">20</span>,</div><div class="line">    <span class="attr">textAlign</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">margin</span>: <span class="number">10</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">instructions</span>: &#123;</div><div class="line">    <span class="attr">textAlign</span>: <span class="string">'center'</span>,</div><div class="line">    <span class="attr">color</span>: <span class="string">'#333333'</span>,</div><div class="line">    <span class="attr">marginBottom</span>: <span class="number">5</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;);</div><div class="line"></div><div class="line">AppRegistry.registerComponent(<span class="string">'dog'</span>, () =&gt; dog);</div></pre></td></tr></table></figure>
+<h1 id="组件生命周期"><a href="#组件生命周期" class="headerlink" title="组件生命周期"></a>组件生命周期</h1><p>先上一张图</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/Screen%20Shot%202016-12-01%20at%2011.09.48%20PM.png" alt=""></p>
+<p>第一次组件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">componentWillMount</div><div class="line">render</div><div class="line">componentDidMount</div></pre></td></tr></table></figure>
+<p>状态改变</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">shouldComponentUpdate</div><div class="line">componentWillUpdate</div><div class="line">render</div><div class="line">componentDidUpdate</div></pre></td></tr></table></figure>
+<h2 id="嵌套组件"><a href="#嵌套组件" class="headerlink" title="嵌套组件"></a>嵌套组件</h2><h3 id="第一次加载"><a href="#第一次加载" class="headerlink" title="第一次加载"></a>第一次加载</h3><p>father getDefaultProps<br>son getDefaultProps<br>father getInitialState<br>father componentWillMount<br>father render<br>son getInitialState<br>son componentWillMount<br>son render<br>son componentDidMount<br>father componentDidMount</p>
+<p>可以看到先渲染父组件，然后渲染子组件</p>
+<h3 id="父组件状态变化"><a href="#父组件状态变化" class="headerlink" title="父组件状态变化"></a>父组件状态变化</h3><p>father shouldComponentUpdate<br>father componentWillUpdate<br>father render<br>son getInitialState<br>son componentWillMount<br>son render<br>son componentDidMount<br>father componentDidUpdate</p>
+<h3 id="只有子组件变化"><a href="#只有子组件变化" class="headerlink" title="只有子组件变化"></a>只有子组件变化</h3><p>son shouldComponentUpdate<br>son componentWillUpdate<br>son render<br>son componentDidUpdate</p>
+<p>测试该组件生命周期的代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Sample React Native App</div><div class="line"> * https://github.com/facebook/react-native</div><div class="line"> */</div><div class="line"><span class="keyword">var</span> React=<span class="built_in">require</span>(<span class="string">'react-native'</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> &#123;</div><div class="line">  AppRegistry,</div><div class="line">  Component,</div><div class="line">  StyleSheet,</div><div class="line">  Text,</div><div class="line">  View</div><div class="line">&#125; = React;</div><div class="line"></div><div class="line"><span class="keyword">var</span> life = React.createClass( &#123;</div><div class="line">  getDefaultProps()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father getDefaultProps'</span>)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  getInitialState()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father getInitialState'</span>)</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">      <span class="attr">times</span>:<span class="number">3</span>,</div><div class="line">      <span class="attr">hit</span>:<span class="literal">false</span></div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentWillMount()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father componentWillMount'</span>)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentDidMount()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father componentDidMount'</span>)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  shouldComponentUpdate()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father shouldComponentUpdate'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentWillUpdate()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father componentWillUpdate'</span>)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentDidUpdate()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father componentDidUpdate'</span>)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  timePlugs()&#123;</div><div class="line">   <span class="keyword">var</span> times= <span class="keyword">this</span>.state.times</div><div class="line"></div><div class="line">   times+=<span class="number">3</span></div><div class="line"></div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:times</div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  timeReset()&#123;</div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:<span class="number">0</span></div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  willHit()&#123;</div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">hit</span>:!<span class="keyword">this</span>.state.hit</div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father render'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></div><div class="line"></div><div class="line">        &#123;</div><div class="line">          this.state.hit </div><div class="line">          ? </div><div class="line">          <span class="tag">&lt;<span class="name">Son</span> <span class="attr">times</span>=<span class="string">&#123;this.state.times&#125;</span> <span class="attr">timeReset</span>=<span class="string">&#123;this.timeReset&#125;/</span>&gt;</span> </div><div class="line">          : null</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        </div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timeReset&#125;</span>&gt;</span></div><div class="line">        老子说：心情好就放你一马</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.willHit&#125;</span>&gt;</span></div><div class="line">          到底揍不走</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">          就揍了你 &#123;this.state.times&#125; 次而已</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timePlugs&#125;</span>&gt;</span></div><div class="line">          不听话在揍你 3 次</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">  ,</div><div class="line">&#125;)</div><div class="line"></div><div class="line">var Son = React.createClass( &#123;</div><div class="line">  getDefaultProps()&#123;</div><div class="line">    console.log('son getDefaultProps')</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  getInitialState()&#123;</div><div class="line">    console.log('son getInitialState')</div><div class="line">    return &#123;</div><div class="line">      times:this.props.times</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentWillMount()&#123;</div><div class="line">    console.log('son componentWillMount')</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentDidMount()&#123;</div><div class="line">    console.log('son componentDidMount')</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentWillReceiveProps(props)&#123;</div><div class="line">    console.log('son componentWillReceiveProps')</div><div class="line">    console.log(this.props)</div><div class="line">    console.log(props)</div><div class="line">    this.setState(&#123;</div><div class="line">      times:props.times</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line">  ,</div><div class="line"></div><div class="line">  shouldComponentUpdate()&#123;</div><div class="line">    console.log('son shouldComponentUpdate')</div><div class="line"></div><div class="line">    return true</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentWillUpdate()&#123;</div><div class="line">    console.log('son componentWillUpdate')</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentDidUpdate()&#123;</div><div class="line">    console.log('son componentDidUpdate')</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  timeReset()&#123;</div><div class="line">    this.props.timeReset()</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  //儿子自己的方法，心理暗示老子要揍他，但其实老子没有揍他</div><div class="line">  timePlugs()&#123;</div><div class="line">   var times= this.state.times</div><div class="line"></div><div class="line">   times+=3</div><div class="line"></div><div class="line">   this.setState(&#123;</div><div class="line">    times:times</div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    console.log('son render')</div><div class="line"></div><div class="line">    return (</div><div class="line">      <span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timePlugs&#125;</span>&gt;</span></div><div class="line">          儿子说：有本事揍我呀！</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">        你居然揍我 &#123;this.state.times&#125; 次</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timeReset&#125;</span> &gt;</span></div><div class="line">        别揍我了，我给你买瓶酒</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line">var styles = StyleSheet.create(&#123;</div><div class="line">  container: &#123;</div><div class="line">    flex: 1,</div><div class="line">    justifyContent: 'center',</div><div class="line">    alignItems: 'center',</div><div class="line">    backgroundColor: '#F5FCFF',</div><div class="line">  &#125;,</div><div class="line">  welcome: &#123;</div><div class="line">    fontSize: 20,</div><div class="line">    textAlign: 'center',</div><div class="line">    margin: 10,</div><div class="line">  &#125;,</div><div class="line">  instructions: &#123;</div><div class="line">    textAlign: 'center',</div><div class="line">    color: '#333333',</div><div class="line">    marginBottom: 5,</div><div class="line">  &#125;,</div><div class="line">&#125;);</div><div class="line"></div><div class="line">AppRegistry.registerComponent('life', () =&gt; life);</div></pre></td></tr></table></figure>
+<h1 id="ES5和ES6区别"><a href="#ES5和ES6区别" class="headerlink" title="ES5和ES6区别"></a>ES5和ES6区别</h1><h2 id="导入模块方式"><a href="#导入模块方式" class="headerlink" title="导入模块方式"></a>导入模块方式</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">//ES5</span></div><div class="line"><span class="keyword">var</span> ReactNative=<span class="built_in">require</span>(<span class="string">'react-native'</span>)</div><div class="line"><span class="keyword">var</span> React=<span class="built_in">require</span>(<span class="string">'react'</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> Component=React.Component</div><div class="line"></div><div class="line"><span class="keyword">var</span> AppRegistry=ReactNative.AppRegistry</div><div class="line"><span class="keyword">var</span> StyleSheet=ReactNative.StyleSheet</div><div class="line"><span class="keyword">var</span> Text=ReactNative.Text</div><div class="line"><span class="keyword">var</span> View=ReactNative.View</div><div class="line"></div><div class="line"><span class="comment">//ES6</span></div><div class="line"><span class="comment">// import React,&#123;Component&#125; from 'react'</span></div><div class="line"><span class="comment">// import &#123;</span></div><div class="line"><span class="comment">//   AppRegistry,</span></div><div class="line"><span class="comment">//   StyleSheet,</span></div><div class="line"><span class="comment">//   Text,</span></div><div class="line"><span class="comment">//   View</span></div><div class="line"><span class="comment">// &#125; from 'react-native'</span></div></pre></td></tr></table></figure>
+<h2 id="创建组件"><a href="#创建组件" class="headerlink" title="创建组件"></a>创建组件</h2><p>ES5使用React.createClass方法来创建一个组件，所以最后需要添加分号(但也有省略)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> life = React.createClass( &#123;</div><div class="line">  getInitialState()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father getInitialState'</span>)</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">      <span class="attr">times</span>:<span class="number">3</span>,</div><div class="line">      <span class="attr">hit</span>:<span class="literal">false</span></div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  timePlugs()&#123;</div><div class="line">   <span class="keyword">var</span> times= <span class="keyword">this</span>.state.times</div><div class="line"></div><div class="line">   times+=<span class="number">3</span></div><div class="line"></div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:times</div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  timeReset()&#123;</div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:<span class="number">0</span></div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  willHit()&#123;</div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">hit</span>:!<span class="keyword">this</span>.state.hit</div><div class="line">   &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'father render'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></div><div class="line"></div><div class="line">        &#123;</div><div class="line">          this.state.hit </div><div class="line">          ? </div><div class="line">          <span class="tag">&lt;<span class="name">Son</span> <span class="attr">times</span>=<span class="string">&#123;this.state.times&#125;</span> <span class="attr">timeReset</span>=<span class="string">&#123;this.timeReset&#125;/</span>&gt;</span> </div><div class="line">          : null</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        </div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timeReset&#125;</span>&gt;</span></div><div class="line">        老子说：心情好就放你一马</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.willHit&#125;</span>&gt;</span></div><div class="line">          到底揍不走</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span>&gt;</span></div><div class="line">          就揍了你 &#123;this.state.times&#125; 次而已</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timePlugs&#125;</span>&gt;</span></div><div class="line">          不听话在揍你 3 次</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>ES6使用class和extends关键字来实现，和Java这样的语言差不多了，更加面向对象了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Son</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(props)&#123;</div><div class="line">    <span class="keyword">super</span>(props)</div><div class="line">    <span class="keyword">this</span>.state=&#123;<span class="attr">times</span>:<span class="number">0</span>&#125;</div><div class="line"></div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'son constructor'</span>)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  componentWillReceiveProps(props)&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'son componentWillReceiveProps'</span>)</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.props)</div><div class="line">    <span class="built_in">console</span>.log(props)</div><div class="line">    <span class="keyword">this</span>.setState(&#123;</div><div class="line">      <span class="attr">times</span>:props.times</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  timeReset()&#123;</div><div class="line">    <span class="keyword">this</span>.props.timeReset()</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">//儿子自己的方法，心理暗示老子要揍他，但其实老子没有揍他</span></div><div class="line">  timePlugs()&#123;</div><div class="line">   <span class="keyword">var</span> times= <span class="keyword">this</span>.state.times</div><div class="line"></div><div class="line">   times+=<span class="number">3</span></div><div class="line"></div><div class="line">   <span class="keyword">this</span>.setState(&#123;</div><div class="line">    <span class="attr">times</span>:times</div><div class="line">   &#125;)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'son render'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;sonStyles.container&#125;</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;sonStyles.welcome&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timePlugs.bind(this)&#125;</span>&gt;</span></div><div class="line">          儿子说：有本事揍我呀！</div><div class="line">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;sonStyles.instructions&#125;</span>&gt;</span></div><div class="line">        你居然揍我 &#123;this.state.times&#125; 次</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;sonStyles.instructions&#125;</span> <span class="attr">onPress</span>=<span class="string">&#123;this.timeReset.bind(this)&#125;</span> &gt;</span></div><div class="line">        别揍我了，我给你买瓶酒</div><div class="line">      <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="获取初始属性"><a href="#获取初始属性" class="headerlink" title="获取初始属性"></a>获取初始属性</h2><p>ES5中使用getDefaultProps和getInitialState来初始化属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">getDefaultProps()&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'father getDefaultProps'</span>)</div><div class="line">&#125;,</div><div class="line"></div><div class="line">getInitialState()&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'father getInitialState'</span>)</div><div class="line">	<span class="keyword">return</span> &#123;</div><div class="line">	  <span class="attr">times</span>:<span class="number">3</span>,</div><div class="line">	  <span class="attr">hit</span>:<span class="literal">false</span></div><div class="line">	&#125;</div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+<p>ES6中使用constructor构造方法来初始化</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constructor</span>(props)&#123;</div><div class="line">  <span class="keyword">super</span>(props)</div><div class="line">  <span class="keyword">this</span>.state=&#123;<span class="attr">times</span>:<span class="number">0</span>&#125;</div><div class="line"></div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'son constructor'</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="View中调用方法"><a href="#View中调用方法" class="headerlink" title="View中调用方法"></a>View中调用方法</h2><p>ES5</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Text style=&#123;styles.instructions&#125; onPress=&#123;<span class="keyword">this</span>.timePlugs&#125;&gt;</div><div class="line">  不听话在揍你 <span class="number">3</span> 次</div><div class="line">&lt;<span class="regexp">/Text&gt;</span></div></pre></td></tr></table></figure>
+<p>ES6要调用bind(this)方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Text style=&#123;sonStyles.welcome&#125; onPress=&#123;<span class="keyword">this</span>.timePlugs.bind(<span class="keyword">this</span>)&#125;&gt;</div><div class="line">  儿子说：有本事揍我呀！</div><div class="line">&lt;<span class="regexp">/Text&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h2><p>ES5中只能使用var</p>
+<p>ES6中可以使用const，let</p>
+<h1 id="常用组件"><a href="#常用组件" class="headerlink" title="常用组件"></a>常用组件</h1><p>首先我们clone react native的源码到本地，并切换到 0.22-stable版本，然后使用npm start安装依赖，如果这个版本安装出错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">npm ERR! Darwin 15.6.0</div><div class="line">npm ERR! argv &quot;/Users/renpingqing/.nvm/versions/node/v4.2.3/bin/node&quot; &quot;/Users/renpingqing/.nvm/versions/node/v4.2.3/bin/npm&quot; &quot;install&quot;</div><div class="line">npm ERR! node v4.2.3</div><div class="line">npm ERR! npm  v2.14.7</div><div class="line">npm ERR! code EPEERINVALID</div><div class="line"></div><div class="line">npm ERR! peerinvalid The package eslint@2.13.1 does not satisfy its siblings&apos; peerDependencies requirements!</div><div class="line">npm ERR! peerinvalid Peer babel-eslint@5.0.4 wants eslint@&lt;2.3.0</div><div class="line"></div><div class="line">npm ERR! Please include the following file with any support request:</div><div class="line">npm ERR!     /Users/renpingqing/Documents/work/react/react-native/npm-debug.log</div></pre></td></tr></table></figure>
+<p>那我们切换到0.24-stable试试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm -rf node_modules &amp;&amp; npm install</div></pre></td></tr></table></figure>
+<p>我们当前的版本是xcode8.1,node是v4.2.3，react-native-cli: 0.2.0。</p>
+<p>我们可以在Examples目录找到多个实例代码，其中UIExplorer就是控件示例代码。</p>
+<h2 id="View"><a href="#View" class="headerlink" title="View"></a>View</h2><p>相当于支持flex布局的div</p>
+<h2 id="Text"><a href="#Text" class="headerlink" title="Text"></a>Text</h2><p>用来显示文本的，可以设置显示的字体大小，颜色，显示几行</p>
+<h2 id="TextInput"><a href="#TextInput" class="headerlink" title="TextInput"></a>TextInput</h2><p>文本输入框，也可以用来输入密码</p>
+<h2 id="Image"><a href="#Image" class="headerlink" title="Image"></a>Image</h2><p>显示图片，可以加载网络，本地图片，还可以监听加载进度，也可以设置图片的拉伸方式</p>
+<h2 id="AlertIOS"><a href="#AlertIOS" class="headerlink" title="AlertIOS"></a>AlertIOS</h2><p>提示框</p>
+<h2 id="Modal"><a href="#Modal" class="headerlink" title="Modal"></a>Modal</h2><p>模态对话框，浮层</p>
+<h2 id="ActivityIndicatorIOS"><a href="#ActivityIndicatorIOS" class="headerlink" title="ActivityIndicatorIOS"></a>ActivityIndicatorIOS</h2><p>loading</p>
+<h2 id="ProgressViewIOS"><a href="#ProgressViewIOS" class="headerlink" title="ProgressViewIOS"></a>ProgressViewIOS</h2><p>进度条，提供0~1之间的值</p>
+<h2 id="ListView"><a href="#ListView" class="headerlink" title="ListView"></a>ListView</h2><h2 id="PickerIOS"><a href="#PickerIOS" class="headerlink" title="PickerIOS"></a>PickerIOS</h2><h2 id="StatusBar"><a href="#StatusBar" class="headerlink" title="StatusBar"></a>StatusBar</h2><p>可以控制IOS状态栏</p>
+<h2 id="Switch"><a href="#Switch" class="headerlink" title="Switch"></a>Switch</h2><p>开关控件</p>
+<h2 id="Slider"><a href="#Slider" class="headerlink" title="Slider"></a>Slider</h2><p>滑块</p>
+<h2 id="MapView"><a href="#MapView" class="headerlink" title="MapView"></a>MapView</h2><h2 id="Navigator"><a href="#Navigator" class="headerlink" title="Navigator"></a>Navigator</h2><h2 id="TabBarIOS"><a href="#TabBarIOS" class="headerlink" title="TabBarIOS"></a>TabBarIOS</h2><h2 id="SegmentedControllIOS"><a href="#SegmentedControllIOS" class="headerlink" title="SegmentedControllIOS"></a>SegmentedControllIOS</h2><h2 id="Touchable"><a href="#Touchable" class="headerlink" title="Touchable"></a>Touchable</h2><h2 id="WebView"><a href="#WebView" class="headerlink" title="WebView"></a>WebView</h2><h1 id="flex布局"><a href="#flex布局" class="headerlink" title="flex布局"></a>flex布局</h1><p>伸缩，弹性容器布局</p>
+<blockquote>
+<p>注意：RN的flex跟css3里的flexbox属性名写法不同，RN全部使用驼峰标示</p>
+<p>RN对flex的支持有限是css3 flexbox的一个子集</p>
+</blockquote>
+<h2 id="父容器"><a href="#父容器" class="headerlink" title="父容器"></a>父容器</h2><h3 id="flexDirection"><a href="#flexDirection" class="headerlink" title="flexDirection"></a>flexDirection</h3><p>可以控制字项目的排列方式通过flexDirection</p>
+<p>默认值是column,标示垂直，row标示水平</p>
+<h3 id="flex-1"><a href="#flex-1" class="headerlink" title="flex:1"></a>flex:1</h3><p>标示让当前这个容器的宽高都充满父容器</p>
+<h3 id="flexWrap"><a href="#flexWrap" class="headerlink" title="flexWrap"></a>flexWrap</h3><p>定义如果在这个方向上放不下的其他元素显示方式</p>
+<p>noWrap:不包裹，就在屏幕外面去了</p>
+<p>wrap:包裹，换行显示</p>
+<h3 id="justifyContent"><a href="#justifyContent" class="headerlink" title="justifyContent"></a>justifyContent</h3><p>设置在排列方向上的位置</p>
+<p>flex-start:左边</p>
+<p>center:居中</p>
+<p>flex-end:右边</p>
+<p>space-between:两段对齐</p>
+<p>space-around:将空间平分，并在平分的空间中在居中</p>
+<h3 id="alignItems"><a href="#alignItems" class="headerlink" title="alignItems"></a>alignItems</h3><p>控制在垂直于排列方式的内容位置</p>
+<p>stretch:在纵轴拉升</p>
+<h2 id="子容器"><a href="#子容器" class="headerlink" title="子容器"></a>子容器</h2><p>子容器可以使用alignSelf覆盖父类的设置</p>
+<p>子容器可是使用flex:1来指定平分父容器的空间，这个值相当于android中的weight属性</p>
+<h1 id="如挑选第三方组件"><a href="#如挑选第三方组件" class="headerlink" title="如挑选第三方组件"></a>如挑选第三方组件</h1><p>star个数</p>
+<p>fork</p>
+<p>close pr</p>
+<p>close issues</p>
+<p>stackoverflow</p>
+<p>文档全，代码规范，测试用例</p>
+<p>比如：我们搜索一个轮播组件，可以搜索关键词，react native carousel，react-native-swiper</p>
+<p>除了在github上搜索，也可以到<a href="https://react.parts/native上搜索" target="_blank" rel="external">https://react.parts/native上搜索</a></p>
+<h1 id="本地存储"><a href="#本地存储" class="headerlink" title="本地存储"></a>本地存储</h1><p>RN提供了AsyncStorage，采用键值对存储</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> user=<span class="keyword">this</span>.state.user</div><div class="line"></div><div class="line">AsyncStorage.setItem(<span class="string">'user'</span>,<span class="built_in">JSON</span>.stringify(user),<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">      <span class="built_in">console</span>.log(err)</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'save fail'</span>)</div><div class="line">    &#125; <span class="keyword">else</span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'save ok'</span>)</div><div class="line">    &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">//或者</span></div><div class="line"><span class="keyword">var</span> user=<span class="keyword">this</span>.state.user</div><div class="line"></div><div class="line">AsyncStorage</div><div class="line">  .setItem(<span class="string">'user'</span>,<span class="built_in">JSON</span>.stringify(user))</div><div class="line">  .then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'save ok'</span>)</div><div class="line">  &#125;)</div><div class="line">  .catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(err)</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'save fail'</span>)</div><div class="line">  &#125;)</div></pre></td></tr></table></figure>
+<p>统计重新载入的次数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">componentDidMount()&#123;</div><div class="line">    <span class="keyword">var</span> that = <span class="keyword">this</span></div><div class="line">      AsyncStorage</div><div class="line">      .getItem(<span class="string">'user'</span>)</div><div class="line">      .then(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</div><div class="line">        <span class="keyword">var</span> userData=<span class="built_in">JSON</span>.parse(data)</div><div class="line">        </div><div class="line">        userData.times++</div><div class="line"></div><div class="line">          that.setState(&#123;</div><div class="line">            <span class="attr">user</span>:userData</div><div class="line">          &#125;)</div><div class="line"></div><div class="line">          AsyncStorage</div><div class="line">            .setItem(<span class="string">'user'</span>,<span class="built_in">JSON</span>.stringify(userData))</div><div class="line">            .then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">              <span class="built_in">console</span>.log(<span class="string">'save ok'</span>)</div><div class="line">            &#125;)</div><div class="line">            .catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">                <span class="built_in">console</span>.log(err)</div><div class="line">                <span class="built_in">console</span>.log(<span class="string">'save fail'</span>)</div><div class="line">            &#125;)</div><div class="line">        <span class="built_in">console</span>.log()</div><div class="line">      &#125;)</div><div class="line">      .catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">          <span class="keyword">var</span> user=that.state.user</div><div class="line"></div><div class="line">          AsyncStorage</div><div class="line">            .setItem(<span class="string">'user'</span>,<span class="built_in">JSON</span>.stringify(user))</div><div class="line">            .then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">              <span class="built_in">console</span>.log(<span class="string">'save ok'</span>)</div><div class="line">            &#125;)</div><div class="line">            .catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">                <span class="built_in">console</span>.log(err)</div><div class="line">                <span class="built_in">console</span>.log(<span class="string">'save fail'</span>)</div><div class="line">            &#125;)</div><div class="line">      &#125;)</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>key不存在会走到catch中</p>
+<p>删除,key不存在也不会报错</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AsyncStorage.removeItem(<span class="string">'user'</span>)</div><div class="line">        .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">          <span class="built_in">console</span>.log(<span class="string">'remove ok'</span>)</div><div class="line">        &#125;)</div></pre></td></tr></table></figure>
+<p>批量操作</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> that = <span class="keyword">this</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> user=<span class="keyword">this</span>.state.user</div><div class="line"></div><div class="line"><span class="comment">// AsyncStorage.multiSet([['user1','u1'],['user2','u2']])</span></div><div class="line"><span class="comment">//   .then(function () &#123;</span></div><div class="line"><span class="comment">//     console.log('save ok')</span></div><div class="line"><span class="comment">//   &#125;)</span></div><div class="line"></div><div class="line"><span class="comment">// AsyncStorage.multiGet(['user1','user2','user'])</span></div><div class="line"><span class="comment">//   .then(function (data) &#123;</span></div><div class="line"><span class="comment">//     console.log(data) //数组</span></div><div class="line"><span class="comment">//   &#125;)</span></div><div class="line"></div><div class="line">  AsyncStorage.multiRemove([<span class="string">'user1'</span>,<span class="string">'user2'</span>,<span class="string">'user'</span>])</div><div class="line">    .then(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">      <span class="keyword">if</span> (err) &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'remove fail'</span>)</div><div class="line">      &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'remove ok'</span>)</div><div class="line">        </div><div class="line">        <span class="comment">//再次获取数据是，value是空，可以还在</span></div><div class="line">        AsyncStorage.multiGet([<span class="string">'user1'</span>,<span class="string">'user2'</span>,<span class="string">'user'</span>])</div><div class="line">          .then(<span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">            <span class="built_in">console</span>.log(data)</div><div class="line">          &#125;)</div><div class="line"></div><div class="line">      &#125;</div><div class="line">    &#125;)</div></pre></td></tr></table></figure>
+<p>## </p>
+<h1 id="调试和热加载"><a href="#调试和热加载" class="headerlink" title="调试和热加载"></a>调试和热加载</h1><p>按command+d，可以开启调试和热加载</p>
+<h1 id="常见错误"><a href="#常见错误" class="headerlink" title="常见错误"></a>常见错误</h1><h2 id="“CFBundleIdentifier”-Does-Not-Exist"><a href="#“CFBundleIdentifier”-Does-Not-Exist" class="headerlink" title="“CFBundleIdentifier”, Does Not Exist"></a>“CFBundleIdentifier”, Does Not Exist</h2><p>Command failed: /usr/libexec/PlistBuddy -c Print:CFBundleIdentifier build/Build/Products/Debug-iphonesimulator/imoocApp.app/Info.plist</p>
+<p>Print: Entry, “:CFBundleIdentifier”, Does Not Exist</p>
+<h2 id="用rninit创建指定版本的应用"><a href="#用rninit创建指定版本的应用" class="headerlink" title="用rninit创建指定版本的应用"></a>用rninit创建指定版本的应用</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">1.</span> 安装</div><div class="line">npm i -g rninit</div><div class="line"><span class="number">2.</span> 使用</div><div class="line"><span class="number">2.1</span> 用最新的 react-native 版本创建工程：</div><div class="line">rninit init [Project Name]</div><div class="line"><span class="number">2.2</span> 用特定的 react-native npm 版本创建工程：</div><div class="line">rninit init [Project Name] --source react-native@<span class="number">0.22</span><span class="number">.2</span></div></pre></td></tr></table></figure>
+<p>或者将依赖改为如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">"lodash": "^4.13.1",</div><div class="line">"mockjs": "^1.0.0",</div><div class="line">"query-string": "^4.2.0",</div><div class="line">"react": "^0.14.8",</div><div class="line">"react-native": "^0.22.2",</div><div class="line">"react-native-audio": "^1.2.1",</div><div class="line">"react-native-button": "^1.6.0",</div><div class="line">"react-native-cli": "^0.2.0",</div><div class="line">"react-native-image-picker": "^0.20.0",</div><div class="line">"react-native-progress": "^3.0.1",</div><div class="line">"react-native-sk-countdown": "^1.0.1",</div><div class="line">"react-native-swiper": "^1.4.6",</div><div class="line">"react-native-vector-icons": "^2.0.2",</div><div class="line">"react-native-video": "^0.8.0",</div><div class="line">"sha1": "^1.1.1"</div></pre></td></tr></table></figure>
+<p><a href="http://coding.imooc.com/learn/questiondetail/1708" target="_blank" rel="external">http://coding.imooc.com/learn/questiondetail/1708</a></p>
+<h2 id="React-native-Cannot-find-module-‘invariant’"><a href="#React-native-Cannot-find-module-‘invariant’" class="headerlink" title="React-native Cannot find module ‘invariant’"></a>React-native Cannot find module ‘invariant’</h2><p>升级了node,和react-native-cli后，初始项目报错，我手动安装了下invariant模块，再次初始化项目居然可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install invariant</div></pre></td></tr></table></figure>
+<p>这个模块的地址<a href="https://www.npmjs.com/package/invariant" target="_blank" rel="external">https://www.npmjs.com/package/invariant</a></p>
+<h2 id="ListView的renderRow方法this指向不对"><a href="#ListView的renderRow方法this指向不对" class="headerlink" title="ListView的renderRow方法this指向不对"></a>ListView的renderRow方法this指向不对</h2><p>解决方法是，调用_renderRow方法然后在调用bind(this)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;ListView</div><div class="line">  dataSource=&#123;<span class="keyword">this</span>.state.dataSource&#125;</div><div class="line">  renderRow=&#123;<span class="keyword">this</span>._renderRow.bind(<span class="keyword">this</span>)&#125; /&gt;</div></pre></td></tr></table></figure>
+<p>这样在_renderRow方法中获取this，就能得到正确的指示了</p>
+<h2 id="node-v7-3-0集成react-native-vector-icons报错"><a href="#node-v7-3-0集成react-native-vector-icons报错" class="headerlink" title="node v7.3.0集成react-native-vector-icons报错"></a>node v7.3.0集成react-native-vector-icons报错</h2><p>第一个错误是，找不到模块，用的是react-native link方式操作的。解决方法是，手动在xcode链接。</p>
+<p>第二个错误是，找不到字体，这个问题是，拷贝字体是没有勾选target。也就是说字体没有打包到ipa中。</p>
+<p><a href="https://github.com/oblador/react-native-vector-icons" target="_blank" rel="external">https://github.com/oblador/react-native-vector-icons</a></p>
+<p><a href="http://blog.csdn.net/sakulafly/article/details/46368173" target="_blank" rel="external">http://blog.csdn.net/sakulafly/article/details/46368173</a></p>
+<h2 id="ios9-http不能访问"><a href="#ios9-http不能访问" class="headerlink" title="ios9 http不能访问"></a>ios9 http不能访问</h2><p><a href="https://segmentfault.com/a/1190000002933776" target="_blank" rel="external">https://segmentfault.com/a/1190000002933776</a></p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/React/" rel="tag">#React</a>
+          
+            <a href="/tags/React-Native/" rel="tag">#React Native</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/31/java-collections/" rel="next" title="Java集合框架总结">
+                <i class="fa fa-chevron-left"></i> Java集合框架总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/17/java-script-syntax/" rel="prev" title="JavaScript语法总结">
+                JavaScript语法总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/11/14/react-native-env/"
+     data-title="React Native"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/11/14/react-native-env/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/14/react-native-env/"
+           data-title="React Native" data-url="http://i.woblog.cn/2016/11/14/react-native-env/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建React-Native开发环境"><span class="nav-number">1.</span> <span class="nav-text">搭建React Native开发环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装xcode"><span class="nav-number">1.1.</span> <span class="nav-text">安装xcode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Command-Line-Tools"><span class="nav-number">1.2.</span> <span class="nav-text">安装Command Line Tools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装homebrew"><span class="nav-number">1.3.</span> <span class="nav-text">安装homebrew</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装watchman"><span class="nav-number">1.4.</span> <span class="nav-text">安装watchman</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装flow"><span class="nav-number">1.5.</span> <span class="nav-text">安装flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装nodejs"><span class="nav-number">1.6.</span> <span class="nav-text">安装nodejs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装react-native"><span class="nav-number">1.7.</span> <span class="nav-text">安装react native</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建第一个项目"><span class="nav-number">1.8.</span> <span class="nav-text">创建第一个项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置subline"><span class="nav-number">1.9.</span> <span class="nav-text">配置subline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装全局exhint检查"><span class="nav-number">1.10.</span> <span class="nav-text">安装全局exhint检查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#react-native项目结构"><span class="nav-number">2.</span> <span class="nav-text">react-native项目结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#统计按钮点击次数"><span class="nav-number">3.</span> <span class="nav-text">统计按钮点击次数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#组件生命周期"><span class="nav-number">4.</span> <span class="nav-text">组件生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#嵌套组件"><span class="nav-number">4.1.</span> <span class="nav-text">嵌套组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一次加载"><span class="nav-number">4.1.1.</span> <span class="nav-text">第一次加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#父组件状态变化"><span class="nav-number">4.1.2.</span> <span class="nav-text">父组件状态变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只有子组件变化"><span class="nav-number">4.1.3.</span> <span class="nav-text">只有子组件变化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ES5和ES6区别"><span class="nav-number">5.</span> <span class="nav-text">ES5和ES6区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#导入模块方式"><span class="nav-number">5.1.</span> <span class="nav-text">导入模块方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建组件"><span class="nav-number">5.2.</span> <span class="nav-text">创建组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取初始属性"><span class="nav-number">5.3.</span> <span class="nav-text">获取初始属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View中调用方法"><span class="nav-number">5.4.</span> <span class="nav-text">View中调用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#声明变量"><span class="nav-number">5.5.</span> <span class="nav-text">声明变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用组件"><span class="nav-number">6.</span> <span class="nav-text">常用组件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#View"><span class="nav-number">6.1.</span> <span class="nav-text">View</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Text"><span class="nav-number">6.2.</span> <span class="nav-text">Text</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TextInput"><span class="nav-number">6.3.</span> <span class="nav-text">TextInput</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image"><span class="nav-number">6.4.</span> <span class="nav-text">Image</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AlertIOS"><span class="nav-number">6.5.</span> <span class="nav-text">AlertIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Modal"><span class="nav-number">6.6.</span> <span class="nav-text">Modal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ActivityIndicatorIOS"><span class="nav-number">6.7.</span> <span class="nav-text">ActivityIndicatorIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ProgressViewIOS"><span class="nav-number">6.8.</span> <span class="nav-text">ProgressViewIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ListView"><span class="nav-number">6.9.</span> <span class="nav-text">ListView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PickerIOS"><span class="nav-number">6.10.</span> <span class="nav-text">PickerIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StatusBar"><span class="nav-number">6.11.</span> <span class="nav-text">StatusBar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Switch"><span class="nav-number">6.12.</span> <span class="nav-text">Switch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slider"><span class="nav-number">6.13.</span> <span class="nav-text">Slider</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapView"><span class="nav-number">6.14.</span> <span class="nav-text">MapView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Navigator"><span class="nav-number">6.15.</span> <span class="nav-text">Navigator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TabBarIOS"><span class="nav-number">6.16.</span> <span class="nav-text">TabBarIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SegmentedControllIOS"><span class="nav-number">6.17.</span> <span class="nav-text">SegmentedControllIOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Touchable"><span class="nav-number">6.18.</span> <span class="nav-text">Touchable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebView"><span class="nav-number">6.19.</span> <span class="nav-text">WebView</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#flex布局"><span class="nav-number">7.</span> <span class="nav-text">flex布局</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#父容器"><span class="nav-number">7.1.</span> <span class="nav-text">父容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flexDirection"><span class="nav-number">7.1.1.</span> <span class="nav-text">flexDirection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flex-1"><span class="nav-number">7.1.2.</span> <span class="nav-text">flex:1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flexWrap"><span class="nav-number">7.1.3.</span> <span class="nav-text">flexWrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#justifyContent"><span class="nav-number">7.1.4.</span> <span class="nav-text">justifyContent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#alignItems"><span class="nav-number">7.1.5.</span> <span class="nav-text">alignItems</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子容器"><span class="nav-number">7.2.</span> <span class="nav-text">子容器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如挑选第三方组件"><span class="nav-number">8.</span> <span class="nav-text">如挑选第三方组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#本地存储"><span class="nav-number">9.</span> <span class="nav-text">本地存储</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调试和热加载"><span class="nav-number">10.</span> <span class="nav-text">调试和热加载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见错误"><span class="nav-number">11.</span> <span class="nav-text">常见错误</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#“CFBundleIdentifier”-Does-Not-Exist"><span class="nav-number">11.1.</span> <span class="nav-text">“CFBundleIdentifier”, Does Not Exist</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用rninit创建指定版本的应用"><span class="nav-number">11.2.</span> <span class="nav-text">用rninit创建指定版本的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#React-native-Cannot-find-module-‘invariant’"><span class="nav-number">11.3.</span> <span class="nav-text">React-native Cannot find module ‘invariant’</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ListView的renderRow方法this指向不对"><span class="nav-number">11.4.</span> <span class="nav-text">ListView的renderRow方法this指向不对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node-v7-3-0集成react-native-vector-icons报错"><span class="nav-number">11.5.</span> <span class="nav-text">node v7.3.0集成react-native-vector-icons报错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios9-http不能访问"><span class="nav-number">11.6.</span> <span class="nav-text">ios9 http不能访问</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

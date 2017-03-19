@@ -1,0 +1,928 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="NodeJs," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="学习网站官网：https://nodejs.org
+npm:https://www.npmjs.com
+github
+stack overflow
+安装nodeJS版本偶数为稳定版本:0.6.x,0.8.x,0.10.x
+基数非稳定版本:0.7.x,0.9.x,0.11.x
+mac安装升级mac系统到最新，安装最新的xcode
+1xcode-select --install
+homebrew安装方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NodeJs">
+<meta property="og:url" content="http://i.woblog.cn/2016/11/23/nodejs/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="学习网站官网：https://nodejs.org
+npm:https://www.npmjs.com
+github
+stack overflow
+安装nodeJS版本偶数为稳定版本:0.6.x,0.8.x,0.10.x
+基数非稳定版本:0.7.x,0.9.x,0.11.x
+mac安装升级mac系统到最新，安装最新的xcode
+1xcode-select --install
+homebrew安装方">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NodeJs">
+<meta name="twitter:description" content="学习网站官网：https://nodejs.org
+npm:https://www.npmjs.com
+github
+stack overflow
+安装nodeJS版本偶数为稳定版本:0.6.x,0.8.x,0.10.x
+基数非稳定版本:0.7.x,0.9.x,0.11.x
+mac安装升级mac系统到最新，安装最新的xcode
+1xcode-select --install
+homebrew安装方">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> NodeJs | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                NodeJs
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-23T00:46:11+00:00" content="2016-11-23">
+              2016-11-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/NodeJs/" itemprop="url" rel="index">
+                    <span itemprop="name">NodeJs</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/23/nodejs/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/23/nodejs/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="学习网站"><a href="#学习网站" class="headerlink" title="学习网站"></a>学习网站</h1><p>官网：<a href="https://nodejs.org" target="_blank" rel="external">https://nodejs.org</a></p>
+<p>npm:<a href="https://www.npmjs.com" target="_blank" rel="external">https://www.npmjs.com</a></p>
+<p>github</p>
+<p>stack overflow</p>
+<h1 id="安装nodeJS"><a href="#安装nodeJS" class="headerlink" title="安装nodeJS"></a>安装nodeJS</h1><h2 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h2><p>偶数为稳定版本:0.6.x,0.8.x,0.10.x</p>
+<p>基数非稳定版本:0.7.x,0.9.x,0.11.x</p>
+<h2 id="mac安装"><a href="#mac安装" class="headerlink" title="mac安装"></a>mac安装</h2><p>升级mac系统到最新，安装最新的xcode</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcode-select --install</div></pre></td></tr></table></figure>
+<h2 id="homebrew"><a href="#homebrew" class="headerlink" title="homebrew"></a>homebrew</h2><p>安装方式可以去官网，用ruby命令安装。然后可以安装node js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install nodejs</div></pre></td></tr></table></figure>
+<h2 id="多版本安装"><a href="#多版本安装" class="headerlink" title="多版本安装"></a>多版本安装</h2><p>使用n模块来管理，先安装</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g n</div></pre></td></tr></table></figure>
+<p>然后就可以通过n来安装相应的版本</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">n <span class="number">0.10</span><span class="number">.2</span></div></pre></td></tr></table></figure>
+<p>安装完了以后，可以通过输入n来切换默认版本：</p>
+<p>我们这里是v4.2.3</p>
+<h1 id="最简单的服务器"><a href="#最简单的服务器" class="headerlink" title="最简单的服务器"></a>最简单的服务器</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line"></div><div class="line"><span class="keyword">var</span> server = http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">request, response</span>) </span>&#123;</div><div class="line">	<span class="comment">// magic happens here!</span></div><div class="line">	response.writeHead(<span class="number">200</span>, &#123;</div><div class="line">		<span class="string">'Content-Type'</span>: <span class="string">'text/html'</span>,</div><div class="line">		<span class="string">'X-Powered-By'</span>: <span class="string">'bacon'</span></div><div class="line">	&#125;);</div><div class="line"></div><div class="line">	response.write(<span class="string">'&lt;html&gt;'</span>);</div><div class="line">	response.write(<span class="string">'&lt;body&gt;'</span>);</div><div class="line">	response.write(<span class="string">'&lt;h1&gt;Hello, World!&lt;/h1&gt;'</span>);</div><div class="line">	response.write(<span class="string">'&lt;/body&gt;'</span>);</div><div class="line">	response.write(<span class="string">'&lt;/html&gt;'</span>);</div><div class="line">	response.end();</div><div class="line">&#125;);</div><div class="line"></div><div class="line">server.listen(<span class="number">1337</span>, <span class="string">'127.0.0.1'</span>)</div></pre></td></tr></table></figure>
+<p>打开浏览器访问<a href="http://127.0.0.1:1337,就能看到hello" target="_blank" rel="external">http://127.0.0.1:1337,就能看到hello</a> world</p>
+<h1 id="在命令行执行"><a href="#在命令行执行" class="headerlink" title="在命令行执行"></a>在命令行执行</h1><p>我们可以将这段输入到chrome的console中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a=<span class="number">1</span>;<span class="keyword">var</span> b=<span class="number">2</span>;<span class="keyword">var</span> add=<span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;<span class="keyword">return</span> a+b&#125;;<span class="built_in">console</span>.log(add(a,b));</div></pre></td></tr></table></figure>
+<p>就可以看到结果为3</p>
+<p>同样可以将上面的代码复制到nodejs的命令行，发现结果也是一样。但是他们的全局变量是不一样的，比如我们可以在chrome中输入window,document但是，node里面就不行。但是他有自己的全局变量，比如process,通用浏览器中也是拿不到了。</p>
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><h2 id="模块的使用流程"><a href="#模块的使用流程" class="headerlink" title="模块的使用流程"></a>模块的使用流程</h2><p>创建模块：teacher.js</p>
+<p>导出模块：exports.add=function(){}</p>
+<p>加载模块：var teacher=require(‘./teacher.js’)</p>
+<p>使用模块：teacher.add(‘Li’)</p>
+<h1 id="常用API"><a href="#常用API" class="headerlink" title="常用API"></a>常用API</h1><h2 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h2><h3 id="parse"><a href="#parse" class="headerlink" title="parse"></a>parse</h3><p>将一个url解析为host等</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">url.parse(<span class="string">'http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc'</span>)</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Url &#123;</div><div class="line">  protocol: &apos;http:&apos;,</div><div class="line">  slashes: true,</div><div class="line">  auth: null,</div><div class="line">  host: &apos;i.woblog.cn:8080&apos;,</div><div class="line">  port: &apos;8080&apos;,</div><div class="line">  hostname: &apos;i.woblog.cn&apos;,</div><div class="line">  hash: &apos;#abc&apos;,</div><div class="line">  search: &apos;?a=b&amp;c=d&apos;,</div><div class="line">  query: &apos;a=b&amp;c=d&apos;,</div><div class="line">  pathname: &apos;/post/list&apos;,</div><div class="line">  path: &apos;/post/list?a=b&amp;c=d&apos;,</div><div class="line">  href: &apos;http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc&apos; &#125;</div></pre></td></tr></table></figure>
+<p>将query解析为对象，只需要传递第二个参数位true</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">url.parse(<span class="string">'http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc'</span>,<span class="literal">true</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Url &#123;</div><div class="line">  protocol: &apos;http:&apos;,</div><div class="line">  slashes: true,</div><div class="line">  auth: null,</div><div class="line">  host: &apos;i.woblog.cn:8080&apos;,</div><div class="line">  port: &apos;8080&apos;,</div><div class="line">  hostname: &apos;i.woblog.cn&apos;,</div><div class="line">  hash: &apos;#abc&apos;,</div><div class="line">  search: &apos;?a=b&amp;c=d&apos;,</div><div class="line">  query: &#123; a: &apos;b&apos;, c: &apos;d&apos; &#125;, //这里已经是对象了</div><div class="line">  pathname: &apos;/post/list&apos;,</div><div class="line">  path: &apos;/post/list?a=b&amp;c=d&apos;,</div><div class="line">  href: &apos;http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc&apos; &#125;</div></pre></td></tr></table></figure>
+<p>不知道url协议，也解析出host，不添加第三个参数，可以看到host为空</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">url.parse(<span class="string">'//i.woblog.cn:8080/post/list?a=b&amp;c=d#abc'</span>,<span class="literal">true</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Url &#123;</div><div class="line">  protocol: null,</div><div class="line">  slashes: null,</div><div class="line">  auth: null,</div><div class="line">  host: null,</div><div class="line">  port: null,</div><div class="line">  hostname: null,</div><div class="line">  hash: &apos;#abc&apos;,</div><div class="line">  search: &apos;?a=b&amp;c=d&apos;,</div><div class="line">  query: &#123; a: &apos;b&apos;, c: &apos;d&apos; &#125;,</div><div class="line">  pathname: &apos;//i.woblog.cn:8080/post/list&apos;,</div><div class="line">  path: &apos;//i.woblog.cn:8080/post/list?a=b&amp;c=d&apos;,</div><div class="line">  href: &apos;//i.woblog.cn:8080/post/list?a=b&amp;c=d#abc&apos; &#125;</div></pre></td></tr></table></figure>
+<p>第三个参数为true</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">url.parse(<span class="string">'//i.woblog.cn:8080/post/list?a=b&amp;c=d#abc'</span>,<span class="literal">true</span>,<span class="literal">true</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Url &#123;</div><div class="line">  protocol: null,</div><div class="line">  slashes: true,</div><div class="line">  auth: null,</div><div class="line">  host: &apos;i.woblog.cn:8080&apos;, //有值了</div><div class="line">  port: &apos;8080&apos;,</div><div class="line">  hostname: &apos;i.woblog.cn&apos;,</div><div class="line">  hash: &apos;#abc&apos;,</div><div class="line">  search: &apos;?a=b&amp;c=d&apos;,</div><div class="line">  query: &#123; a: &apos;b&apos;, c: &apos;d&apos; &#125;,</div><div class="line">  pathname: &apos;/post/list&apos;,</div><div class="line">  path: &apos;/post/list?a=b&amp;c=d&apos;,</div><div class="line">  href: &apos;//i.woblog.cn:8080/post/list?a=b&amp;c=d#abc&apos; &#125;</div></pre></td></tr></table></figure>
+<h2 id="format"><a href="#format" class="headerlink" title="format"></a>format</h2><p>将一个对象转为一个url,可以是上面的parse对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">url.format(&#123;</div><div class="line">...   protocol: <span class="string">'http:'</span>,</div><div class="line">...   slashes: <span class="literal">true</span>,</div><div class="line">...   auth: <span class="literal">null</span>,</div><div class="line">...   host: <span class="string">'i.woblog.cn:8080'</span>,</div><div class="line">...   port: <span class="string">'8080'</span>,</div><div class="line">...   hostname: <span class="string">'i.woblog.cn'</span>,</div><div class="line">...   hash: <span class="string">'#abc'</span>,</div><div class="line">...   search: <span class="string">'?a=b&amp;c=d'</span>,</div><div class="line">...   query: <span class="string">'a=b&amp;c=d'</span>,</div><div class="line">...   pathname: <span class="string">'/post/list'</span>,</div><div class="line">...   path: <span class="string">'/post/list?a=b&amp;c=d'</span>,</div><div class="line">...   href: <span class="string">'http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc'</span> &#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://i.woblog.cn:8080/post/list?a=b&amp;c=d#abc</div></pre></td></tr></table></figure>
+<h2 id="resolve"><a href="#resolve" class="headerlink" title="resolve"></a>resolve</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">url.resolve(<span class="string">'/one/two/three'</span>, <span class="string">'four'</span>)         <span class="comment">// '/one/two/four'</span></div><div class="line">url.resolve(<span class="string">'http://example.com/'</span>, <span class="string">'/one'</span>)    <span class="comment">// 'http://example.com/one'</span></div><div class="line">url.resolve(<span class="string">'http://example.com/one'</span>, <span class="string">'/two'</span>) <span class="comment">// 'http://example.com/two'</span></div></pre></td></tr></table></figure>
+<h2 id="queryString"><a href="#queryString" class="headerlink" title="queryString"></a>queryString</h2><h3 id="将对象转为参数字符串"><a href="#将对象转为参数字符串" class="headerlink" title="将对象转为参数字符串"></a>将对象转为参数字符串</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.stringify(&#123;<span class="attr">name</span>:<span class="string">'li'</span>,<span class="attr">age</span>:<span class="number">10</span>,<span class="attr">course</span>:[<span class="string">'b'</span>,<span class="number">1</span>],<span class="attr">other</span>:<span class="string">''</span>&#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;name=li&amp;age=10&amp;course=b&amp;course=1&amp;other=&apos;</div></pre></td></tr></table></figure>
+<p>第二个参数表示多个参数间的连接符号，默认&amp;</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.stringify(&#123;<span class="attr">name</span>:<span class="string">'li'</span>,<span class="attr">age</span>:<span class="number">10</span>,<span class="attr">course</span>:[<span class="string">'b'</span>,<span class="number">1</span>],<span class="attr">other</span>:<span class="string">''</span>&#125;,<span class="string">','</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;name=li,age=10,course=b,course=1,other=&apos;</div></pre></td></tr></table></figure>
+<p>第三个参数表示key和value之间的分隔符，默认=</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.stringify(&#123;<span class="attr">name</span>:<span class="string">'li'</span>,<span class="attr">age</span>:<span class="number">10</span>,<span class="attr">course</span>:[<span class="string">'b'</span>,<span class="number">1</span>],<span class="attr">other</span>:<span class="string">''</span>&#125;,<span class="string">','</span>,<span class="string">':'</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;name:li,age:10,course:b,course:1,other:&apos;</div></pre></td></tr></table></figure>
+<h3 id="将字符串解析为对象"><a href="#将字符串解析为对象" class="headerlink" title="将字符串解析为对象"></a>将字符串解析为对象</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.parse(<span class="string">'name=li&amp;age=10&amp;course=b&amp;course=1&amp;other='</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; name: &apos;li&apos;, age: &apos;10&apos;, course: [ &apos;b&apos;, &apos;1&apos; ], other: &apos;&apos; &#125;</div></pre></td></tr></table></figure>
+<p>通用也可以指定多个参数间的连接符号</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.parse(<span class="string">'name=li,age=10,course=b,course=1,other='</span>,<span class="string">','</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; name: &apos;li&apos;, age: &apos;10&apos;, course: [ &apos;b&apos;, &apos;1&apos; ], other: &apos;&apos; &#125;</div></pre></td></tr></table></figure>
+<p>指定key和value间的分隔符</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.parse(<span class="string">'name:li,age:10,course:b,course:1,other:'</span>,<span class="string">','</span>,<span class="string">':'</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; name: &apos;li&apos;, age: &apos;10&apos;, course: [ &apos;b&apos;, &apos;1&apos; ], other: &apos;&apos; &#125;</div></pre></td></tr></table></figure>
+<h3 id="字符转义"><a href="#字符转义" class="headerlink" title="字符转义"></a>字符转义</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.escape(<span class="string">'&lt;呵 护&gt;'</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;%3C%E5%91%B5%20%E6%8A%A4%3E&apos;</div></pre></td></tr></table></figure>
+<p>反转义</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">querystring.unescape(<span class="string">'%3C%E5%91%B5%20%E6%8A%A4%3E'</span>)</div></pre></td></tr></table></figure>
+<h1 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//上下文</span></div><div class="line"></div><div class="line"><span class="comment">//var pet = &#123;</span></div><div class="line"><span class="comment">//	words : "...",</span></div><div class="line"><span class="comment">//	speak:function () &#123;</span></div><div class="line"><span class="comment">//		console.log(this.words) //this就是pet</span></div><div class="line"><span class="comment">//		console.log(this==pet)</span></div><div class="line"><span class="comment">//	&#125;</span></div><div class="line"><span class="comment">//&#125;</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//pet.speak()</span></div><div class="line"></div><div class="line"><span class="comment">//function pet(words) &#123;</span></div><div class="line"><span class="comment">//	this.words = words</span></div><div class="line"><span class="comment">//	console.log(this.words) //global</span></div><div class="line"><span class="comment">//	console.log(this==global)</span></div><div class="line"><span class="comment">//&#125;</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//pet("...")</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Pet</span>(<span class="params">words</span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.words = words</div><div class="line">	<span class="keyword">this</span>.speak = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(<span class="keyword">this</span>.words)</div><div class="line">		<span class="built_in">console</span>.log(<span class="keyword">this</span>) <span class="comment">//this是Pet当前实例</span></div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> cat = <span class="keyword">new</span> Pet(<span class="string">"Maomi"</span>)</div><div class="line">cat.speak()</div></pre></td></tr></table></figure>
+<h2 id="改变上下文"><a href="#改变上下文" class="headerlink" title="改变上下文"></a>改变上下文</h2><p>将一个方法在另一个对象上调用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> pet = &#123;</div><div class="line">	<span class="attr">words</span>: <span class="string">"..."</span>,</div><div class="line">	<span class="attr">speak</span>: <span class="function"><span class="keyword">function</span>(<span class="params">say</span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(say + <span class="string">' '</span> + <span class="keyword">this</span>.words)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//pet.speak('Speak')</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> dog = &#123;</div><div class="line">	<span class="attr">words</span>: <span class="string">"wang"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//改版了speak方法里面的this为dog，打印Speak wang</span></div><div class="line">pet.speak.call(dog, <span class="string">"Speak"</span>)</div></pre></td></tr></table></figure>
+<p>实现继承</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Pet</span>(<span class="params">words</span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.words = words</div><div class="line">	<span class="keyword">this</span>.speak = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(<span class="keyword">this</span>.words)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span>(<span class="params">words</span>) </span>&#123;</div><div class="line">	<span class="comment">//	Pet.call(this,words) //相当于继承Pet，所以Dog也有speak方法</span></div><div class="line">	Pet.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> dog = <span class="keyword">new</span> Dog(<span class="string">"wang"</span>)</div><div class="line">dog.speak()</div></pre></td></tr></table></figure>
+<h1 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h1><p>我们使用apache ab测试工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ab -n1000 -c10 http://localhost:2015/</div></pre></td></tr></table></figure>
+<p>-n请求次数</p>
+<p>-c并发数</p>
+<p>打印如下信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">This is ApacheBench, Version 2.3 &lt;$Revision: 1706008 $&gt;</div><div class="line">Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/</div><div class="line">Licensed to The Apache Software Foundation, http://www.apache.org/</div><div class="line"></div><div class="line">Benchmarking localhost (be patient)</div><div class="line">Completed 100 requests</div><div class="line">Completed 200 requests</div><div class="line">Completed 300 requests</div><div class="line">Completed 400 requests</div><div class="line">Completed 500 requests</div><div class="line">Completed 600 requests</div><div class="line">Completed 700 requests</div><div class="line">Completed 800 requests</div><div class="line">Completed 900 requests</div><div class="line">Completed 1000 requests</div><div class="line">Finished 1000 requests</div><div class="line"></div><div class="line"></div><div class="line">Server Software:        </div><div class="line">Server Hostname:        localhost</div><div class="line">Server Port:            2015</div><div class="line"></div><div class="line">Document Path:          /</div><div class="line">Document Length:        5 bytes</div><div class="line"></div><div class="line">Concurrency Level:      10</div><div class="line">Time taken for tests:   0.281 seconds</div><div class="line">Complete requests:      1000</div><div class="line">Failed requests:        0</div><div class="line">Total transferred:      106000 bytes</div><div class="line">HTML transferred:       5000 bytes</div><div class="line">Requests per second:    3553.72 [#/sec] (mean)</div><div class="line">Time per request:       2.814 [ms] (mean)</div><div class="line">Time per request:       0.281 [ms] (mean, across all concurrent requests)</div><div class="line">Transfer rate:          367.87 [Kbytes/sec] received</div><div class="line"></div><div class="line">Connection Times (ms)</div><div class="line">              min  mean[+/-sd] median   max</div><div class="line">Connect:        0    0   0.2      0       1</div><div class="line">Processing:     1    2   1.9      2      15</div><div class="line">Waiting:        1    2   1.9      2      15</div><div class="line">Total:          1    3   1.9      2      15</div><div class="line"></div><div class="line">Percentage of the requests served within a certain time (ms)</div><div class="line">  50%      2</div><div class="line">  66%      3</div><div class="line">  75%      3</div><div class="line">  80%      3</div><div class="line">  90%      4</div><div class="line">  95%      5</div><div class="line">  98%     11</div><div class="line">  99%     12</div><div class="line"> 100%     15 (longest request)</div></pre></td></tr></table></figure>
+<h1 id="nodeJS事件"><a href="#nodeJS事件" class="headerlink" title="nodeJS事件"></a>nodeJS事件</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> EventEmitter = <span class="built_in">require</span>(<span class="string">'events'</span>).EventEmitter</div><div class="line"></div><div class="line"><span class="keyword">var</span> life = <span class="keyword">new</span> EventEmitter()</div><div class="line"></div><div class="line"><span class="comment">//修改默认值，就不会出现警告</span></div><div class="line">life.setMaxListeners(<span class="number">20</span>)</div><div class="line"></div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">life.on(<span class="string">'求默默'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水1'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水2'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水3'</span>)</div><div class="line">&#125;)</div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水4'</span>)</div><div class="line">&#125;)</div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水5'</span>)</div><div class="line">&#125;)</div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水6'</span>)</div><div class="line">&#125;)</div><div class="line">life.on(<span class="string">'求抱抱'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水7'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水8'</span>)</div><div class="line">&#125;)</div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水9'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">//默认超过10个事件，就会有警告，有可能有内存泄漏，可以修改</span></div><div class="line">life.on(<span class="string">'求安慰'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 倒水10'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">//true，表示已经监听过该事件</span></div><div class="line"><span class="keyword">var</span> hasConfor = life.emit(<span class="string">'求安慰'</span>, <span class="string">'美男子'</span>)</div><div class="line"><span class="keyword">var</span> hasConfor1 = life.emit(<span class="string">'哈哈'</span>, <span class="string">'美男子'</span>)</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(hasConfor)</div><div class="line"><span class="built_in">console</span>.log(hasConfor1)</div><div class="line"></div><div class="line"><span class="comment">//移除一个监听，监听时间不能使用匿名函数</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">wanwan</span>(<span class="params">who</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'给 '</span> + who + <span class="string">' 玩玩'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">life.on(<span class="string">'玩玩'</span>, wanwan)</div><div class="line"></div><div class="line"><span class="comment">//移除事件,移除后，后面就不会打印该事件了</span></div><div class="line">life.removeListener(<span class="string">'玩玩'</span>, wanwan)</div><div class="line"></div><div class="line">life.emit(<span class="string">'玩玩'</span>, <span class="string">'美男子'</span>)</div><div class="line"></div><div class="line"><span class="comment">//获取一个事件有多少个监听器,两种方式</span></div><div class="line"><span class="built_in">console</span>.log(life.listeners(<span class="string">'求安慰'</span>).length)</div><div class="line"><span class="built_in">console</span>.log(EventEmitter.listenerCount(life, <span class="string">'求安慰'</span>))</div><div class="line"></div><div class="line"><span class="comment">//移除监听</span></div><div class="line"></div><div class="line"><span class="comment">//移除所有事件</span></div><div class="line"><span class="comment">//life.removeAllListeners()</span></div><div class="line"></div><div class="line"><span class="comment">//移除指定事件名 事件</span></div><div class="line">life.removeAllListeners(<span class="string">'求安慰'</span>)</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(life.listeners(<span class="string">'求抱抱'</span>).length)</div></pre></td></tr></table></figure>
+<h1 id="request方法实例"><a href="#request方法实例" class="headerlink" title="request方法实例"></a>request方法实例</h1><p>一个使用request来评论提交评论的例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</div><div class="line"><span class="keyword">var</span> querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>)</div><div class="line"></div><div class="line"><span class="keyword">var</span> postData = querystring.stringify(&#123;</div><div class="line">	<span class="string">'content'</span>: <span class="string">'感觉学的还不错！'</span>,</div><div class="line">	<span class="string">'cid'</span>: <span class="number">348</span></div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="keyword">var</span> options = &#123;</div><div class="line">	<span class="attr">hostname</span>: <span class="string">'www.imooc.com'</span>,</div><div class="line">	<span class="attr">post</span>: <span class="number">80</span>,</div><div class="line">	<span class="attr">path</span>: <span class="string">'/course/docomment'</span>,</div><div class="line">	<span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">	<span class="attr">headers</span>: &#123;</div><div class="line">		<span class="string">'Accept'</span>: <span class="string">'application/json, text/javascript, */*; q=0.01'</span>,</div><div class="line">		...</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> req = http.request(options, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'status:'</span> + res.statuscode)</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'headers:'</span> + <span class="built_in">JSON</span>.stringify(res.headers))</div><div class="line"></div><div class="line">	res.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(Buffer.isBuffer(chunk))</div><div class="line">		<span class="built_in">console</span>.log(<span class="keyword">typeof</span> chunk)</div><div class="line">		<span class="built_in">console</span>.log(chunk.toString(<span class="string">'utf-8'</span>))</div><div class="line">	&#125;)</div><div class="line"></div><div class="line">	res.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(<span class="string">'评论完毕'</span>)</div><div class="line">	&#125;)</div><div class="line"></div><div class="line">	res.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(<span class="string">'error:'</span> + e.message)</div><div class="line">	&#125;)</div><div class="line"></div><div class="line">&#125;)</div><div class="line"></div><div class="line">req.write(postData)</div><div class="line">req.end()</div></pre></td></tr></table></figure>
+<h1 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h1><p>先使用用Promise实现一个三个小球的运动</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></div><div class="line">			.ball &#123;</div><div class="line">				width: 40px;</div><div class="line">				height: 40px;</div><div class="line">				border-radius: 20px;</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">			.ball1 &#123;</div><div class="line">				background: red;</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">			.ball2 &#123;</div><div class="line">				background: green;</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">			.ball3 &#123;</div><div class="line">				background: blue;</div><div class="line">			&#125;</div><div class="line">		<span class="tag">&lt;/<span class="name">style</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"ball ball1"</span> <span class="attr">style</span>=<span class="string">"margin-left: 0;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"ball ball2"</span> <span class="attr">style</span>=<span class="string">"margin-left: 0;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"ball ball3"</span> <span class="attr">style</span>=<span class="string">"margin-left: 0;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line">			<span class="keyword">var</span> ball1 = <span class="built_in">document</span>.querySelector(<span class="string">'.ball1'</span>)</div><div class="line">			<span class="keyword">var</span> ball2 = <span class="built_in">document</span>.querySelector(<span class="string">'.ball2'</span>)</div><div class="line">			<span class="keyword">var</span> ball3 = <span class="built_in">document</span>.querySelector(<span class="string">'.ball3'</span>)</div><div class="line"></div><div class="line">			<span class="function"><span class="keyword">function</span> <span class="title">promiseAnimate</span>(<span class="params">ball, distance</span>) </span>&#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line"></div><div class="line">					<span class="function"><span class="keyword">function</span> _animate(<span class="params"></span>) </span>&#123;</div><div class="line"></div><div class="line">						setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">							<span class="keyword">var</span> marginLeft = <span class="built_in">parseInt</span>(ball.style.marginLeft, <span class="number">10</span>)</div><div class="line">								<span class="comment">//					console.log('marginLeft:' + marginLeft + ',distance:' + distance)</span></div><div class="line">							<span class="keyword">if</span>(marginLeft == distance) &#123;</div><div class="line">								resolve()</div><div class="line">							&#125; <span class="keyword">else</span> &#123;</div><div class="line">								<span class="keyword">if</span>(marginLeft &lt; distance) &#123;</div><div class="line">									marginLeft++</div><div class="line">								&#125; <span class="keyword">else</span> &#123;</div><div class="line">									marginLeft--</div><div class="line">								&#125;</div><div class="line"></div><div class="line">								<span class="built_in">console</span>.log(<span class="string">'marginLeft:'</span> + marginLeft + <span class="string">',distance:'</span> + distance)</div><div class="line"></div><div class="line">								ball.style.marginLeft = marginLeft + <span class="string">'px'</span></div><div class="line"></div><div class="line">								<span class="built_in">console</span>.log(<span class="string">'left:'</span> + ball.style.marginLeft)</div><div class="line"></div><div class="line">								_animate()</div><div class="line">							&#125;</div><div class="line">						&#125;, <span class="number">13</span>)</div><div class="line">					&#125;</div><div class="line"></div><div class="line">					_animate(ball, distance)</div><div class="line">				&#125;)</div><div class="line"></div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="comment">//不适用Promise,就需要多个返回嵌套</span></div><div class="line">			<span class="comment">// animate(ball1, 100, function() &#123;</span></div><div class="line">			<span class="comment">// 		animate(ball2, 200, function() &#123;</span></div><div class="line">			<span class="comment">// 			animate(ball3, 300, function() &#123;</span></div><div class="line">			<span class="comment">// 				animate(ball3, 150, function() &#123;</span></div><div class="line">			<span class="comment">// 					animate(ball2, 150, function() &#123;</span></div><div class="line">			<span class="comment">// 						animate(ball1, 150, function() &#123;</span></div><div class="line"></div><div class="line">			<span class="comment">// 						&#125;)</span></div><div class="line">			<span class="comment">// 					&#125;)</span></div><div class="line">			<span class="comment">// 				&#125;)</span></div><div class="line">			<span class="comment">// 			&#125;)</span></div><div class="line">			<span class="comment">// 		&#125;)</span></div><div class="line">			<span class="comment">// 	&#125;)</span></div><div class="line"></div><div class="line">			promiseAnimate(ball1, <span class="number">100</span>)</div><div class="line">				.then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">					<span class="keyword">return</span> promiseAnimate(ball2, <span class="number">200</span>)</div><div class="line">				&#125;)</div><div class="line">				.then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">					<span class="keyword">return</span> promiseAnimate(ball3, <span class="number">300</span>)</div><div class="line">				&#125;)</div><div class="line">				.then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">					<span class="keyword">return</span> promiseAnimate(ball3, <span class="number">150</span>)</div><div class="line">				&#125;)</div><div class="line">				.then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">					<span class="keyword">return</span> promiseAnimate(ball2, <span class="number">150</span>)</div><div class="line">				&#125;)</div><div class="line">				.then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">					<span class="keyword">return</span> promiseAnimate(ball1, <span class="number">150</span>)</div><div class="line">				&#125;)</div><div class="line">		<span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="三种状态"><a href="#三种状态" class="headerlink" title="三种状态"></a>三种状态</h2><p>未完成pending</p>
+<p>已完成fulfilled</p>
+<p>失败rejected</p>
+<p>状态不可逆，也就是说要么已完成，要么失败，不可能即完成又失败。</p>
+<h2 id="Promise-1"><a href="#Promise-1" class="headerlink" title="Promise"></a>Promise</h2><p>bluebird</p>
+<p>Q</p>
+<p>then.js</p>
+<p>es6-promise</p>
+<p>ypromise</p>
+<p>async</p>
+<p>native-promise-only</p>
+<h2 id="使用Promise改写的爬虫"><a href="#使用Promise改写的爬虫" class="headerlink" title="使用Promise改写的爬虫"></a>使用Promise改写的爬虫</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</div><div class="line"><span class="keyword">var</span> cheerio = <span class="built_in">require</span>(<span class="string">'cheerio'</span>)</div><div class="line"><span class="keyword">var</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">'bluebird'</span>)</div><div class="line">	<span class="comment">//var Promise = require('Promise') //老版本没有</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> url = <span class="string">"http://www.imooc.com/learn/348"</span></div><div class="line"><span class="keyword">var</span> baseUrl = <span class="string">"http://www.imooc.com/learn/"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterChapters</span>(<span class="params">html</span>) </span>&#123;</div><div class="line">	<span class="keyword">var</span> $ = cheerio.load(html)</div><div class="line">	<span class="keyword">var</span> chapters = $(<span class="string">'.chapter'</span>)</div><div class="line"></div><div class="line">	<span class="comment">//期望的数据格式</span></div><div class="line">	<span class="comment">//	couseData = &#123;</span></div><div class="line">	<span class="comment">//		title: title,</span></div><div class="line">	<span class="comment">//		number: number,</span></div><div class="line">	<span class="comment">//		videos: [&#123;</span></div><div class="line">	<span class="comment">//			chapterTitle: '',</span></div><div class="line">	<span class="comment">//			videos: [</span></div><div class="line">	<span class="comment">//				title: '',</span></div><div class="line">	<span class="comment">//				id: ''</span></div><div class="line">	<span class="comment">//			]</span></div><div class="line">	<span class="comment">//		&#125;]//	&#125;</span></div><div class="line"></div><div class="line">	<span class="keyword">var</span> title = $(<span class="string">'.course-infos .path span'</span>).text()</div><div class="line">		<span class="comment">//	var title = $('.course-infos .hd h2').text()</span></div><div class="line">	<span class="keyword">var</span> number = $($(<span class="string">'.course-infos .statics .static-item'</span>)[<span class="number">0</span>]).find(<span class="string">'.js-learn-num'</span>).text()</div><div class="line"></div><div class="line">	<span class="comment">//	console.log(title)</span></div><div class="line"></div><div class="line">	<span class="keyword">var</span> courseData = &#123;</div><div class="line">		<span class="attr">title</span>: title,</div><div class="line">		<span class="attr">number</span>: number,</div><div class="line">		<span class="attr">videos</span>: []</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	chapters.each(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>) </span>&#123;</div><div class="line">		<span class="keyword">var</span> chapter = $(<span class="keyword">this</span>)</div><div class="line">			<span class="comment">//			var chapterTitle = chapter.find('strong').children()[0].</span></div><div class="line"></div><div class="line">		<span class="keyword">var</span> chapterTitle = chapter.find(<span class="string">'strong'</span>).text().trim()</div><div class="line">			<span class="comment">//		console.log(chapterTitle)</span></div><div class="line"></div><div class="line">		<span class="keyword">var</span> videos = chapter.find(<span class="string">'.video'</span>).children(<span class="string">'li'</span>)</div><div class="line"></div><div class="line">		<span class="keyword">var</span> chapterData = &#123;</div><div class="line">			<span class="attr">chapterTitle</span>: chapterTitle,</div><div class="line">			<span class="attr">videos</span>: []</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		videos.each(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>) </span>&#123;</div><div class="line">			<span class="keyword">var</span> video = $(<span class="keyword">this</span>).find(<span class="string">'.J-media-item'</span>)</div><div class="line">			<span class="keyword">var</span> videoTitle = video.text().trim()</div><div class="line">			<span class="keyword">var</span> id = video.attr(<span class="string">'href'</span>).split(<span class="string">'video/'</span>)[<span class="number">1</span>].trim()</div><div class="line">			chapterData.videos.push(&#123;</div><div class="line">				<span class="attr">title</span>: videoTitle,</div><div class="line">				<span class="attr">id</span>: id</div><div class="line">			&#125;)</div><div class="line">		&#125;)</div><div class="line"></div><div class="line">		courseData.videos.push(chapterData)</div><div class="line"></div><div class="line">	&#125;)</div><div class="line"></div><div class="line">	<span class="keyword">return</span> courseData</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">printCourse</span>(<span class="params">course</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'课程：【'</span> + course.title + <span class="string">'】学习人数：'</span> + course.number)</div><div class="line">		<span class="comment">//	console.log('课程：【'+course.title+'】')</span></div><div class="line"></div><div class="line">	course.videos.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>) </span>&#123;</div><div class="line">		<span class="built_in">console</span>.log(item.chapterTitle + <span class="string">'\n'</span>)</div><div class="line">		item.videos.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">video</span>) </span>&#123;</div><div class="line">			<span class="built_in">console</span>.log(<span class="string">' 【'</span> + video.id + <span class="string">'】'</span> + video.title)</div><div class="line">		&#125;)</div><div class="line">	&#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getPageAsync</span>(<span class="params">url</span>) </span>&#123;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line"></div><div class="line">		http.get(url, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">			<span class="keyword">var</span> html = <span class="string">''</span></div><div class="line"></div><div class="line">			res.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">				html += data</div><div class="line">			&#125;)</div><div class="line"></div><div class="line">			res.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">				resolve(html)</div><div class="line">					<span class="comment">//				var course = filterChapters(html)</span></div><div class="line">					<span class="comment">//		console.log(course)</span></div><div class="line">					<span class="comment">//				printCourse(course)</span></div><div class="line">			&#125;)</div><div class="line">		&#125;).on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">			reject(e)</div><div class="line">				<span class="comment">//			console.log('获取课程出错')</span></div><div class="line">		&#125;)</div><div class="line">	&#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//爬取一个课程</span></div><div class="line"><span class="comment">//getPageAsync(url).then(function(data) &#123;</span></div><div class="line"><span class="comment">//	console.log(data)</span></div><div class="line"><span class="comment">//&#125;)</span></div><div class="line"></div><div class="line"><span class="comment">//如果要同时爬去多个课程，可以组建多个Promise</span></div><div class="line"><span class="comment">//组建每个课程的Promise</span></div><div class="line"><span class="keyword">var</span> fetchCourseArray = []</div><div class="line"></div><div class="line"><span class="comment">//要抓取的课程id</span></div><div class="line"><span class="keyword">var</span> videoIds = [<span class="number">637</span>, <span class="number">348</span>, <span class="number">259</span>]</div><div class="line"></div><div class="line"><span class="comment">//创建某个Promise</span></div><div class="line">videoIds.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</div><div class="line">	fetchCourseArray.push(getPageAsync(baseUrl + id))</div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">//并发执行所有Promise</span></div><div class="line"><span class="built_in">Promise</span>.</div><div class="line">all(fetchCourseArray)</div><div class="line">	.then(<span class="function"><span class="keyword">function</span>(<span class="params">pages</span>) </span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">var</span> cousreData = []</div><div class="line"></div><div class="line">		<span class="comment">//拿到了每页的数据html，循环遍历</span></div><div class="line">		pages.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">page</span>) </span>&#123;</div><div class="line"></div><div class="line">			<span class="comment">//解析每页的源码，解析Wie一个课程</span></div><div class="line">			<span class="keyword">var</span> courses = filterChapters(page)</div><div class="line"></div><div class="line">			cousreData.push(courses)</div><div class="line">		&#125;)</div><div class="line"></div><div class="line">		<span class="comment">//	按照学习人数排序</span></div><div class="line">		<span class="comment">//		cousreData.sort(function (a,b) &#123;</span></div><div class="line">		<span class="comment">//			return a.number&gt;b.number</span></div><div class="line">		<span class="comment">//		&#125;)</span></div><div class="line"></div><div class="line">		<span class="comment">//打印每个课程</span></div><div class="line">		cousreData.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>) </span>&#123;</div><div class="line">			printCourse(item)</div><div class="line">		&#125;)</div><div class="line">	&#125;)</div></pre></td></tr></table></figure>
+<h1 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h1><p>用来处理二进制数据的，直接在node交互是环境下输入Buffer打印如下信息：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123; [<span class="built_in">Function</span>: Buffer]</div><div class="line">  poolSize: <span class="number">8192</span>,</div><div class="line">  <span class="attr">isBuffer</span>: [<span class="built_in">Function</span>: isBuffer],</div><div class="line">  <span class="attr">compare</span>: [<span class="built_in">Function</span>: compare],</div><div class="line">  <span class="attr">isEncoding</span>: [<span class="built_in">Function</span>],</div><div class="line">  <span class="attr">concat</span>: [<span class="built_in">Function</span>],</div><div class="line">  <span class="attr">byteLength</span>: [<span class="built_in">Function</span>: byteLength] &#125;</div></pre></td></tr></table></figure>
+<p>说明Buffer是一个对象，在node中代表一段内存空间</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Buffer(<span class="string">'Hello 你好'</span>)</div><div class="line">&lt;Buffer <span class="number">48</span> <span class="number">65</span> <span class="number">6</span>c <span class="number">6</span>c <span class="number">6</span>f <span class="number">20</span> e4 bd a0 e5 a5 bd&gt;</div></pre></td></tr></table></figure>
+<p>创建的时候可以执行编码格式，默认是utf-8，比如我们指定为base64</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">new</span> Buffer(<span class="string">'Hello 你好'</span>,<span class="string">'base64'</span>)</div><div class="line">&lt;Buffer <span class="number">1</span>d e9 <span class="number">65</span> a3&gt;</div></pre></td></tr></table></figure>
+<h2 id="指定大小"><a href="#指定大小" class="headerlink" title="指定大小"></a>指定大小</h2><p>分配一段指定大小的内存空间，如果写入的长度大于分配的空间，多余的内容不会写入。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="number">7</span>);buf.write(<span class="string">'12345678'</span>);<span class="built_in">console</span>.log(buf);</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">Buffer</span> <span class="attr">31</span> <span class="attr">32</span> <span class="attr">33</span> <span class="attr">34</span> <span class="attr">35</span> <span class="attr">36</span> <span class="attr">37</span>&gt;</span></span></div></pre></td></tr></table></figure>
+<p>可以看见字符8没有存储。</p>
+<h2 id="数组方法初始化"><a href="#数组方法初始化" class="headerlink" title="数组方法初始化"></a>数组方法初始化</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">var</span> buf=<span class="keyword">new</span> Buffer([<span class="number">1</span>,<span class="number">3.4</span>,<span class="number">2.1</span>,<span class="number">3</span>]);<span class="built_in">console</span>.log(buf);</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">Buffer</span> <span class="attr">01</span> <span class="attr">03</span> <span class="attr">02</span> <span class="attr">03</span>&gt;</span></span></div></pre></td></tr></table></figure>
+<p>他会自动转为int，可以使用下表访问</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(buf[<span class="number">1</span>])</div></pre></td></tr></table></figure>
+<h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><p>buffer[index]</p>
+<p>buffer.length</p>
+<p>buffer.write(string,offset=0,length,encoding=utf8)</p>
+<p>可以看到超出长度的字符串不会被写入</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">var</span> b = <span class="keyword">new</span> Buffer(<span class="string">'hello 你好'</span>)</div><div class="line"><span class="literal">undefined</span></div><div class="line">&gt; b.toString()</div><div class="line"><span class="string">'hello 你好'</span></div><div class="line">&gt; b.length</div><div class="line"><span class="number">12</span></div><div class="line">&gt; b.write(<span class="string">'haha hahahahahahhah你是'</span>)</div><div class="line"><span class="number">12</span></div><div class="line">&gt; b.toString()</div><div class="line"><span class="string">'haha hahahah'</span></div></pre></td></tr></table></figure>
+<p>从第二个自开始替换，替换两个字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="keyword">var</span> b = <span class="keyword">new</span> Buffer(<span class="string">'hello 你好'</span>)</div><div class="line"><span class="literal">undefined</span></div><div class="line">&gt; b.write(<span class="string">'haha hahahahahahhah你是'</span>,<span class="number">2</span>,<span class="number">2</span>)</div><div class="line"><span class="number">2</span></div><div class="line">&gt; b.toString()</div><div class="line"><span class="string">'hehao 你好'</span></div><div class="line">&gt;</div></pre></td></tr></table></figure>
+<p>buffer.toString(encoding,start=0,end=buffer.length)</p>
+<p>指定开始和结束为止位置</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; b.toString(<span class="string">'utf-8'</span>,<span class="number">2</span>,<span class="number">4</span>)</div><div class="line"><span class="string">'ha'</span></div></pre></td></tr></table></figure>
+<p>buffer.copy(target,tStart,sStart,sEnd=buffer.length)</p>
+<p>buffer.splice(start,end)</p>
+<p>buffer.compare(otherBuffer)</p>
+<p>buffer.equals(otherBuffer)</p>
+<p>buffer.fill(value,offset,end)</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"></div><div class="line">fs.readFile(<span class="string">'logo.png'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err, origin_buffer</span>) </span>&#123;</div><div class="line">	<span class="keyword">if</span>(err) <span class="built_in">console</span>.log(err)</div><div class="line"></div><div class="line">	<span class="built_in">console</span>.log(Buffer.isBuffer(origin_buffer))</div><div class="line"></div><div class="line">	<span class="comment">//保存图片</span></div><div class="line">	fs.writeFile(<span class="string">'logo_save.png'</span>, origin_buffer, <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</div><div class="line">		<span class="keyword">if</span>(err) <span class="built_in">console</span>.log(err)</div><div class="line">	&#125;)</div><div class="line"></div><div class="line">	<span class="comment">//将图片转为base64</span></div><div class="line">	<span class="keyword">var</span> imageBase64 = origin_buffer.toString(<span class="string">'base64'</span>)</div><div class="line"></div><div class="line">	<span class="built_in">console</span>.log(imageBase64)</div><div class="line"></div><div class="line">	<span class="keyword">var</span> imageDecode = <span class="keyword">new</span> Buffer(imageBase64, <span class="string">'base64'</span>)</div><div class="line"></div><div class="line">	<span class="built_in">console</span>.log(Buffer.compare(origin_buffer, imageDecode))</div><div class="line"></div><div class="line">	fs.writeFile(<span class="string">'logo_decode.png'</span>, imageDecode, <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</div><div class="line">		<span class="keyword">if</span>(err) <span class="built_in">console</span>.log(err)</div><div class="line">	&#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>另外图片的base编码可以通过如下格式用到网页中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">data:image/png;base64,图片的base64编码</div></pre></td></tr></table></figure>
+<p>然后将上面的数据写入image的src或者css background中的url中，就可以显示出来图片了。</p>
+<h1 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h1><p>流相当于水管，是连接buffer的。</p>
+<p>拷贝图片</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs=<span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> source=fs.readFileSync(<span class="string">'./logo.png'</span>)</div><div class="line"></div><div class="line">fs.writeFileSync(<span class="string">'./logo_copy.png'</span>,source)</div></pre></td></tr></table></figure>
+<h2 id="流事件"><a href="#流事件" class="headerlink" title="流事件"></a>流事件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> readStream = fs.createReadStream(<span class="string">'./stream_copy_image.js'</span>)</div><div class="line"></div><div class="line">readStream.</div><div class="line">on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data emits'</span>)</div><div class="line">	<span class="built_in">console</span>.log(Buffer.isBuffer(chunk))</div><div class="line">	<span class="built_in">console</span>.log(chunk.toString(<span class="string">'utf8'</span>));</div><div class="line"></div><div class="line">&#125;).</div><div class="line">on(<span class="string">'readable'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data readable'</span>);</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data end'</span>)</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'close'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data close'</span>);</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data read error:'</span> + e);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h2 id="暂停和恢复流"><a href="#暂停和恢复流" class="headerlink" title="暂停和恢复流"></a>暂停和恢复流</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> readStream = fs.createReadStream(<span class="string">'./a.mov'</span>)</div><div class="line">	<span class="comment">//var readStream = fs.createReadStream('./stream_copy_image.js')</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> n = <span class="number">0</span></div><div class="line"></div><div class="line">readStream.</div><div class="line">on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>) </span>&#123;</div><div class="line">	n++</div><div class="line"></div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data emits'</span>)</div><div class="line">	<span class="built_in">console</span>.log(Buffer.isBuffer(chunk))</div><div class="line">		<span class="comment">//	console.log(chunk.toString('utf8'));</span></div><div class="line"></div><div class="line">	<span class="comment">//流的暂停和恢复</span></div><div class="line">	readStream.pause()</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">"stream pause"</span>);</div><div class="line"></div><div class="line">	setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">		readStream.resume()</div><div class="line">		<span class="built_in">console</span>.log(<span class="string">"stream resume"</span>);</div><div class="line"></div><div class="line">	&#125;, <span class="number">2000</span>)</div><div class="line"></div><div class="line">&#125;).</div><div class="line">on(<span class="string">'readable'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data readable'</span>);</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data end:'</span> + n)</div><div class="line"></div><div class="line">&#125;).</div><div class="line">on(<span class="string">'close'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data close'</span>);</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data read error:'</span> + e);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h2 id="通过流事件拷贝文件"><a href="#通过流事件拷贝文件" class="headerlink" title="通过流事件拷贝文件"></a>通过流事件拷贝文件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> readStream = fs.createReadStream(<span class="string">'a.mov'</span>)</div><div class="line"><span class="keyword">var</span> writeStream = fs.createWriteStream(<span class="string">'a_copy.mov'</span>)</div><div class="line"></div><div class="line">readStream.</div><div class="line">on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>) </span>&#123;</div><div class="line">	writeStream.write(chunk)</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	writeStream.end()</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>但是上面的代码有个问题就是，有可能写入的数据没有还没有写入到文件，缓冲区就会满了，所以推荐的做法是，判断写入到文件没，没有的话就暂停读取。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> readStream = fs.createReadStream(<span class="string">'a.mov'</span>)</div><div class="line"><span class="keyword">var</span> writeStream = fs.createWriteStream(<span class="string">'a_copy.mov'</span>)</div><div class="line"></div><div class="line">readStream.</div><div class="line">on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">chunk</span>) </span>&#123;</div><div class="line">	<span class="keyword">if</span>(writeStream.write(chunk) == <span class="literal">false</span>) &#123;</div><div class="line">		<span class="built_in">console</span>.log(<span class="string">'data pause'</span>)</div><div class="line">		readStream.pause()</div><div class="line">	&#125;</div><div class="line">&#125;).</div><div class="line">on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	writeStream.end()</div><div class="line">&#125;)</div><div class="line"></div><div class="line">writeStream.</div><div class="line">on(<span class="string">'drain'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(<span class="string">'data drains'</span>)</div><div class="line">	readStream.resume()</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h2 id="流的种类"><a href="#流的种类" class="headerlink" title="流的种类"></a>流的种类</h2><p>Readable，Writable，Duplex，Transform</p>
+<h2 id="pipe"><a href="#pipe" class="headerlink" title="pipe"></a>pipe</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</div><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line"><span class="keyword">var</span> request = <span class="built_in">require</span>(<span class="string">'request'</span>)</div><div class="line"></div><div class="line">http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">//通过传统方法读取图片</span></div><div class="line">	<span class="comment">//	fs.readFile('./logo.png', function(err,data) &#123;</span></div><div class="line">	<span class="comment">//		if(err) &#123;</span></div><div class="line">	<span class="comment">//			res.end('file not exist')</span></div><div class="line">	<span class="comment">//		&#125; else &#123;</span></div><div class="line">	<span class="comment">//			res.writeHeader(200, &#123;</span></div><div class="line">	<span class="comment">//				'Content-Type': 'image/png'</span></div><div class="line">	<span class="comment">//			&#125;)</span></div><div class="line">	<span class="comment">//			res.end(data)</span></div><div class="line">	<span class="comment">//		&#125;</span></div><div class="line">	<span class="comment">//	&#125;)</span></div><div class="line"></div><div class="line">	<span class="comment">//通过管道</span></div><div class="line">	<span class="comment">//	fs.createReadStream('./logo.png').pipe(res)</span></div><div class="line"></div><div class="line">	<span class="comment">//还可以通过网络获取一张图片,需要安装</span></div><div class="line">	request(<span class="string">'https://gss1.bdstatic.com/5eN1dDebRNRTm2_p8IuM_a/res/img/richanglogo168_24.png'</span>).</div><div class="line">	pipe(res)</div><div class="line">&#125;).listen(<span class="number">8090</span>)</div></pre></td></tr></table></figure>
+<h3 id="拷贝文件"><a href="#拷贝文件" class="headerlink" title="拷贝文件"></a>拷贝文件</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</div><div class="line">fs.createReadStream(<span class="string">'a.mov'</span>).pipe(fs.createWriteStream(<span class="string">'a_copy.mov'</span>))</div></pre></td></tr></table></figure>
+<h2 id="自定义可写流函数"><a href="#自定义可写流函数" class="headerlink" title="自定义可写流函数"></a>自定义可写流函数</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Readable = <span class="built_in">require</span>(<span class="string">'stream'</span>).Readable</div><div class="line"><span class="keyword">var</span> Writable = <span class="built_in">require</span>(<span class="string">'stream'</span>).Writable</div><div class="line"></div><div class="line"><span class="keyword">var</span> readStream = <span class="keyword">new</span> Readable()</div><div class="line"><span class="keyword">var</span> writeStream = <span class="keyword">new</span> Writable()</div><div class="line"></div><div class="line">readStream.push(<span class="string">'i '</span>)</div><div class="line">readStream.push(<span class="string">"Love "</span>)</div><div class="line">readStream.push(<span class="string">"JS \n"</span>)</div><div class="line">readStream.push(<span class="literal">null</span>)</div><div class="line"></div><div class="line"><span class="comment">//自定义了Writable的write方法</span></div><div class="line">writeStream._write = <span class="function"><span class="keyword">function</span>(<span class="params">chunk, encode, cb</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(chunk.toString())</div><div class="line">	cb()</div><div class="line">&#125;</div><div class="line"></div><div class="line">readStream.pipe(writeStream)</div></pre></td></tr></table></figure>
+<h2 id="自定义流"><a href="#自定义流" class="headerlink" title="自定义流"></a>自定义流</h2><p>我们自定义了ReadStream，WritStream，TransformStream并通过TransformStream流混入一些数据</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> stream = <span class="built_in">require</span>(<span class="string">'stream'</span>)</div><div class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">ReadStream</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	stream.Readable.call(<span class="keyword">this</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">util.inherits(ReadStream, stream.Readable)</div><div class="line"></div><div class="line">ReadStream.prototype._read = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.push(<span class="string">'i '</span>)</div><div class="line">	<span class="keyword">this</span>.push(<span class="string">"Love "</span>)</div><div class="line">	<span class="keyword">this</span>.push(<span class="string">"JS \n"</span>)</div><div class="line">	<span class="keyword">this</span>.push(<span class="literal">null</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">WritStream</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	stream.Writable.call(<span class="keyword">this</span>)</div><div class="line">	<span class="keyword">this</span>._cached = <span class="keyword">new</span> Buffer(<span class="string">''</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">util.inherits(WritStream, stream.Writable)</div><div class="line"></div><div class="line">WritStream.prototype._write = <span class="function"><span class="keyword">function</span>(<span class="params">chunk, encode, cb</span>) </span>&#123;</div><div class="line">	<span class="built_in">console</span>.log(chunk.toString());</div><div class="line">	cb()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">TransformStream</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	stream.Transform.call(<span class="keyword">this</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">util.inherits(TransformStream, stream.Transform)</div><div class="line"></div><div class="line">TransformStream.prototype._transform = <span class="function"><span class="keyword">function</span>(<span class="params">chunk, encode, cb</span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.push(chunk)</div><div class="line">	<span class="keyword">this</span>.push(<span class="string">'transform '</span>)</div><div class="line">	cb()</div><div class="line">&#125;</div><div class="line"></div><div class="line">TransformStream.prototype._flush = <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>) </span>&#123;</div><div class="line">	<span class="keyword">this</span>.push(<span class="string">'flush '</span>)</div><div class="line">	cb()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> rs = <span class="keyword">new</span> ReadStream()</div><div class="line"><span class="keyword">var</span> ws = <span class="keyword">new</span> WritStream()</div><div class="line"><span class="keyword">var</span> ts = <span class="keyword">new</span> TransformStream()</div><div class="line"></div><div class="line">rs.pipe(ts).pipe(ws)</div></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">i </div><div class="line">transform </div><div class="line">Love </div><div class="line">transform </div><div class="line">JS </div><div class="line"></div><div class="line">transform </div><div class="line">flush</div></pre></td></tr></table></figure>
+<h1 id="常见错误"><a href="#常见错误" class="headerlink" title="常见错误"></a>常见错误</h1><p>## </p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NodeJs/" rel="tag">#NodeJs</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/17/java-script-syntax/" rel="next" title="JavaScript语法总结">
+                <i class="fa fa-chevron-left"></i> JavaScript语法总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/27/mongodb/" rel="prev" title="MongoDB">
+                MongoDB <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/11/23/nodejs/"
+     data-title="NodeJs"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/11/23/nodejs/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/23/nodejs/"
+           data-title="NodeJs" data-url="http://i.woblog.cn/2016/11/23/nodejs/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习网站"><span class="nav-number">1.</span> <span class="nav-text">学习网站</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装nodeJS"><span class="nav-number">2.</span> <span class="nav-text">安装nodeJS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#版本"><span class="nav-number">2.1.</span> <span class="nav-text">版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mac安装"><span class="nav-number">2.2.</span> <span class="nav-text">mac安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#homebrew"><span class="nav-number">2.3.</span> <span class="nav-text">homebrew</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本安装"><span class="nav-number">2.4.</span> <span class="nav-text">多版本安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最简单的服务器"><span class="nav-number">3.</span> <span class="nav-text">最简单的服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在命令行执行"><span class="nav-number">4.</span> <span class="nav-text">在命令行执行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模块"><span class="nav-number">5.</span> <span class="nav-text">模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模块的使用流程"><span class="nav-number">5.1.</span> <span class="nav-text">模块的使用流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用API"><span class="nav-number">6.</span> <span class="nav-text">常用API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#URL"><span class="nav-number">6.1.</span> <span class="nav-text">URL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#parse"><span class="nav-number">6.1.1.</span> <span class="nav-text">parse</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#format"><span class="nav-number">6.2.</span> <span class="nav-text">format</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#resolve"><span class="nav-number">6.3.</span> <span class="nav-text">resolve</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#queryString"><span class="nav-number">6.4.</span> <span class="nav-text">queryString</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将对象转为参数字符串"><span class="nav-number">6.4.1.</span> <span class="nav-text">将对象转为参数字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将字符串解析为对象"><span class="nav-number">6.4.2.</span> <span class="nav-text">将字符串解析为对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符转义"><span class="nav-number">6.4.3.</span> <span class="nav-text">字符转义</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上下文"><span class="nav-number">7.</span> <span class="nav-text">上下文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#改变上下文"><span class="nav-number">7.1.</span> <span class="nav-text">改变上下文</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#性能测试"><span class="nav-number">8.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nodeJS事件"><span class="nav-number">9.</span> <span class="nav-text">nodeJS事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#request方法实例"><span class="nav-number">10.</span> <span class="nav-text">request方法实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Promise"><span class="nav-number">11.</span> <span class="nav-text">Promise</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#三种状态"><span class="nav-number">11.1.</span> <span class="nav-text">三种状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Promise-1"><span class="nav-number">11.2.</span> <span class="nav-text">Promise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Promise改写的爬虫"><span class="nav-number">11.3.</span> <span class="nav-text">使用Promise改写的爬虫</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Buffer"><span class="nav-number">12.</span> <span class="nav-text">Buffer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#指定大小"><span class="nav-number">12.1.</span> <span class="nav-text">指定大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组方法初始化"><span class="nav-number">12.2.</span> <span class="nav-text">数组方法初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用方法"><span class="nav-number">12.3.</span> <span class="nav-text">常用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">12.4.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Stream"><span class="nav-number">13.</span> <span class="nav-text">Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#流事件"><span class="nav-number">13.1.</span> <span class="nav-text">流事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#暂停和恢复流"><span class="nav-number">13.2.</span> <span class="nav-text">暂停和恢复流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过流事件拷贝文件"><span class="nav-number">13.3.</span> <span class="nav-text">通过流事件拷贝文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流的种类"><span class="nav-number">13.4.</span> <span class="nav-text">流的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipe"><span class="nav-number">13.5.</span> <span class="nav-text">pipe</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#拷贝文件"><span class="nav-number">13.5.1.</span> <span class="nav-text">拷贝文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义可写流函数"><span class="nav-number">13.6.</span> <span class="nav-text">自定义可写流函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义流"><span class="nav-number">13.7.</span> <span class="nav-text">自定义流</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见错误"><span class="nav-number">14.</span> <span class="nav-text">常见错误</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="smali," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="smali文件格式反编译过来的smali文件会依次根据包名放在相应的目录里，普通类，抽象类，接口和内部类都是单独的smali文件
+文件头每个文件头前3行描述了当前类的一些信息
+123.class &amp;lt;权限修饰符&amp;gt; [修饰关键字] &amp;lt;类名&amp;gt; #classIdx.super &amp;lt;父类名&amp;gt; #superclassIdx.source &amp;lt;源文件名(没有路径)&amp;gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Smali语法与Java语法的对比">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/05/smali-compare-java-sytax/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="smali文件格式反编译过来的smali文件会依次根据包名放在相应的目录里，普通类，抽象类，接口和内部类都是单独的smali文件
+文件头每个文件头前3行描述了当前类的一些信息
+123.class &amp;lt;权限修饰符&amp;gt; [修饰关键字] &amp;lt;类名&amp;gt; #classIdx.super &amp;lt;父类名&amp;gt; #superclassIdx.source &amp;lt;源文件名(没有路径)&amp;gt;">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Smali语法与Java语法的对比">
+<meta name="twitter:description" content="smali文件格式反编译过来的smali文件会依次根据包名放在相应的目录里，普通类，抽象类，接口和内部类都是单独的smali文件
+文件头每个文件头前3行描述了当前类的一些信息
+123.class &amp;lt;权限修饰符&amp;gt; [修饰关键字] &amp;lt;类名&amp;gt; #classIdx.super &amp;lt;父类名&amp;gt; #superclassIdx.source &amp;lt;源文件名(没有路径)&amp;gt;">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> Smali语法与Java语法的对比 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Smali语法与Java语法的对比
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-05T11:41:27+00:00" content="2016-08-05">
+              2016-08-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Dalvik/" itemprop="url" rel="index">
+                    <span itemprop="name">Dalvik</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/05/smali-compare-java-sytax/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/05/smali-compare-java-sytax/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="smali文件格式"><a href="#smali文件格式" class="headerlink" title="smali文件格式"></a>smali文件格式</h1><p>反编译过来的smali文件会依次根据包名放在相应的目录里，普通类，抽象类，接口和内部类都是单独的smali文件</p>
+<h2 id="文件头"><a href="#文件头" class="headerlink" title="文件头"></a>文件头</h2><p>每个文件头前3行描述了当前类的一些信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.class &lt;权限修饰符&gt; [修饰关键字] &lt;类名&gt; #classIdx</div><div class="line">.super &lt;父类名&gt; #superclassIdx</div><div class="line">.source &lt;源文件名(没有路径)&gt; #sourceFileIdx</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.class public Lcom/example/testsmali/MainActivity;</div><div class="line">.super Landroid/app/Activity;</div><div class="line">.source &quot;MainActivity.java&quot;</div></pre></td></tr></table></figure>
+<p>如果没有父类，就没有.super这行，混淆后的apk .source有可能就没有值，其实这里面的信息就是Dex中DexClassDef结构中的</p>
+<p>加有final修饰符的结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.class public final Lcom/woblog/testsmali/smali/StaticFinalClass;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;StaticFinalClass.java&quot;</div></pre></td></tr></table></figure>
+<h1 id="字段"><a href="#字段" class="headerlink" title="字段"></a>字段</h1><p>使用.field 声明</p>
+<h2 id="实例字段"><a href="#实例字段" class="headerlink" title="实例字段"></a>实例字段</h2><p>.field &lt;权限修饰符&gt; [修饰关键字] &lt;字段名&gt;:&lt;字段类型&gt;</p>
+<h2 id="静态字段"><a href="#静态字段" class="headerlink" title="静态字段"></a>静态字段</h2><p>.field &lt;权限修饰符&gt; static [修饰关键字] &lt;字段名&gt;:&lt;字段类型&gt;</p>
+<p>可以看到静态的只是多了static修饰关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"># static fields</div><div class="line">.field private static name:Ljava/lang/String; = null</div><div class="line"></div><div class="line">.field private static final password:Ljava/lang/String; = &quot;123456&quot;</div><div class="line"></div><div class="line"></div><div class="line"># instance fields</div><div class="line">.field private final age:I</div><div class="line"></div><div class="line">.field private price:Ljava/lang/Integer;</div></pre></td></tr></table></figure>
+<p><code># instance fields</code>这是baksmali添加的注释</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">private static String name;</div><div class="line">private static final String password = &quot;123456&quot;;</div><div class="line">private final int age = 25;</div><div class="line">private Integer price = 888888;</div></pre></td></tr></table></figure>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>使用.method指令声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"># direct method</div><div class="line">.method &lt;权限修饰符&gt; [修饰关键字] &lt;方法原型&gt;</div><div class="line">	&lt;.locals&gt;</div><div class="line">	[.param]</div><div class="line">	[.prologue]</div><div class="line">	[.line]</div><div class="line"></div><div class="line">	&lt;代码块&gt;</div><div class="line"></div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p><code># direct methods</code>是baksmali添加的注释</p>
+<p>locals:局部变量数</p>
+<p>param：参数</p>
+<p>prologue：代码开始</p>
+<p>line：源代码行数，混淆了可能没有</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">.method public static append([III)[I</div><div class="line">    .locals 4</div><div class="line">    .param p0, &quot;array&quot;    # [I</div><div class="line">    .param p1, &quot;currentSize&quot;    # I</div><div class="line">    .param p2, &quot;element&quot;    # I</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    const/4 v3, 0x0</div><div class="line"></div><div class="line">    .line 57</div><div class="line">    sget-boolean v1, Landroid/support/v7/content/res/GrowingArrayUtils;-&gt;$assertionsDisabled:Z</div><div class="line"></div><div class="line">    if-nez v1, :cond_0</div><div class="line"></div><div class="line">    array-length v1, p0</div><div class="line"></div><div class="line">    if-le p1, v1, :cond_0</div><div class="line"></div><div class="line">    new-instance v1, Ljava/lang/AssertionError;</div><div class="line"></div><div class="line">    invoke-direct &#123;v1&#125;, Ljava/lang/AssertionError;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    throw v1</div><div class="line"></div><div class="line">    .line 59</div><div class="line">    :cond_0</div><div class="line">    add-int/lit8 v1, p1, 0x1</div><div class="line"></div><div class="line">    array-length v2, p0</div><div class="line"></div><div class="line">    if-le v1, v2, :cond_1</div><div class="line"></div><div class="line">    .line 60</div><div class="line">    invoke-static &#123;p1&#125;, Landroid/support/v7/content/res/GrowingArrayUtils;-&gt;growSize(I)I</div><div class="line"></div><div class="line">    move-result v1</div><div class="line"></div><div class="line">    new-array v0, v1, [I</div><div class="line"></div><div class="line">    .line 61</div><div class="line">    .local v0, &quot;newArray&quot;:[I</div><div class="line">    invoke-static &#123;p0, v3, v0, v3, p1&#125;, Ljava/lang/System;-&gt;arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V</div><div class="line"></div><div class="line">    .line 62</div><div class="line">    move-object p0, v0</div><div class="line"></div><div class="line">    .line 64</div><div class="line">    .end local v0    # &quot;newArray&quot;:[I</div><div class="line">    :cond_1</div><div class="line">    aput p2, p0, p1</div><div class="line"></div><div class="line">    .line 65</div><div class="line">    return-object p0</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span>[] append(<span class="keyword">int</span>[] array, <span class="keyword">int</span> currentSize, <span class="keyword">int</span> element) &#123;</div><div class="line">    <span class="keyword">assert</span> currentSize &lt;= array.length;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (currentSize + <span class="number">1</span> &gt; array.length) &#123;</div><div class="line">        <span class="keyword">int</span>[] newArray = <span class="keyword">new</span> <span class="keyword">int</span>[growSize(currentSize)];</div><div class="line">        System.arraycopy(array, <span class="number">0</span>, newArray, <span class="number">0</span>, currentSize);</div><div class="line">        array = newArray;</div><div class="line">    &#125;</div><div class="line">    array[currentSize] = element;</div><div class="line">    <span class="keyword">return</span> array;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>direct methods：直接方法</p>
+<p>virtual methods:虚方法</p>
+<p>他们的区别是直接方法一般是private，虚方法一般是覆盖，重载，或者实现的接口，抽象类的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"># direct methods</div><div class="line">.method public constructor &lt;init&gt;()V</div><div class="line">    .locals 1</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 3</div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    .line 6</div><div class="line">    const/16 v0, 0x19</div><div class="line"></div><div class="line">    iput v0, p0, Lcn/woblog/testsmali/smali/StaticFinalClass;-&gt;age:I</div><div class="line"></div><div class="line">    .line 7</div><div class="line">    const v0, 0xd9038</div><div class="line"></div><div class="line">    invoke-static &#123;v0&#125;, Ljava/lang/Integer;-&gt;valueOf(I)Ljava/lang/Integer;</div><div class="line"></div><div class="line">    move-result-object v0</div><div class="line"></div><div class="line">    iput-object v0, p0, Lcn/woblog/testsmali/smali/StaticFinalClass;-&gt;price:Ljava/lang/Integer;</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<h2 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h2><p>如果方法的声明中使用throws关键字抛出异常，就会生成Throws注解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"># virtual methods</div><div class="line">.method public throw1()V</div><div class="line">    .locals 1</div><div class="line">    .annotation system Ldalvik/annotation/Throws;</div><div class="line">        value = &#123;</div><div class="line">            Ljava/lang/Exception;</div><div class="line">        &#125;</div><div class="line">    .end annotation</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 5</div><div class="line">    new-instance v0, Ljava/lang/Exception;</div><div class="line"></div><div class="line">    invoke-direct &#123;v0&#125;, Ljava/lang/Exception;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    throw v0</div><div class="line">.end method</div><div class="line"></div><div class="line">.method public throw2()V</div><div class="line">    .locals 1</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 9</div><div class="line">    new-instance v0, Ljava/lang/RuntimeException;</div><div class="line"></div><div class="line">    invoke-direct &#123;v0&#125;, Ljava/lang/RuntimeException;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    throw v0</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class ThrowClass &#123;</div><div class="line">    public void throw1() throws Exception &#123;</div><div class="line">        throw new Exception();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void throw2() &#123;</div><div class="line">        throw new RuntimeException();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="类实现了接口"><a href="#类实现了接口" class="headerlink" title="类实现了接口"></a>类实现了接口</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># interfcase</div><div class="line">.implements &lt;接口名&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># interfaces</div><div class="line">.implements Lcn/woblog/testsmali/ICallback; #来着interfacesOff指定的结构体中的值</div><div class="line">.implements Lcn/woblog/testsmali/ICallbackTwo;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Callback</span> <span class="keyword">implements</span> <span class="title">ICallback</span>,<span class="title">ICallbackTwo</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">success</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h1><p>注解可以作用到类，方法和字段，但他们的表现形式是不一样的</p>
+<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>类的注解是直接添加到smali文件上面的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># annotations &lt;注解属性&gt; &lt;注解类名&gt;</div><div class="line">	[注解字段=值]</div><div class="line">.end annotation</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># annotations</div><div class="line">.annotation runtime Lcn/woblog/testsmali/smali/MyClassAnnotation;</div><div class="line">    otherName = &quot;otherName&quot;</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation runtime Lcn/woblog/testsmali/smali/MyClassAnnotationTwo;</div><div class="line">    value = &quot;value&quot;</div><div class="line">.end annotation</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@MyClassAnnotation</span>(otherName = <span class="string">"otherName"</span>)</div><div class="line"><span class="meta">@MyClassAnnotationTwo</span>(<span class="string">"value"</span>)</div><div class="line"><span class="comment">//@MyClassAnnotationTwo(value = "value")</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Callback</span></span>&#123;</div><div class="line">  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="字段-1"><a href="#字段-1" class="headerlink" title="字段"></a>字段</h2><p>如果注解在字段上，他会被包含在field里面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.field &lt;权限修饰符&gt; static [修饰关键字] &lt;字段名&gt;:&lt;字段类型&gt;</div><div class="line">	# annotations &lt;注解属性&gt; &lt;注解类名&gt;</div><div class="line">		[注解字段=值]</div><div class="line">	.end annotation</div><div class="line">..end field</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"># instance fields</div><div class="line">.field private name:Ljava/lang/String;</div><div class="line">    .annotation runtime Lcn/woblog/testsmali/smali/MyFiledAnnotation;</div><div class="line">        report = false</div><div class="line">        tag = &quot;tag1&quot;</div><div class="line">    .end annotation</div><div class="line">.end field</div><div class="line"></div><div class="line">.field private password:Ljava/lang/String;</div><div class="line">    .annotation runtime Lcn/woblog/testsmali/smali/MyFiledAnnotation;</div><div class="line">        report = true</div><div class="line">    .end annotation</div><div class="line">.end field</div><div class="line"></div><div class="line">.field private vip:Z</div><div class="line">    .annotation runtime Lcn/woblog/testsmali/smali/MyFiledAnnotation;</div><div class="line">        report = false</div><div class="line">    .end annotation</div><div class="line">.end field</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//字段注解</span></div><div class="line"><span class="meta">@MyFiledAnnotation</span>(tag = <span class="string">"tag1"</span>,report = <span class="keyword">false</span>)</div><div class="line"><span class="keyword">private</span> String name;</div><div class="line"></div><div class="line"><span class="meta">@MyFiledAnnotation</span>(report = <span class="keyword">true</span>)</div><div class="line"><span class="keyword">private</span> String password;</div><div class="line"></div><div class="line"><span class="meta">@MyFiledAnnotation</span>(report = <span class="keyword">false</span>)</div><div class="line"><span class="keyword">private</span> <span class="keyword">boolean</span> vip;</div></pre></td></tr></table></figure>
+<h1 id="类-1"><a href="#类-1" class="headerlink" title="类"></a>类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.class public Lcn/woblog/testsmali/Callback;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;Callback.java&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package cn.woblog.testsmali.smali;</div><div class="line"></div><div class="line">public final class StaticFinalClass &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h1><p>内部类可分为，内部类，静态嵌套类，方法内部类，匿名内部类，他为每个内部类生成一个独立的文件，格式为：[外部类]$[内部类].smali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">package cn.woblog.testsmali.smali;</div><div class="line"></div><div class="line">import android.util.Log;</div><div class="line"></div><div class="line">public class OuterClass &#123;</div><div class="line">    //内部类</div><div class="line">    class Inner &#123;</div><div class="line">        class Inner1 &#123;</div><div class="line">            public void main() &#123;</div><div class="line">                Inner inner = new Inner();</div><div class="line">                inner.run();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public void run() &#123;</div><div class="line">            Log.d(&quot;TAG&quot;, &quot;run&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //静态内部类</div><div class="line">    public static class InnerStatic &#123;</div><div class="line">        public void main() &#123;</div><div class="line">            new Thread() &#123;</div><div class="line">                @Override</div><div class="line">                public void run() &#123;</div><div class="line">                    super.run();</div><div class="line">                    Log.d(&quot;TAG&quot;, &quot;static run&quot;);</div><div class="line">                &#125;</div><div class="line">            &#125;.start();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述代码会生成下面这些smali文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">OuterClass$Inner$Inner1.smali</div><div class="line">OuterClass$Inner.smali</div><div class="line">OuterClass$InnerStatic$1.smali</div><div class="line">OuterClass$InnerStatic.smali</div><div class="line">OuterClass.smali</div></pre></td></tr></table></figure>
+<p>可以看见内部类是以$符号分隔每个类的，匿名内部类会依次生成$1~这样的格式</p>
+<p>OuterClass.smali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">.class public Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;OuterClass.java&quot;</div><div class="line"></div><div class="line"></div><div class="line"># annotations</div><div class="line">.annotation system Ldalvik/annotation/MemberClasses;</div><div class="line">    value = &#123;</div><div class="line">        Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;,</div><div class="line">        Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line">    &#125;</div><div class="line">.end annotation</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method public constructor &lt;init&gt;()V</div><div class="line">    .locals 0</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 5</div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>可以看见如果一个类中有定义内部类，那么会有MemberClasses的注解，他的value是一个列表，里面是每一个类名</p>
+<p>OuterClass$Inner.smali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">.class Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;OuterClass.java&quot;</div><div class="line"></div><div class="line"></div><div class="line"># annotations</div><div class="line">.annotation system Ldalvik/annotation/EnclosingClass;</div><div class="line">    value = Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation system Ldalvik/annotation/InnerClass;</div><div class="line">    accessFlags = 0x0</div><div class="line">    name = &quot;Inner&quot;</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation system Ldalvik/annotation/MemberClasses;</div><div class="line">    value = &#123;</div><div class="line">        Lcn/woblog/testsmali/smali/OuterClass$Inner$Inner1;</div><div class="line">    &#125;</div><div class="line">.end annotation</div><div class="line"></div><div class="line"></div><div class="line"># instance fields</div><div class="line">.field final synthetic this$0:Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method constructor &lt;init&gt;(Lcn/woblog/testsmali/smali/OuterClass;)V</div><div class="line">    .locals 0</div><div class="line">    .param p1, &quot;this$0&quot;    # Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 7</div><div class="line">    iput-object p1, p0, Lcn/woblog/testsmali/smali/OuterClass$Inner;-&gt;this$0:Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line"></div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line"></div><div class="line"># virtual methods</div><div class="line">.method public run()V</div><div class="line">    .locals 2</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 16</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;run&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 17</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>如果是一个内部类，他有两个注解EnclosingClass，InnerClass</p>
+<p>EnclosingClass：里面的值为父类类名</p>
+<p>InnerClass：定义了内部类一些信息</p>
+<p>​    accessFlags = 0x0：访问修饰符<br>      name = “Inner”：内部类类名，如果是匿名内部类他为name = null</p>
+<p>还有一个synthetic修饰的this$0实例字段，是外部类的引用，0表示引用层数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public class OuterClass &#123; //this$0</div><div class="line">    class Inner &#123; //this$1</div><div class="line">        class Inner1 &#123;</div><div class="line">            public void main() &#123;</div><div class="line">                Inner inner = new Inner();</div><div class="line">                inner.run();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>synthetic表示合成的，表示不是我们自己写的，而是编译器生成的，下面我们来看看内部类的初始化过程</p>
+<p>首先他的init方法有两个参数，第一个p0是this,p1是外部类的应用，传递进来赋值给this$0，然后在调用父类的初始化方法</p>
+<p>OuterClass$Inner$Inner1.smali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">.class Lcn/woblog/testsmali/smali/OuterClass$Inner$Inner1;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;OuterClass.java&quot;</div><div class="line"></div><div class="line"></div><div class="line"># annotations</div><div class="line">.annotation system Ldalvik/annotation/EnclosingClass;</div><div class="line">    value = Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation system Ldalvik/annotation/InnerClass;</div><div class="line">    accessFlags = 0x0</div><div class="line">    name = &quot;Inner1&quot;</div><div class="line">.end annotation</div><div class="line"></div><div class="line"></div><div class="line"># instance fields</div><div class="line">.field final synthetic this$1:Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method constructor &lt;init&gt;(Lcn/woblog/testsmali/smali/OuterClass$Inner;)V</div><div class="line">    .locals 0</div><div class="line">    .param p1, &quot;this$1&quot;    # Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 8</div><div class="line">    iput-object p1, p0, Lcn/woblog/testsmali/smali/OuterClass$Inner$Inner1;-&gt;this$1:Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line"></div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line"></div><div class="line"># virtual methods</div><div class="line">.method public main()V</div><div class="line">    .locals 2</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 10</div><div class="line">    new-instance v0, Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line"></div><div class="line">    iget-object v1, p0, Lcn/woblog/testsmali/smali/OuterClass$Inner$Inner1;-&gt;this$1:Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line"></div><div class="line">    iget-object v1, v1, Lcn/woblog/testsmali/smali/OuterClass$Inner;-&gt;this$0:Lcn/woblog/testsmali/smali/OuterClass;</div><div class="line"></div><div class="line">    invoke-direct &#123;v0, v1&#125;, Lcn/woblog/testsmali/smali/OuterClass$Inner;-&gt;&lt;init&gt;(Lcn/woblog/testsmali/smali/OuterClass;)V</div><div class="line"></div><div class="line">    .line 11</div><div class="line">    .local v0, &quot;inner&quot;:Lcn/woblog/testsmali/smali/OuterClass$Inner;</div><div class="line">    invoke-virtual &#123;v0&#125;, Lcn/woblog/testsmali/smali/OuterClass$Inner;-&gt;run()V</div><div class="line"></div><div class="line">    .line 12</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>OuterClass$InnerStatic$1.smali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">.class Lcn/woblog/testsmali/smali/OuterClass$InnerStatic$1;</div><div class="line">.super Ljava/lang/Thread;</div><div class="line">.source &quot;OuterClass.java&quot;</div><div class="line"></div><div class="line"></div><div class="line"># annotations</div><div class="line">.annotation system Ldalvik/annotation/EnclosingMethod;</div><div class="line">    value = Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;-&gt;main()V</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation system Ldalvik/annotation/InnerClass;</div><div class="line">    accessFlags = 0x0</div><div class="line">    name = null</div><div class="line">.end annotation</div><div class="line"></div><div class="line"></div><div class="line"># instance fields</div><div class="line">.field final synthetic this$0:Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method constructor &lt;init&gt;(Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;)V</div><div class="line">    .locals 0</div><div class="line">    .param p1, &quot;this$0&quot;    # Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 23</div><div class="line">    iput-object p1, p0, Lcn/woblog/testsmali/smali/OuterClass$InnerStatic$1;-&gt;this$0:Lcn/woblog/testsmali/smali/OuterClass$InnerStatic;</div><div class="line"></div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Thread;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line"></div><div class="line"># virtual methods</div><div class="line">.method public run()V</div><div class="line">    .locals 2</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 26</div><div class="line">    invoke-super &#123;p0&#125;, Ljava/lang/Thread;-&gt;run()V</div><div class="line"></div><div class="line">    .line 27</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;static run&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 28</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<h1 id="监听器"><a href="#监听器" class="headerlink" title="监听器"></a>监听器</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">const v2, 0x7f0b0054</div><div class="line"></div><div class="line">invoke-virtual &#123;p0, v2&#125;, Lcn/woblog/testsmali/MainActivity;-&gt;findViewById(I)Landroid/view/View;</div><div class="line"></div><div class="line">move-result-object v0</div><div class="line"></div><div class="line">check-cast v0, Landroid/widget/Button;</div><div class="line"></div><div class="line">.line 37</div><div class="line">.local v0, &quot;bt1&quot;:Landroid/widget/Button;</div><div class="line">new-instance v2, Lcn/woblog/testsmali/MainActivity$1; //创建匿名监听器对象</div><div class="line"></div><div class="line">invoke-direct &#123;v2, p0&#125;, Lcn/woblog/testsmali/MainActivity$1;-&gt;&lt;init&gt;(Lcn/woblog/testsmali/MainActivity;)V</div><div class="line"></div><div class="line">invoke-virtual &#123;v0, v2&#125;, Landroid/widget/Button;-&gt;setOnClickListener(Landroid/view/View$OnClickListener;)V //设置匿名监听器</div><div class="line"></div><div class="line">.line 44</div><div class="line">const v2, 0x7f0b0055</div><div class="line"></div><div class="line">invoke-virtual &#123;p0, v2&#125;, Lcn/woblog/testsmali/MainActivity;-&gt;findViewById(I)Landroid/view/View;</div><div class="line"></div><div class="line">move-result-object v1</div><div class="line"></div><div class="line">check-cast v1, Landroid/widget/Button;</div><div class="line"></div><div class="line">.line 45</div><div class="line">.local v1, &quot;bt2&quot;:Landroid/widget/Button;</div><div class="line">invoke-virtual &#123;v1, p0&#125;, Landroid/widget/Button;-&gt;setOnClickListener(Landroid/view/View$OnClickListener;)V //设置类监听器</div></pre></td></tr></table></figure>
+<p>MainActivity$1.smali</p>
+<p>匿名监听器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">.class Lcn/woblog/testsmali/MainActivity$1;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;MainActivity.java&quot;</div><div class="line"></div><div class="line"># interfaces</div><div class="line">.implements Landroid/view/View$OnClickListener;</div><div class="line"></div><div class="line"></div><div class="line"># annotations</div><div class="line">.annotation system Ldalvik/annotation/EnclosingMethod;</div><div class="line">    value = Lcn/woblog/testsmali/MainActivity;-&gt;testListener()V</div><div class="line">.end annotation</div><div class="line"></div><div class="line">.annotation system Ldalvik/annotation/InnerClass;</div><div class="line">    accessFlags = 0x0</div><div class="line">    name = null</div><div class="line">.end annotation</div><div class="line"></div><div class="line"></div><div class="line"># instance fields</div><div class="line">.field final synthetic this$0:Lcn/woblog/testsmali/MainActivity;</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method constructor &lt;init&gt;(Lcn/woblog/testsmali/MainActivity;)V</div><div class="line">    .locals 0</div><div class="line">    .param p1, &quot;this$0&quot;    # Lcn/woblog/testsmali/MainActivity;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 37</div><div class="line">    iput-object p1, p0, Lcn/woblog/testsmali/MainActivity$1;-&gt;this$0:Lcn/woblog/testsmali/MainActivity;</div><div class="line"></div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line"></div><div class="line"># virtual methods</div><div class="line">.method public onClick(Landroid/view/View;)V</div><div class="line">    .locals 2</div><div class="line">    .param p1, &quot;view&quot;    # Landroid/view/View;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 40</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;onClick&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 41</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>类监听器</p>
+<p>首先类要实现接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># interfaces</div><div class="line">.implements Landroid/view/View$OnClickListener;</div></pre></td></tr></table></figure>
+<p>并实现OnClickListener的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">.method public onClick(Landroid/view/View;)V</div><div class="line">    .locals 2</div><div class="line">    .param p1, &quot;view&quot;    # Landroid/view/View;</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 383</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;onClick1&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 384</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Button bt1 = (Button) findViewById(R.id.bt1);</div><div class="line">bt1.setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">    @Override</div><div class="line">    public void onClick(View view) &#123;</div><div class="line">        Log.d(&quot;TAG&quot;, &quot;onClick&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">Button bt2 = (Button) findViewById(R.id.bt2);</div><div class="line">bt2.setOnClickListener(this);</div></pre></td></tr></table></figure>
+<h1 id="for"><a href="#for" class="headerlink" title="for"></a>for</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Iterator&lt;对象&gt; &lt;对象名&gt; = &lt;方法返回一个对象列表&gt;;</div><div class="line">for (&lt;对象&gt; &lt;对象名&gt;:&lt;对象列表&gt;) &#123;</div><div class="line">	[code]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Iterator&lt;对象&gt; &lt;对象名&gt; = &lt;方法返回一个对象列表&gt;;</div><div class="line">while(&lt;对象名&gt;.hasNext()) &#123;</div><div class="line">	&lt;对象&gt; &lt;对象名&gt; = &lt;对象名&gt;.next();</div><div class="line">	[code]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">public class Loop &#123;</div><div class="line"></div><div class="line">    public void for1()&#123;</div><div class="line">        ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();</div><div class="line">        strings.add(&quot;a&quot;);</div><div class="line">        strings.add(&quot;b&quot;);</div><div class="line">        strings.add(&quot;c&quot;);</div><div class="line">        strings.add(&quot;d&quot;);</div><div class="line"></div><div class="line">        for (String s:strings) &#123;</div><div class="line">            Log.d(&quot;TAG&quot;,s);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    public void for2()&#123;</div><div class="line">        ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();</div><div class="line">        strings.add(&quot;a&quot;);</div><div class="line">        strings.add(&quot;b&quot;);</div><div class="line">        strings.add(&quot;c&quot;);</div><div class="line">        strings.add(&quot;d&quot;);</div><div class="line"></div><div class="line">        for (int i = 0; i &lt; strings.size(); i++) &#123;</div><div class="line">            Log.d(&quot;TAG&quot;,strings.get(i));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void while1()&#123;</div><div class="line">        ArrayList&lt;String&gt; strings = new ArrayList&lt;&gt;();</div><div class="line">        strings.add(&quot;a&quot;);</div><div class="line">        strings.add(&quot;b&quot;);</div><div class="line">        strings.add(&quot;c&quot;);</div><div class="line">        strings.add(&quot;d&quot;);</div><div class="line"></div><div class="line"></div><div class="line">        Iterator&lt;String&gt; iterator = strings.iterator();</div><div class="line">        while (iterator.hasNext()) &#123;</div><div class="line">            Log.d(&quot;TAG&quot;,iterator.next());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div></pre></td><td class="code"><pre><div class="line">.class public Lcn/woblog/testsmali/smali/Loop;</div><div class="line">.super Ljava/lang/Object;</div><div class="line">.source &quot;Loop.java&quot;</div><div class="line"></div><div class="line"></div><div class="line"># direct methods</div><div class="line">.method public constructor &lt;init&gt;()V</div><div class="line">    .locals 0</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 8</div><div class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line"></div><div class="line"># virtual methods</div><div class="line">.method public for1()V</div><div class="line">    .locals 4</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 11</div><div class="line">    new-instance v1, Ljava/util/ArrayList;</div><div class="line"></div><div class="line">    invoke-direct &#123;v1&#125;, Ljava/util/ArrayList;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    .line 12</div><div class="line">    .local v1, &quot;strings&quot;:Ljava/util/ArrayList;, &quot;Ljava/util/ArrayList&lt;Ljava/lang/String;&gt;;&quot;</div><div class="line">    const-string v2, &quot;a&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 13</div><div class="line">    const-string v2, &quot;b&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 14</div><div class="line">    const-string v2, &quot;c&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 15</div><div class="line">    const-string v2, &quot;d&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 17</div><div class="line">    invoke-virtual &#123;v1&#125;, Ljava/util/ArrayList;-&gt;iterator()Ljava/util/Iterator;</div><div class="line"></div><div class="line">    move-result-object v2</div><div class="line"></div><div class="line">    :goto_0</div><div class="line">    invoke-interface &#123;v2&#125;, Ljava/util/Iterator;-&gt;hasNext()Z</div><div class="line"></div><div class="line">    move-result v3</div><div class="line"></div><div class="line">    if-eqz v3, :cond_0</div><div class="line"></div><div class="line">    invoke-interface &#123;v2&#125;, Ljava/util/Iterator;-&gt;next()Ljava/lang/Object;</div><div class="line"></div><div class="line">    move-result-object v0</div><div class="line"></div><div class="line">    check-cast v0, Ljava/lang/String;</div><div class="line"></div><div class="line">    .line 18</div><div class="line">    .local v0, &quot;s&quot;:Ljava/lang/String;</div><div class="line">    const-string v3, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v3, v0&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 20</div><div class="line">    .end local v0    # &quot;s&quot;:Ljava/lang/String;</div><div class="line">    :cond_0</div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line">.method public for2()V</div><div class="line">    .locals 4</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 23</div><div class="line">    new-instance v1, Ljava/util/ArrayList;</div><div class="line"></div><div class="line">    invoke-direct &#123;v1&#125;, Ljava/util/ArrayList;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    .line 24</div><div class="line">    .local v1, &quot;strings&quot;:Ljava/util/ArrayList;, &quot;Ljava/util/ArrayList&lt;Ljava/lang/String;&gt;;&quot;</div><div class="line">    const-string v2, &quot;a&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 25</div><div class="line">    const-string v2, &quot;b&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 26</div><div class="line">    const-string v2, &quot;c&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 27</div><div class="line">    const-string v2, &quot;d&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 29</div><div class="line">    const/4 v0, 0x0</div><div class="line"></div><div class="line">    .local v0, &quot;i&quot;:I</div><div class="line">    :goto_0</div><div class="line">    invoke-virtual &#123;v1&#125;, Ljava/util/ArrayList;-&gt;size()I</div><div class="line"></div><div class="line">    move-result v2</div><div class="line"></div><div class="line">    if-ge v0, v2, :cond_0</div><div class="line"></div><div class="line">    .line 30</div><div class="line">    const-string v3, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v0&#125;, Ljava/util/ArrayList;-&gt;get(I)Ljava/lang/Object;</div><div class="line"></div><div class="line">    move-result-object v2</div><div class="line"></div><div class="line">    check-cast v2, Ljava/lang/String;</div><div class="line"></div><div class="line">    invoke-static &#123;v3, v2&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 29</div><div class="line">    add-int/lit8 v0, v0, 0x1</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 32</div><div class="line">    :cond_0</div><div class="line">    return-void</div><div class="line">.end method</div><div class="line"></div><div class="line">.method public while1()V</div><div class="line">    .locals 4</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 35</div><div class="line">    new-instance v1, Ljava/util/ArrayList;</div><div class="line"></div><div class="line">    invoke-direct &#123;v1&#125;, Ljava/util/ArrayList;-&gt;&lt;init&gt;()V</div><div class="line"></div><div class="line">    .line 36</div><div class="line">    .local v1, &quot;strings&quot;:Ljava/util/ArrayList;, &quot;Ljava/util/ArrayList&lt;Ljava/lang/String;&gt;;&quot;</div><div class="line">    const-string v2, &quot;a&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 37</div><div class="line">    const-string v2, &quot;b&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 38</div><div class="line">    const-string v2, &quot;c&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 39</div><div class="line">    const-string v2, &quot;d&quot;</div><div class="line"></div><div class="line">    invoke-virtual &#123;v1, v2&#125;, Ljava/util/ArrayList;-&gt;add(Ljava/lang/Object;)Z</div><div class="line"></div><div class="line">    .line 42</div><div class="line">    invoke-virtual &#123;v1&#125;, Ljava/util/ArrayList;-&gt;iterator()Ljava/util/Iterator;</div><div class="line"></div><div class="line">    move-result-object v0</div><div class="line"></div><div class="line">    .line 43</div><div class="line">    .local v0, &quot;iterator&quot;:Ljava/util/Iterator;, &quot;Ljava/util/Iterator&lt;Ljava/lang/String;&gt;;&quot;</div><div class="line">    :goto_0</div><div class="line">    invoke-interface &#123;v0&#125;, Ljava/util/Iterator;-&gt;hasNext()Z</div><div class="line"></div><div class="line">    move-result v2</div><div class="line"></div><div class="line">    if-eqz v2, :cond_0</div><div class="line"></div><div class="line">    .line 44</div><div class="line">    const-string v3, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-interface &#123;v0&#125;, Ljava/util/Iterator;-&gt;next()Ljava/lang/Object;</div><div class="line"></div><div class="line">    move-result-object v2</div><div class="line"></div><div class="line">    check-cast v2, Ljava/lang/String;</div><div class="line"></div><div class="line">    invoke-static &#123;v3, v2&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 46</div><div class="line">    :cond_0</div><div class="line">    return-void</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<h1 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h1><p>反编译过来的switch代码分有序和无序</p>
+<h2 id="有序"><a href="#有序" class="headerlink" title="有序"></a>有序</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">switch1</span><span class="params">(<span class="keyword">int</span> type)</span> </span>&#123;</div><div class="line">    <span class="keyword">switch</span> (type) &#123;</div><div class="line">        <span class="keyword">case</span> <span class="number">5</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">6</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">7</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">8</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> <span class="number">9</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, <span class="string">"default"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line"># virtual methods</div><div class="line">.method public switch1(I)V</div><div class="line">    .locals 2</div><div class="line">    .param p1, &quot;type&quot;    # I</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 10</div><div class="line">    packed-switch p1, :pswitch_data_0</div><div class="line"></div><div class="line">    .line 30</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;default&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 33</div><div class="line">    :goto_0</div><div class="line">    return-void</div><div class="line"></div><div class="line">    .line 12</div><div class="line">    :pswitch_0</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 16</div><div class="line">    :pswitch_1</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 20</div><div class="line">    :pswitch_2</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 24</div><div class="line">    :pswitch_3</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 27</div><div class="line">    :pswitch_4</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 10</div><div class="line">    nop</div><div class="line"></div><div class="line">    :pswitch_data_0</div><div class="line">    .packed-switch 0x5</div><div class="line">        :pswitch_0</div><div class="line">        :pswitch_1</div><div class="line">        :pswitch_2</div><div class="line">        :pswitch_3</div><div class="line">        :pswitch_4</div><div class="line">    .end packed-switch</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>有序使用的是packed-switch指令，使用有序switch他会生成packed-switch p1, :pswitch_data_0指令，我们可以从上面看到p1是传递进来的type参数，其中<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>:pswitch_data_0<br>.packed-switch 0x5<br>    :pswitch_0<br>    :pswitch_1<br>    :pswitch_2<br>    :pswitch_3<br>    :pswitch_4<br>.end packed-switch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">其中packed-switch后面的0x5表示从0x5开始递增，里面的pswitch_0就是真实的分支名，后面的0，1是case的值，真是的代码就是分支名地方的代码</div></pre></td></tr></table></figure></p>
+<p>:pswitch_0<br>const-string v0, “TAG”</p>
+<p>invoke-static {p1}, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</p>
+<p>move-result-object v1</p>
+<p>invoke-static {v0, v1}, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</p>
+<p>goto :goto_0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">我们手动分析有序switch指令,他的指令格式为packed-switch vAA, +BBBBBBBB，我们用ida定位到这条指令，方法偏移为f59cc，他的格式为：</div><div class="line"></div><div class="line">/art/runtime/dex_instruction.h</div><div class="line"></div><div class="line">```c++</div><div class="line">struct PACKED(4) PackedSwitchPayload &#123;</div><div class="line">	const uint16_t ident;</div><div class="line">	const uint16_t case_count;</div><div class="line">	const int32_t first_key;</div><div class="line">	const int32_t targets[];</div><div class="line"></div><div class="line">	private:</div><div class="line">	DISALLOW_COPY_AND_ASSIGN(PackedSwitchPayload);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>ident:这是固定值，有序为0x100</p>
+<p>case_count:case的个数</p>
+<p>first_key：初始case值</p>
+<p>targets：这是一个数组，对应每个case相对switch指令偏移的偏移</p>
+<p>我们发现switch指令格式为31t，op vAA, +BBBBBBBB，查看表前面的Format(AA|op BBBBlo BBBBhi)表示需要3个字节，所以我们读取3个字节2b 03 3e 00 00 00，根据小端序交换位置后03 2b 00 3e 00 00</p>
+<p>其中2b为opcode</p>
+<p>03为寄存器p1</p>
+<p>3e为case的相对偏移</p>
+<p>虚拟机计算偏移是以2个字节单位的，所以case得结构的偏移为：00f59cc+3e*2=f5a48，我们用ida查看该位置值为</p>
+<p>第一个字段00 01真实值为0x100,表示是packed-switch的case区域，也就是上面的ident</p>
+<p>第二个字节05 00真实值为0x5，表示有个case块</p>
+<p>第三个字节05 00 00 00 真实值为0x5,表示初始case值</p>
+<p>第四个字节0b 00 00 00真实值为0xb表示caes的相对偏移位置，所以我们可以计算出这个5个case位置</p>
+<p>0:00f59cc+2*0b=f59e2</p>
+<p>1:00f59cc+2*15=f59f6</p>
+<p>2:00f59cc+2*1f=f5a0a</p>
+<p>3:00f59cc+2*29=f5a1e</p>
+<p>4:00f59cc+2*33=f5a32</p>
+<p>接下来我们就可以按照另一篇文章来分析下面的指令了</p>
+<h2 id="无序"><a href="#无序" class="headerlink" title="无序"></a>无序</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">switch2</span><span class="params">(<span class="keyword">int</span> type)</span> </span>&#123;</div><div class="line">    <span class="keyword">switch</span> (type) &#123;</div><div class="line">        <span class="keyword">case</span> <span class="number">100</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">20</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">3</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">case</span> <span class="number">6</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> <span class="number">9</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, String.valueOf(type));</div><div class="line">            <span class="keyword">break</span>;</div><div class="line"></div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            Log.d(<span class="string">"TAG"</span>, <span class="string">"default"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line">.method public switch2(I)V</div><div class="line">    .locals 2</div><div class="line">    .param p1, &quot;type&quot;    # I</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 36</div><div class="line">    sparse-switch p1, :sswitch_data_0</div><div class="line"></div><div class="line">    .line 57</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v1, &quot;default&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 60</div><div class="line">    :goto_0</div><div class="line">    return-void</div><div class="line"></div><div class="line">    .line 38</div><div class="line">    :sswitch_0</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 42</div><div class="line">    :sswitch_1</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 46</div><div class="line">    :sswitch_2</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 50</div><div class="line">    :sswitch_3</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 53</div><div class="line">    :sswitch_4</div><div class="line">    const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;p1&#125;, Ljava/lang/String;-&gt;valueOf(I)Ljava/lang/String;</div><div class="line"></div><div class="line">    move-result-object v1</div><div class="line"></div><div class="line">    invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 36</div><div class="line">    nop</div><div class="line"></div><div class="line">    :sswitch_data_0</div><div class="line">    .sparse-switch</div><div class="line">        0x3 -&gt; :sswitch_2</div><div class="line">        0x6 -&gt; :sswitch_3</div><div class="line">        0x9 -&gt; :sswitch_4</div><div class="line">        0x14 -&gt; :sswitch_1</div><div class="line">        0x64 -&gt; :sswitch_0</div><div class="line">    .end sparse-switch</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>如果代码中使用了无序switch，它会使用sparse-switch指令，如：sparse-switch p1, :sswitch_data_0，其中p1还是传递进来的type，后面是case的标号，我们查看case部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">:sswitch_data_0</div><div class="line">.sparse-switch</div><div class="line">    0x3 -&gt; :sswitch_2</div><div class="line">    0x6 -&gt; :sswitch_3</div><div class="line">    0x9 -&gt; :sswitch_4</div><div class="line">    0x14 -&gt; :sswitch_1</div><div class="line">    0x64 -&gt; :sswitch_0</div><div class="line">.end sparse-switch</div></pre></td></tr></table></figure>
+<p>可以看见他讲值排序了，前面是值，后面是当前值所对应的代码。在switch中default分支直接附在switch指令后面，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">sparse-switch p1, :sswitch_data_0</div><div class="line"></div><div class="line">.line 57</div><div class="line">const-string v0, &quot;TAG&quot;</div><div class="line"></div><div class="line">const-string v1, &quot;default&quot;</div><div class="line"></div><div class="line">invoke-static &#123;v0, v1&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">.line 60</div><div class="line">:goto_0</div><div class="line">return-void</div></pre></td></tr></table></figure>
+<p>我们手动分析无序switch指令,他的指令格式为sparse-switch vAA, +BBBBBBBB，我们用ida定位到这条指令，方法偏移为f5a74，他的格式为：</p>
+<p>/art/runtime/dex_instruction.h</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">struct</span> <span class="title">PACKED</span><span class="params">(<span class="number">4</span>)</span> SparseSwitchPayload </span>&#123;</div><div class="line">	<span class="keyword">const</span> <span class="keyword">uint16_t</span> ident;</div><div class="line">	<span class="keyword">const</span> <span class="keyword">uint16_t</span> case_count;</div><div class="line">	<span class="keyword">const</span> <span class="keyword">int32_t</span> keys_and_targets[];</div><div class="line">	<span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">const</span> int32_t* <span class="title">GetKeys</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</div><div class="line">	 <span class="keyword">return</span> keys_and_targets;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">const</span> int32_t* <span class="title">GetTargets</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</div><div class="line">	 <span class="keyword">return</span> keys_and_targets + case_count;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">private</span>:</div><div class="line">	DISALLOW_COPY_AND_ASSIGN(SparseSwitchPayload);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>ident:这是固定值，无序为0x200</p>
+<p>case_count:case的个数</p>
+<p>first_key：初始case值</p>
+<p>keys_and_targets：这是一个数组，先存储的是key,后面接着是每个case相对switch指令偏移的偏移</p>
+<p>我们发现switch指令格式为31t，op vAA, +BBBBBBBB，查看表前面的Format(AA|op BBBBlo BBBBhi)表示需要3个字节，所以我们读取3个字节2c 03 3e 00 00 00，根据小端序交换位置后03 2c 00 3e 00 00</p>
+<p>其中2c为opcode</p>
+<p>03为寄存器p1</p>
+<p>3e为case的相对偏移</p>
+<p>虚拟机计算偏移是以2个字节单位的，所以case得结构的偏移为：f5a74+3e*2=f5af0，我们用ida查看该位置值为</p>
+<p>第一个字段00 02真实值为0x200,表示是packed-switch的case区域，也就是上面的ident</p>
+<p>第二个字节05 00真实值为0x5，表示有个case块</p>
+<p>第三个字节05 00 00 00 真实值为0x5,表示初始case值</p>
+<p>第四个字节03 00 00 00真实值为0x3表示第一个case的值为0x3，偏移为key的偏移量+case_count(f5a74+5)所以我们可以计算出这个5个case位置</p>
+<p>0:3:f5a74+2*1f=f5ab2</p>
+<p>1:6:f5a74+2*29=f5ac6</p>
+<p>2:9:f5a74+2*33=f5ada</p>
+<p>3:14:f5a74+2*15=f5a9e</p>
+<p>4:64:f5a74+2*0b=f5a8a</p>
+<p>序列:值:代码偏移地址</p>
+<p>接下来我们就可以按照另一篇文章来分析下面的指令了</p>
+<h1 id="try-catch"><a href="#try-catch" class="headerlink" title="try/catch"></a>try/catch</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">try1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> b = <span class="number">10</span>;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line"></div><div class="line">        b = Integer.valueOf(<span class="string">"20"</span>);</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">int</span> i = b / a;</div><div class="line">            Log.d(TAG, <span class="string">"yes"</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (ArithmeticException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            Log.d(TAG, <span class="string">"除数不能为0"</span>);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            Log.d(TAG, <span class="string">"finally1"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        Log.d(TAG, <span class="string">"数字格式化失败"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        Log.d(TAG, <span class="string">"其他异常"</span>);</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        Log.d(TAG, <span class="string">"finally2"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div></pre></td><td class="code"><pre><div class="line">.method public try1()V</div><div class="line">    .locals 7</div><div class="line"></div><div class="line">    .prologue</div><div class="line">    .line 12</div><div class="line">    const/4 v0, 0x0</div><div class="line"></div><div class="line">    .line 13</div><div class="line">    .local v0, &quot;a&quot;:I</div><div class="line">    const/16 v1, 0xa</div><div class="line"></div><div class="line">    .line 17</div><div class="line">    .local v1, &quot;b&quot;:I</div><div class="line">    :try_start_0</div><div class="line">    const-string v4, &quot;20&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4&#125;, Ljava/lang/Integer;-&gt;valueOf(Ljava/lang/String;)Ljava/lang/Integer;</div><div class="line"></div><div class="line">    move-result-object v4</div><div class="line"></div><div class="line">    invoke-virtual &#123;v4&#125;, Ljava/lang/Integer;-&gt;intValue()I</div><div class="line">    :try_end_0</div><div class="line">    .catch Ljava/lang/NumberFormatException; &#123;:try_start_0 .. :try_end_0&#125; :catch_1</div><div class="line">    .catch Ljava/lang/Exception; &#123;:try_start_0 .. :try_end_0&#125; :catch_2</div><div class="line">    .catchall &#123;:try_start_0 .. :try_end_0&#125; :catchall_1</div><div class="line"></div><div class="line">    move-result v1</div><div class="line"></div><div class="line">    .line 20</div><div class="line">    :try_start_1</div><div class="line">    div-int v3, v1, v0</div><div class="line"></div><div class="line">    .line 21</div><div class="line">    .local v3, &quot;i&quot;:I</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;yes&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_1</div><div class="line">    .catch Ljava/lang/ArithmeticException; &#123;:try_start_1 .. :try_end_1&#125; :catch_0</div><div class="line">    .catchall &#123;:try_start_1 .. :try_end_1&#125; :catchall_0</div><div class="line"></div><div class="line">    .line 26</div><div class="line">    :try_start_2</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;finally1&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_2</div><div class="line">    .catch Ljava/lang/NumberFormatException; &#123;:try_start_2 .. :try_end_2&#125; :catch_1</div><div class="line">    .catch Ljava/lang/Exception; &#123;:try_start_2 .. :try_end_2&#125; :catch_2</div><div class="line">    .catchall &#123;:try_start_2 .. :try_end_2&#125; :catchall_1</div><div class="line"></div><div class="line">    .line 35</div><div class="line">    .end local v3    # &quot;i&quot;:I</div><div class="line">    :goto_0</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;finally2&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    .line 37</div><div class="line">    :goto_1</div><div class="line">    return-void</div><div class="line"></div><div class="line">    .line 22</div><div class="line">    :catch_0</div><div class="line">    move-exception v2</div><div class="line"></div><div class="line">    .line 23</div><div class="line">    .local v2, &quot;e&quot;:Ljava/lang/ArithmeticException;</div><div class="line">    :try_start_3</div><div class="line">    invoke-virtual &#123;v2&#125;, Ljava/lang/ArithmeticException;-&gt;printStackTrace()V</div><div class="line"></div><div class="line">    .line 24</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;\u9664\u6570\u4e0d\u80fd\u4e3a0&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_3</div><div class="line">    .catchall &#123;:try_start_3 .. :try_end_3&#125; :catchall_0</div><div class="line"></div><div class="line">    .line 26</div><div class="line">    :try_start_4</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;finally1&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_4</div><div class="line">    .catch Ljava/lang/NumberFormatException; &#123;:try_start_4 .. :try_end_4&#125; :catch_1</div><div class="line">    .catch Ljava/lang/Exception; &#123;:try_start_4 .. :try_end_4&#125; :catch_2</div><div class="line">    .catchall &#123;:try_start_4 .. :try_end_4&#125; :catchall_1</div><div class="line"></div><div class="line">    goto :goto_0</div><div class="line"></div><div class="line">    .line 28</div><div class="line">    .end local v2    # &quot;e&quot;:Ljava/lang/ArithmeticException;</div><div class="line">    :catch_1</div><div class="line">    move-exception v2</div><div class="line"></div><div class="line">    .line 29</div><div class="line">    .local v2, &quot;e&quot;:Ljava/lang/NumberFormatException;</div><div class="line">    :try_start_5</div><div class="line">    invoke-virtual &#123;v2&#125;, Ljava/lang/NumberFormatException;-&gt;printStackTrace()V</div><div class="line"></div><div class="line">    .line 30</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;\u6570\u5b57\u683c\u5f0f\u5316\u5931\u8d25&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_5</div><div class="line">    .catchall &#123;:try_start_5 .. :try_end_5&#125; :catchall_1</div><div class="line"></div><div class="line">    .line 35</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;finally2&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_1</div><div class="line"></div><div class="line">    .line 26</div><div class="line">    .end local v2    # &quot;e&quot;:Ljava/lang/NumberFormatException;</div><div class="line">    :catchall_0</div><div class="line">    move-exception v4</div><div class="line"></div><div class="line">    :try_start_6</div><div class="line">    const-string v5, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v6, &quot;finally1&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v5, v6&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    throw v4</div><div class="line">    :try_end_6</div><div class="line">    .catch Ljava/lang/NumberFormatException; &#123;:try_start_6 .. :try_end_6&#125; :catch_1</div><div class="line">    .catch Ljava/lang/Exception; &#123;:try_start_6 .. :try_end_6&#125; :catch_2</div><div class="line">    .catchall &#123;:try_start_6 .. :try_end_6&#125; :catchall_1</div><div class="line"></div><div class="line">    .line 31</div><div class="line">    :catch_2</div><div class="line">    move-exception v2</div><div class="line"></div><div class="line">    .line 32</div><div class="line">    .local v2, &quot;e&quot;:Ljava/lang/Exception;</div><div class="line">    :try_start_7</div><div class="line">    invoke-virtual &#123;v2&#125;, Ljava/lang/Exception;-&gt;printStackTrace()V</div><div class="line"></div><div class="line">    .line 33</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;\u5176\u4ed6\u5f02\u5e38&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line">    :try_end_7</div><div class="line">    .catchall &#123;:try_start_7 .. :try_end_7&#125; :catchall_1</div><div class="line"></div><div class="line">    .line 35</div><div class="line">    const-string v4, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v5, &quot;finally2&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v4, v5&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    goto :goto_1</div><div class="line"></div><div class="line">    .end local v2    # &quot;e&quot;:Ljava/lang/Exception;</div><div class="line">    :catchall_1</div><div class="line">    move-exception v4</div><div class="line"></div><div class="line">    const-string v5, &quot;TAG&quot;</div><div class="line"></div><div class="line">    const-string v6, &quot;finally2&quot;</div><div class="line"></div><div class="line">    invoke-static &#123;v5, v6&#125;, Landroid/util/Log;-&gt;d(Ljava/lang/String;Ljava/lang/String;)I</div><div class="line"></div><div class="line">    throw v4</div><div class="line">.end method</div></pre></td></tr></table></figure>
+<p>通过上面的代码发现try/catch的代码基本格式为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">:try_start_&lt;数字&gt;</div><div class="line">[有可能发生异常的代码]</div><div class="line">:try_end_&lt;数字&gt;</div><div class="line">.catch &lt;异常类型&gt; &#123;&lt;try语句起始标号&gt; .. &lt;try语句结束标号&gt;&#125; &lt;catch标号(真正处理这个异常的代码)&gt;</div><div class="line">.catch(可能有多个catch)</div><div class="line">.catchall &#123;&lt;try语句起始标号&gt; .. &lt;try语句结束标号&gt;&#125; &lt;catch标号&gt;(finally代码块)</div></pre></td></tr></table></figure>
+<p>也可以发现如果是try/catch嵌套，他会这样排列指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">异常1开始</div><div class="line"></div><div class="line">异常1结束</div><div class="line">异常1处理指令 处理指令标号</div><div class="line"></div><div class="line">异常2开始</div><div class="line"></div><div class="line">异常2结束</div><div class="line">异常2处理指令 处理指令标号</div></pre></td></tr></table></figure>
+<p>从上面的伪指令可以看出如果异常1里面发生了异常，就会跳转到异常1处理指令，所以异常2的部分也就不会执行，也就实现了上面的try嵌套语句</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/smali/" rel="tag">#smali</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/05/dex-format-image/" rel="next" title="一张图带你搞明白Dex文件格式">
+                <i class="fa fa-chevron-left"></i> 一张图带你搞明白Dex文件格式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/07/simple-use-ida-to-creake-apk/" rel="prev" title="使用Ida pro来解除软件的注册码限制">
+                使用Ida pro来解除软件的注册码限制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/05/smali-compare-java-sytax/"
+     data-title="Smali语法与Java语法的对比"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/05/smali-compare-java-sytax/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/05/smali-compare-java-sytax/"
+           data-title="Smali语法与Java语法的对比" data-url="http://i.woblog.cn/2016/08/05/smali-compare-java-sytax/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#smali文件格式"><span class="nav-number">1.</span> <span class="nav-text">smali文件格式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文件头"><span class="nav-number">1.1.</span> <span class="nav-text">文件头</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字段"><span class="nav-number">2.</span> <span class="nav-text">字段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例字段"><span class="nav-number">2.1.</span> <span class="nav-text">实例字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态字段"><span class="nav-number">2.2.</span> <span class="nav-text">静态字段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法"><span class="nav-number">3.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#抛出异常"><span class="nav-number">3.1.</span> <span class="nav-text">抛出异常</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类实现了接口"><span class="nav-number">4.</span> <span class="nav-text">类实现了接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注解"><span class="nav-number">5.</span> <span class="nav-text">注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类"><span class="nav-number">5.1.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字段-1"><span class="nav-number">5.2.</span> <span class="nav-text">字段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类-1"><span class="nav-number">6.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内部类"><span class="nav-number">7.</span> <span class="nav-text">内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#监听器"><span class="nav-number">8.</span> <span class="nav-text">监听器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#for"><span class="nav-number">9.</span> <span class="nav-text">for</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#switch"><span class="nav-number">10.</span> <span class="nav-text">switch</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#有序"><span class="nav-number">10.1.</span> <span class="nav-text">有序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无序"><span class="nav-number">10.2.</span> <span class="nav-text">无序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#try-catch"><span class="nav-number">11.</span> <span class="nav-text">try/catch</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

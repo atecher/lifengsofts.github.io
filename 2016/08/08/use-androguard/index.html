@@ -1,0 +1,855 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="androguard," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="简介androguard (Android guard) 是 Android 应用程序的逆向工程，提供恶意软件分析等等功能。
+androguard 主要由 Python 编写，支持：
+
+DEX, ODEX
+APK
+Android’s binary xml
+
+安装过程比较复杂，请参考另一篇文章，下面就来说说一些工具的基本使用
+androapkinfo用来列出apk的文件，权限，主activity,其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="androguard的基本使用">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/08/use-androguard/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="简介androguard (Android guard) 是 Android 应用程序的逆向工程，提供恶意软件分析等等功能。
+androguard 主要由 Python 编写，支持：
+
+DEX, ODEX
+APK
+Android’s binary xml
+
+安装过程比较复杂，请参考另一篇文章，下面就来说说一些工具的基本使用
+androapkinfo用来列出apk的文件，权限，主activity,其">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/gephi-home.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="androguard的基本使用">
+<meta name="twitter:description" content="简介androguard (Android guard) 是 Android 应用程序的逆向工程，提供恶意软件分析等等功能。
+androguard 主要由 Python 编写，支持：
+
+DEX, ODEX
+APK
+Android’s binary xml
+
+安装过程比较复杂，请参考另一篇文章，下面就来说说一些工具的基本使用
+androapkinfo用来列出apk的文件，权限，主activity,其">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/gephi-home.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> androguard的基本使用 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                androguard的基本使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-08T15:06:13+00:00" content="2016-08-08">
+              2016-08-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/androguard/" itemprop="url" rel="index">
+                    <span itemprop="name">androguard</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/08/use-androguard/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/08/use-androguard/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>androguard (Android guard) 是 Android 应用程序的逆向工程，提供恶意软件分析等等功能。</p>
+<p>androguard 主要由 Python 编写，支持：</p>
+<ul>
+<li>DEX, ODEX</li>
+<li>APK</li>
+<li>Android’s binary xml</li>
+</ul>
+<p>安装过程比较复杂，请参考另一篇文章，下面就来说说一些工具的基本使用</p>
+<h1 id="androapkinfo"><a href="#androapkinfo" class="headerlink" title="androapkinfo"></a>androapkinfo</h1><p>用来列出apk的文件，权限，主activity,其他activity,service,receivers,providers</p>
+<p>是否有native code,是否有动态代码，是否用了反射</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androapkinfo.py -i apk/app-debug.apk &gt; apk/apkinfo.txt</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">app-debug.apk :</div><div class="line">FILES: </div><div class="line">	AndroidManifest.xml Android binary XML -6ccb1fe1</div><div class="line">	res/anim-v21/design_appbar_state_list_animator.xml Android binary XML 6d63fc0c</div><div class="line">	res/anim-v21/design_bottom_sheet_slide_in.xml Android binary XML -71f29031</div><div class="line">	</div><div class="line">	...</div><div class="line"></div><div class="line">PERMISSIONS: </div><div class="line">	android.permission.INTERNET [&apos;dangerous&apos;, &apos;full Internet access&apos;, &apos;Allows an application to create network sockets.&apos;]</div><div class="line">MAIN ACTIVITY:  cn.woblog.weatherapp.MainActivity</div><div class="line">ACTIVITIES: </div><div class="line">	cn.woblog.weatherapp.MainActivity &#123;&apos;action&apos;: [u&apos;android.intent.action.MAIN&apos;], &apos;category&apos;: [u&apos;android.intent.category.LAUNCHER&apos;]&#125;</div><div class="line">	cn.woblog.weatherapp.activity.WeatherDetailActivity </div><div class="line">	cn.woblog.weatherapp.activity.TestActivity </div><div class="line">	cn.woblog.weatherapp.activity.SettingsActivity </div><div class="line">SERVICES: </div><div class="line">RECEIVERS: </div><div class="line">PROVIDERS:  []</div><div class="line">Native code: False</div><div class="line">Dynamic code: True</div><div class="line">Reflection code: True</div><div class="line">Ascii Obfuscation: False</div><div class="line">Landroid/support/design/R$anim; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$anim; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$attr; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$attr; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$bool; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$bool; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$color; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$color; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line">Landroid/support/design/R$dimen; &lt;init&gt; [&apos;ANDROID&apos;, &apos;SUPPORT&apos;]</div><div class="line"></div><div class="line">...</div></pre></td></tr></table></figure>
+<h1 id="androaxml"><a href="#androaxml" class="headerlink" title="androaxml"></a>androaxml</h1><p>用来解密apk包中的AndroidManifest.xml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androaxml.py -i ./apk/app-debug.apk</div></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line">          <span class="attr">package</span>=<span class="string">"cn.woblog.weatherapp"</span></div><div class="line">          <span class="attr">platformBuildVersionCode</span>=<span class="string">"24"</span></div><div class="line">          <span class="attr">platformBuildVersionName</span>=<span class="string">"7.000000"</span></div><div class="line">          <span class="attr">android:versionCode</span>=<span class="string">"1"</span></div><div class="line">          <span class="attr">android:versionName</span>=<span class="string">"1.0"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">uses-sdk</span></span></div><div class="line">        <span class="attr">android:minSdkVersion</span>=<span class="string">"10"</span></div><div class="line">        <span class="attr">android:targetSdkVersion</span>=<span class="string">"24"</span>&gt;</div><div class="line">    <span class="tag">&lt;/<span class="name">uses-sdk</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.INTERNET"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">uses-permission</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">application</span></span></div><div class="line">        <span class="attr">android:name</span>=<span class="string">"com.android.tools.fd.runtime.BootstrapApplication"</span></div><div class="line">        <span class="attr">name</span>=<span class="string">"cn.woblog.weatherapp.AppContext"</span></div><div class="line">        <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">android:debuggable</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">android:icon</span>=<span class="string">"@7F030000"</span></div><div class="line">        <span class="attr">android:label</span>=<span class="string">"@7F060020"</span></div><div class="line">        <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">android:theme</span>=<span class="string">"@7F080092"</span>&gt;</div><div class="line">        <span class="tag">&lt;<span class="name">activity</span></span></div><div class="line">            <span class="attr">android:name</span>=<span class="string">"cn.woblog.weatherapp.MainActivity"</span></div><div class="line">            <span class="attr">android:label</span>=<span class="string">"@7F060025"</span></div><div class="line">            <span class="attr">android:theme</span>=<span class="string">"@7F080039"</span>&gt;</div><div class="line">            <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.MAIN"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.LAUNCHER"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">category</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">activity</span></span></div><div class="line">            <span class="attr">android:name</span>=<span class="string">"cn.woblog.weatherapp.activity.WeatherDetailActivity"</span></div><div class="line">            <span class="attr">android:label</span>=<span class="string">"@7F060027"</span></div><div class="line">            <span class="attr">android:parentActivityName</span>=<span class="string">"cn.woblog.weatherapp.MainActivity"</span></div><div class="line">            <span class="attr">android:theme</span>=<span class="string">"@7F080039"</span>&gt;</div><div class="line">            <span class="tag">&lt;<span class="name">meta-data</span></span></div><div class="line">                <span class="attr">android:name</span>=<span class="string">"android.support.PARENT_ACTIVITY"</span></div><div class="line">                <span class="attr">android:value</span>=<span class="string">".MainActivity"</span>&gt;</div><div class="line">            <span class="tag">&lt;/<span class="name">meta-data</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">activity</span></span></div><div class="line">            <span class="attr">android:name</span>=<span class="string">"cn.woblog.weatherapp.activity.TestActivity"</span></div><div class="line">            <span class="attr">android:label</span>=<span class="string">"@7F060026"</span></div><div class="line">            <span class="attr">android:theme</span>=<span class="string">"@7F080039"</span>&gt;</div><div class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">"cn.woblog.weatherapp.activity.SettingsActivity"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></div></pre></td></tr></table></figure>
+<h1 id="androsign"><a href="#androsign" class="headerlink" title="androsign"></a>androsign</h1><h1 id="androdd"><a href="#androdd" class="headerlink" title="androdd"></a>androdd</h1><p>用来生成apk文件中每个类的方法的调用流程图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androdd.py -i ./apk/app-debug.apk -o ./apk -d -f PNG</div></pre></td></tr></table></figure>
+<h1 id="androdiff"><a href="#androdiff" class="headerlink" title="androdiff"></a>androdiff</h1><p>用来比较两个apk文件的差异</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androdiff.py -i ./apk/smali-demo.apk ./apk/smali-demo-creacked.apk</div></pre></td></tr></table></figure>
+<h1 id="Androdump"><a href="#Androdump" class="headerlink" title="Androdump"></a>Androdump</h1><p>用来dump一个linux进程的信息</p>
+<p>用来生成APK的GEXF格式图形文件，可以用Gephi查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androgexf.py -i ./apk/smali-demo.apk -o ./apk/smali-demo.gexf</div></pre></td></tr></table></figure>
+<h1 id="androlyze"><a href="#androlyze" class="headerlink" title="androlyze"></a>androlyze</h1><p>它提供一个交互式环境以提供我们分析apk</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androlyze.py -s</div></pre></td></tr></table></figure>
+<p>会进入一个shell交互式环境，我们可以通过他提供的对象来获取一些信息，经常用到的有3个对象：apk文件对象，dex文件对象，分析结果对象</p>
+<h2 id="获取一个apk对象"><a href="#获取一个apk对象" class="headerlink" title="获取一个apk对象"></a>获取一个apk对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apk = APK(&quot;./apk/smali-demo-creacked.apk&quot;)</div></pre></td></tr></table></figure>
+<p>apk.show(),apk.files:输出结果和androapkinfo结果差不多</p>
+<p>get_permissions():所有权限</p>
+<p>get_providers()：所有ContentProvider</p>
+<p>get_receivers()：所有BroadcastReceiver</p>
+<p>get_services():所有service</p>
+<h2 id="dex对象"><a href="#dex对象" class="headerlink" title="dex对象"></a>dex对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dex=DalvikVMFormat(apk.get_dex())</div></pre></td></tr></table></figure>
+<p>他保存了dex文件中所有的类(class_)</p>
+<p>d.CLASS_Landroid_support_annotation_AnimatorRes：表示android.support.annotation.AnimatorRes类</p>
+<p>方法(method)</p>
+<p>d.CLASS_Lcn_woblog_testsmali_MainActivity.METHOD_isRegister</p>
+<p>MainActivity的isRegister方法</p>
+<p>字段信息(class<em>field</em>)</p>
+<p>d.CLASS_Lcn_woblog_testsmali_MainActivity.FIELD_oblog_testsmali_MainActivity.FIELD_TAG</p>
+<h3 id="查看方法详情"><a href="#查看方法详情" class="headerlink" title="查看方法详情"></a>查看方法详情</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">d.CLASS_Lcn_woblog_testsmali_MainActivity.METHOD_isRegister.pretty_show()</div></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">########## Method Information</div><div class="line">Lcn/woblog/testsmali/MainActivity;-&gt;isRegister()Z [access_flags=private]</div><div class="line">########## Params</div><div class="line">local registers: v0...v2</div><div class="line">- return: boolean</div><div class="line">####################</div><div class="line">***************************************************************************</div><div class="line">isRegister-BB@0x0 : </div><div class="line">	0  (00000000) iget-object         v0, v2, Lcn/woblog/testsmali/MainActivity;-&gt;et_code Landroid/widget/EditText;</div><div class="line">	1  (00000004) invoke-virtual      v0, Landroid/widget/EditText;-&gt;getText()Landroid/text/Editable;</div><div class="line">	2  (0000000a) move-result-object  v0</div><div class="line">	3  (0000000c) invoke-virtual      v0, Ljava/lang/Object;-&gt;toString()Ljava/lang/String;</div><div class="line">	4  (00000012) move-result-object  v0</div><div class="line">	5  (00000014) invoke-virtual      v0, Ljava/lang/String;-&gt;trim()Ljava/lang/String;</div><div class="line">	6  (0000001a) move-result-object  v0</div><div class="line">	7  (0000001c) const-string        v1, &apos;321&apos;</div><div class="line">	8  (00000020) invoke-virtual      v0, v1, Ljava/lang/String;-&gt;equals(Ljava/lang/Object;)Z</div><div class="line">	9  (00000026) move-result         v0</div><div class="line">	10 (00000028) return              v0</div><div class="line"></div><div class="line">***************************************************************************</div><div class="line">########## XREF</div><div class="line">F: Lcn/woblog/testsmali/MainActivity; access$100 (Lcn/woblog/testsmali/MainActivity;)Z 0</div><div class="line">####################</div></pre></td></tr></table></figure>
+<p>下面有个XREF表示对象方法引用关系</p>
+<p>F:改方法被其他方法调用</p>
+<p>T:指定的方法被本方法调用</p>
+<h3 id="显示java代码"><a href="#显示java代码" class="headerlink" title="显示java代码"></a>显示java代码</h3><p>d.CLASS_Lcn_woblog_testsmali_MainActivity.METHOD_isRegister.source()</p>
+<p>我这里没测试通过一直报错</p>
+<h2 id="结果对象"><a href="#结果对象" class="headerlink" title="结果对象"></a>结果对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">result=VMAnalysis(dex)</div></pre></td></tr></table></figure>
+<p>也可以使用这个命令一次获得者三个对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">a,d,dr=AnalyzeAPK(&quot;./apk/smali-demo.apk&quot;)</div></pre></td></tr></table></figure>
+<h1 id="andromercury"><a href="#andromercury" class="headerlink" title="andromercury"></a>andromercury</h1><h1 id="androrisk"><a href="#androrisk" class="headerlink" title="androrisk"></a>androrisk</h1><p>用于评估apk文件中的风险</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androrisk.py -m -i ./apk/smali-demo.apk</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">RedFlags</div><div class="line">DEX &#123;&apos;NATIVE&apos;: 0, &apos;DYNAMIC&apos;: 0, &apos;CRYPTO&apos;: 0, &apos;REFLECTION&apos;: 1&#125;</div><div class="line">APK &#123;&apos;DEX&apos;: 0, &apos;EXECUTABLE&apos;: 0, &apos;ZIP&apos;: 0, &apos;SHELL_SCRIPT&apos;: 0, &apos;APK&apos;: 0, &apos;SHARED LIBRARIES&apos;: 0&#125;</div><div class="line">PERM &#123;&apos;PRIVACY&apos;: 0, &apos;NORMAL&apos;: 0, &apos;MONEY&apos;: 0, &apos;INTERNET&apos;: 0, &apos;SMS&apos;: 0, &apos;DANGEROUS&apos;: 0, &apos;SIGNATUREORSYSTEM&apos;: 0, &apos;CALL&apos;: 0, &apos;SIGNATURE&apos;: 0, &apos;GPS&apos;: 0&#125;</div><div class="line">FuzzyRisk</div><div class="line">VALUE 0.0</div></pre></td></tr></table></figure>
+<p>可以看到REFLECTION为1，表示代码中使用反射</p>
+<h1 id="androsign-1"><a href="#androsign-1" class="headerlink" title="androsign"></a>androsign</h1><p>用于检测apk的信息是否存在于特定数据库中，他的作用于androcsign相反，我们可以将恶意信息的apk放到数据库，如果比对时发现相似信息，可以怀疑他也是恶意</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./androsim.py -i ./apk/smali-demo.apk ./apk/smali-demo-creacked.apk</div></pre></td></tr></table></figure>
+<p>用来生成apk/jar/class/dex文件的控制流程以及功能调用图，输出格式为xgmml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/androxgmml.py -i ./apk/smali-demo.apk -o ./apk/smali-demo.xgmml</div></pre></td></tr></table></figure>
+<h1 id="apkviewer"><a href="#apkviewer" class="headerlink" title="apkviewer"></a>apkviewer</h1><p>用来为apk文件中每一个类生成一个独立的graphml图形文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./apkviewer.py -i ./apk/smali-demo.apk -o ./apk/out</div></pre></td></tr></table></figure>
+<p>可以使用gephi打开上面的文件</p>
+<h1 id="gephi"><a href="#gephi" class="headerlink" title="gephi"></a>gephi</h1><p>这是一个开源软件，我们安装完成后，打开上面生成的gexf文件后，我们选择左边-布局-yifan hu，然后就会生成下图：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/gephi-home.png" alt=""></p>
+<p>当分析图生成后，我们可以点击下方的滑块可以调整线的粗细和字体大小颜色等</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/androguard/" rel="tag">#androguard</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/07/simple-use-ida-to-creake-apk/" rel="next" title="使用Ida pro来解除软件的注册码限制">
+                <i class="fa fa-chevron-left"></i> 使用Ida pro来解除软件的注册码限制
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/10/gcc-compile-step/" rel="prev" title="详解gcc的四个编译步骤">
+                详解gcc的四个编译步骤 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/08/use-androguard/"
+     data-title="androguard的基本使用"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/08/use-androguard/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/08/use-androguard/"
+           data-title="androguard的基本使用" data-url="http://i.woblog.cn/2016/08/08/use-androguard/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androapkinfo"><span class="nav-number">2.</span> <span class="nav-text">androapkinfo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androaxml"><span class="nav-number">3.</span> <span class="nav-text">androaxml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androsign"><span class="nav-number">4.</span> <span class="nav-text">androsign</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androdd"><span class="nav-number">5.</span> <span class="nav-text">androdd</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androdiff"><span class="nav-number">6.</span> <span class="nav-text">androdiff</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Androdump"><span class="nav-number">7.</span> <span class="nav-text">Androdump</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androlyze"><span class="nav-number">8.</span> <span class="nav-text">androlyze</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取一个apk对象"><span class="nav-number">8.1.</span> <span class="nav-text">获取一个apk对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dex对象"><span class="nav-number">8.2.</span> <span class="nav-text">dex对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看方法详情"><span class="nav-number">8.2.1.</span> <span class="nav-text">查看方法详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示java代码"><span class="nav-number">8.2.2.</span> <span class="nav-text">显示java代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果对象"><span class="nav-number">8.3.</span> <span class="nav-text">结果对象</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#andromercury"><span class="nav-number">9.</span> <span class="nav-text">andromercury</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androrisk"><span class="nav-number">10.</span> <span class="nav-text">androrisk</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#androsign-1"><span class="nav-number">11.</span> <span class="nav-text">androsign</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#apkviewer"><span class="nav-number">12.</span> <span class="nav-text">apkviewer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gephi"><span class="nav-number">13.</span> <span class="nav-text">gephi</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

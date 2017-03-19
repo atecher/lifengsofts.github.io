@@ -1,0 +1,804 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Build Variants,Product Flavors," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="背景众所周知，在一个软件从开发到上线，需要经历多个测试环境来测试，最直接的就是各个测试环境Api地址不一样，以前我们都是在一个文件写多个Api，然后注释或打开，但是有了Build Variants从此我们可以更优雅的解决这个问题了
+配置不同的Api环境假设我们的App有三个测试环境：api1：完全的测试环境，里面的内容可以随便添加，随便删除，也可以叫devapi2：是线上环境一个镜像，但数据差一天">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Build Variants和productFlavors来打包不同配置的APP">
+<meta property="og:url" content="http://i.woblog.cn/2016/06/21/use-build-variants/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="背景众所周知，在一个软件从开发到上线，需要经历多个测试环境来测试，最直接的就是各个测试环境Api地址不一样，以前我们都是在一个文件写多个Api，然后注释或打开，但是有了Build Variants从此我们可以更优雅的解决这个问题了
+配置不同的Api环境假设我们的App有三个测试环境：api1：完全的测试环境，里面的内容可以随便添加，随便删除，也可以叫devapi2：是线上环境一个镜像，但数据差一天">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/build_variants.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/create_build_variants_api.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/api1-endpoint.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/api2-endpoint.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Build Variants和productFlavors来打包不同配置的APP">
+<meta name="twitter:description" content="背景众所周知，在一个软件从开发到上线，需要经历多个测试环境来测试，最直接的就是各个测试环境Api地址不一样，以前我们都是在一个文件写多个Api，然后注释或打开，但是有了Build Variants从此我们可以更优雅的解决这个问题了
+配置不同的Api环境假设我们的App有三个测试环境：api1：完全的测试环境，里面的内容可以随便添加，随便删除，也可以叫devapi2：是线上环境一个镜像，但数据差一天">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/build_variants.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> 使用Build Variants和productFlavors来打包不同配置的APP | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Build Variants和productFlavors来打包不同配置的APP
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-21T09:56:32+00:00" content="2016-06-21">
+              2016-06-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/21/use-build-variants/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/21/use-build-variants/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>众所周知，在一个软件从开发到上线，需要经历多个测试环境来测试，最直接的就是各个测试环境Api地址不一样，以前我们都是在一个文件写多个Api，然后注释或打开，但是有了Build Variants从此我们可以更优雅的解决这个问题了</p>
+<h2 id="配置不同的Api环境"><a href="#配置不同的Api环境" class="headerlink" title="配置不同的Api环境"></a>配置不同的Api环境</h2><p>假设我们的App有三个测试环境：<br>api1：完全的测试环境，里面的内容可以随便添加，随便删除，也可以叫dev<br>api2：是线上环境一个镜像，但数据差一天<br>api：线上环境</p>
+<p>我们的要实现的就是，根据一个配置，或者打包不同的版本App是不是打开文件来注释一些代码，而是有一个总开关，这样方便控制，不同的环境其实也相当于渠道包，所以下面我们首先需要配置几个渠道</p>
+<h3 id="配置渠道"><a href="#配置渠道" class="headerlink" title="配置渠道"></a>配置渠道</h3><p>我们在项目的build.grade的android中添加：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">productFlavors&#123;</div><div class="line">    api1&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    api2&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    api&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们根据app的一个测试环境来配置了一些渠道包，到这里我们可以看到已经有多个Build variants了，如下图：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/build_variants.png" alt=""></p>
+<p>那我们问题来了，到这里不，他就知道我们api1对应什么域名了，当然是肯定不知道，因为我们什么都还没用定义，所以接下来，我们需要根据渠道创建不同的配置目录</p>
+<h3 id="根据渠道创建配置文件"><a href="#根据渠道创建配置文件" class="headerlink" title="根据渠道创建配置文件"></a>根据渠道创建配置文件</h3><p>然后再在相应的创建一个Api.java，然后更改endpoint的值，创建完后我们的目录结构：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/create_build_variants_api.png" alt=""></p>
+<p>其中api1目录中的Api.java内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Api</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ENDPOINT = <span class="string">"http://api1.baidu.com"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>正常工作中到这一步，就可以实现不同的版本使用不同的Api，但是这里我为了更直观，所以在textview显示当前的endpoint和Build type</p>
+<h3 id="测试是否更改了endpoint"><a href="#测试是否更改了endpoint" class="headerlink" title="测试是否更改了endpoint"></a>测试是否更改了endpoint</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">TextView tv_info = (TextView) findViewById(R.id.tv_info);</div><div class="line">StringBuilder stringBuilder = <span class="keyword">new</span> StringBuilder();</div><div class="line">stringBuilder.append(<span class="string">"Endpoint:"</span>);</div><div class="line">stringBuilder.append(Api.ENDPOINT);</div><div class="line">stringBuilder.append(<span class="string">"\n"</span>);</div><div class="line"></div><div class="line">stringBuilder.append(<span class="string">"Build type:"</span>);</div><div class="line"></div><div class="line"><span class="keyword">if</span> (BuildConfig.DEBUG) &#123;</div><div class="line">    stringBuilder.append(<span class="string">"debug"</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    stringBuilder.append(<span class="string">"release"</span>);</div><div class="line">&#125;</div><div class="line">stringBuilder.append(<span class="string">"\n"</span>);</div><div class="line">tv_info.setText(stringBuilder.toString());</div></pre></td></tr></table></figure>
+<p>我们部署不同的版本，会发现内容却是改变了</p>
+<p>api1:</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/api1-endpoint.png" alt=""></p>
+<p>api2:</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/api2-endpoint.png" alt=""></p>
+<p>这种方法虽然我们更改了endpoint，但有时候也有这种需求，比如测试App我想测试app和正式app拥有不同的名字，甚至是不同的图标</p>
+<h2 id="替换部分AndroidManifest-xml"><a href="#替换部分AndroidManifest-xml" class="headerlink" title="替换部分AndroidManifest.xml"></a>替换部分AndroidManifest.xml</h2><p>首先我们在清单文件配</p>
+<p>置需要替换的地方配置上变量名</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">application</span></span></div><div class="line">        <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></div><div class="line">        <span class="attr">android:label</span>=<span class="string">"$&#123;app_name&#125;"</span></div></pre></td></tr></table></figure>
+<p>然后在项目的build.grade的productFlavors里替换项目变量</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">productFlavors &#123;</div><div class="line">    api1 &#123;</div><div class="line">        manifestPlaceholders = [<span class="string">app_name:</span> <span class="string">"api1版本"</span>]</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    api2 &#123;</div><div class="line">        manifestPlaceholders = [<span class="string">app_name:</span> <span class="string">"api2版本"</span>]</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    api &#123;</div><div class="line">        manifestPlaceholders = [<span class="string">app_name:</span> <span class="string">"@string/app_name"</span>]</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>分别运行不同的版本即可查看效果</p>
+<p>其实想要更改更改清单文件，也可以通过上面更改endpoint的方式更改，也就是把原来的清单文件复制一份到api目录，然后更改需要需更改的内容，比如我这里更改了label</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">application</span></span></div><div class="line">    <span class="attr">tools:replace</span>=<span class="string">"android:label"</span></div><div class="line">    <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></div><div class="line">    <span class="attr">android:label</span>=<span class="string">"完全更改清单文件"</span></div></pre></td></tr></table></figure>
+<p>更改完成后效果也是我们想要的，好了今天就到这里，，<a href="https://github.com/lifengsofts/TsetBuildVariants" target="_blank" rel="external">源码可以这里下载</a></p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Build-Variants/" rel="tag">#Build Variants</a>
+          
+            <a href="/tags/Product-Flavors/" rel="tag">#Product Flavors</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/19/use-lombok/" rel="next" title="Java界的神器-使用Lombok来消除你的冗余代码量">
+                <i class="fa fa-chevron-left"></i> Java界的神器-使用Lombok来消除你的冗余代码量
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/29/use-git-1/" rel="prev" title="Git使用笔记(一)">
+                Git使用笔记(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/21/use-build-variants/"
+     data-title="使用Build Variants和productFlavors来打包不同配置的APP"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/06/21/use-build-variants/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/21/use-build-variants/"
+           data-title="使用Build Variants和productFlavors来打包不同配置的APP" data-url="http://i.woblog.cn/2016/06/21/use-build-variants/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置不同的Api环境"><span class="nav-number">2.</span> <span class="nav-text">配置不同的Api环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置渠道"><span class="nav-number">2.1.</span> <span class="nav-text">配置渠道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据渠道创建配置文件"><span class="nav-number">2.2.</span> <span class="nav-text">根据渠道创建配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试是否更改了endpoint"><span class="nav-number">2.3.</span> <span class="nav-text">测试是否更改了endpoint</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#替换部分AndroidManifest-xml"><span class="nav-number">3.</span> <span class="nav-text">替换部分AndroidManifest.xml</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

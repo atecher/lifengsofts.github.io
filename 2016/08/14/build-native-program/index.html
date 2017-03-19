@@ -1,0 +1,834 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ndk,ndk-build,make," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ndk从android1.5就提供了原生的开发套件(Native Development Kit),从R8版本中支持3中cpu，分别是x86，mips,arm,我们一般以arm来讲解
+arm交叉工具链android-ndk-r12b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin，前缀为arm-linux-androi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android中原生代码的编译方式">
+<meta property="og:url" content="http://i.woblog.cn/2016/08/14/build-native-program/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="ndk从android1.5就提供了原生的开发套件(Native Development Kit),从R8版本中支持3中cpu，分别是x86，mips,arm,我们一般以arm来讲解
+arm交叉工具链android-ndk-r12b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin，前缀为arm-linux-androi">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build1.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build2.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build3.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android中原生代码的编译方式">
+<meta name="twitter:description" content="ndk从android1.5就提供了原生的开发套件(Native Development Kit),从R8版本中支持3中cpu，分别是x86，mips,arm,我们一般以arm来讲解
+arm交叉工具链android-ndk-r12b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin，前缀为arm-linux-androi">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> android中原生代码的编译方式 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                android中原生代码的编译方式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-14T16:45:58+00:00" content="2016-08-14">
+              2016-08-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/NDK/" itemprop="url" rel="index">
+                    <span itemprop="name">NDK</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/14/build-native-program/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/14/build-native-program/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ndk"><a href="#ndk" class="headerlink" title="ndk"></a>ndk</h1><p>从android1.5就提供了原生的开发套件(Native Development Kit),从R8版本中支持3中cpu，分别是x86，mips,arm,我们一般以arm来讲解</p>
+<h2 id="arm交叉工具链"><a href="#arm交叉工具链" class="headerlink" title="arm交叉工具链"></a>arm交叉工具链</h2><p>android-ndk-r12b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin，前缀为arm-linux-androideabi-，他们和linux下面的gcc使用没什么区别，只是他们编译的程序是用于android平台的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">arm-linux-androideabi-addr2line 将程序地址转换为文件名和行号</div><div class="line">arm-linux-androideabi-ar 建立，修改，提取归档文件</div><div class="line">arm-linux-androideabi-as gas汇编器</div><div class="line">arm-linux-androideabi-c++ g++的一个拷贝</div><div class="line">arm-linux-androideabi-c++filt 连接器使用它过滤符号，防止重载函数冲突</div><div class="line">arm-linux-androideabi-cpp c++程序编译工具</div><div class="line">arm-linux-androideabi-dwp </div><div class="line">arm-linux-androideabi-elfedit</div><div class="line">arm-linux-androideabi-g++ c++编译工具</div><div class="line">arm-linux-androideabi-gcc c程序编译工具</div><div class="line">arm-linux-androideabi-gcc-4.9 gcc拷贝</div><div class="line">arm-linux-androideabi-gcc-4.9.x gcc拷贝</div><div class="line">arm-linux-androideabi-gcc-ar</div><div class="line">arm-linux-androideabi-gcc-nm </div><div class="line">arm-linux-androideabi-gcc-ranlib 产生归档文件索引并保存到这个归档文件中</div><div class="line">arm-linux-androideabi-gcov 程序覆盖度测量工具，记录代码的执行路径</div><div class="line">arm-linux-androideabi-gcov-tool</div><div class="line">arm-linux-androideabi-gprof 程序信息测量工具</div><div class="line">arm-linux-androideabi-ld 连接器，用于生产可以执行文件</div><div class="line">arm-linux-androideabi-ld.bfd</div><div class="line">arm-linux-androideabi-ld.gold</div><div class="line">arm-linux-androideabi-nm 列出目标文件中的符号</div><div class="line">arm-linux-androideabi-objcopy 赋值目标文件中的内容到另一种类型的目标文件中</div><div class="line">arm-linux-androideabi-objdump 输出目标文件的信息(反编译)</div><div class="line">arm-linux-androideabi-ranlib </div><div class="line">arm-linux-androideabi-readelf 显示elf格式可执行文件信息</div><div class="line">arm-linux-androideabi-size 显示目标文件每一段的大小以及文件的大小</div><div class="line">arm-linux-androideabi-strings 输出目标文件的可打印字符串</div><div class="line">arm-linux-androideabi-strip 去除目标文件中的符号信息</div></pre></td></tr></table></figure>
+<h1 id="原生程序编译步骤"><a href="#原生程序编译步骤" class="headerlink" title="原生程序编译步骤"></a>原生程序编译步骤</h1><p>我们用下面的测试代码来测试几种编译方式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"hello arm\n"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="gcc"><a href="#gcc" class="headerlink" title="gcc"></a>gcc</h2><p>使用gcc需要些makefile(当然也可以直接在目录行下面将依赖库传递给gcc)然后make命令来编译</p>
+<h3 id="makefile"><a href="#makefile" class="headerlink" title="makefile"></a>makefile</h3><figure class="highlight mak"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">NDK_ROOT=/Users/renpingqing/Documents/android/android-ndk-r12b</div><div class="line">TOOLCHAINS_ROOT=<span class="variable">$(NDK_ROOT)</span>/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64</div><div class="line">TOOLCHAINS_PREFIX=<span class="variable">$(TOOLCHAINS_ROOT)</span>/bin/arm-linux-androideabi</div><div class="line">TOOLCHAINS_INCLUDE=<span class="variable">$(TOOLCHAINS_ROOT)</span>/lib/gcc/arm-linux-androideabi/4.9/include-fixed</div><div class="line"></div><div class="line">PLATFORM_ROOT=<span class="variable">$(NDK_ROOT)</span>/platforms/android-14/arch-arm</div><div class="line">PLATFORM_INCLUDE=<span class="variable">$(PLATFORM_ROOT)</span>/usr/include</div><div class="line">PLATFORM_LIB=<span class="variable">$(PLATFORM_ROOT)</span>/usr/lib</div><div class="line"></div><div class="line">MODULE_NAME=hello</div><div class="line">RM=rm -rf</div><div class="line"></div><div class="line">FLAGS=-I<span class="variable">$(TOOLCHAINS_INCLUDE)</span> \</div><div class="line">	-I<span class="variable">$(PLATFORM_INCLUDE)</span> \</div><div class="line">	-L<span class="variable">$(PLATFORM_LIB)</span> \</div><div class="line">	-nostdlib \</div><div class="line">	-lgcc \</div><div class="line">	-Bdynamic \</div><div class="line">	-lc</div><div class="line"></div><div class="line">OBJS=<span class="variable">$(MODULE_NAME)</span>.o \</div><div class="line">	<span class="variable">$(PLATFORM_LIB)</span>/crtbegin_dynamic.o \</div><div class="line">	<span class="variable">$(PLATFORM_LIB)</span>/crtend_android.o</div><div class="line"></div><div class="line"><span class="section">all:</span></div><div class="line">	#<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -c <span class="variable">$(MODULE_NAME)</span>.c -o <span class="variable">$(MODULE_NAME)</span>.o</div><div class="line">	#<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> <span class="variable">$(OBJS)</span> -o <span class="variable">$(MODULE_NAME)</span></div><div class="line"></div><div class="line">	#下面是分布来编译，一般情况下，用上面两条命令就行了</div><div class="line">	#预处理</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -E <span class="variable">$(MODULE_NAME)</span>.c -o <span class="variable">$(MODULE_NAME)</span>.i</div><div class="line"></div><div class="line">	#编译</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -S <span class="variable">$(MODULE_NAME)</span>.i -o <span class="variable">$(MODULE_NAME)</span>.s</div><div class="line"></div><div class="line">	#汇编</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> -c <span class="variable">$(MODULE_NAME)</span>.s -o <span class="variable">$(MODULE_NAME)</span>.o</div><div class="line"></div><div class="line">	#链接</div><div class="line">	<span class="variable">$(TOOLCHAINS_PREFIX)</span>-gcc <span class="variable">$(FLAGS)</span> <span class="variable">$(OBJS)</span> -o <span class="variable">$(MODULE_NAME)</span></div><div class="line"><span class="section">clean:</span></div><div class="line">	<span class="variable">$(RM)</span> *.o</div><div class="line"><span class="section">install:</span></div><div class="line">	adb push <span class="variable">$(MODULE_NAME)</span> /data/local/</div><div class="line">	adb shell chmod 755 /data/local/<span class="variable">$(MODULE_NAME)</span></div><div class="line">	adb shell /data/local/<span class="variable">$(MODULE_NAME)</span></div></pre></td></tr></table></figure>
+<p>FLAGS：变量添加了头文件和库文件上的搜索路径</p>
+<p>all:指定了编译程序时需要的命令</p>
+<p>clean:用于清理编译生成的文件</p>
+<p>install:用来将生成的可执行文件push到手机并执行</p>
+<blockquote>
+<p>注意：由于android没有采用标准的glibc库，而是用自己开发的bionic库，所以flags中需要加-nostdlib</p>
+</blockquote>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><p>接下来我们只需要执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">make</div><div class="line">make install</div></pre></td></tr></table></figure>
+<p>就可以看见如下输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello arm</div></pre></td></tr></table></figure>
+<p>如果makefile叫其他的名字那需要这样执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make -f makefile1</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：虽然我们可以通过makefile的方式来编译，但是官方推荐使用ndk-build来完成</p>
+</blockquote>
+<h2 id="ndk-build"><a href="#ndk-build" class="headerlink" title="ndk-build"></a>ndk-build</h2><p>使用gcc来编译时很原始的，所以android开发了一套编译套件，其目录结构一般是在android工程下创建一个jni目录，然后在里面放入原生代码源文件。同时编译脚本</p>
+<p>Android.mk：相当于makefile</p>
+<p>Application.mk(可选):描述原始程序本身的一些特性，如：支持的指令集，stl支持</p>
+<p>也放在这里</p>
+<p>Android.mk</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">#定义本地源码的路径，调用了my-dir宏，有编译系统提供，返回Android.mk文件本身的路径，一般在源码跟目录</div><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line"></div><div class="line"># 让编译系统清除已经定义的宏，像LOCAL_ARM_MODE是全局的，当编译多个模块如果不清除将会导致混乱</div><div class="line">include $(CLEAR_VARS)</div><div class="line"></div><div class="line">#指定原生程序所使用的arm指令模式</div><div class="line">LOCAL_ARM_MODE := arm</div><div class="line"></div><div class="line">#指定生成后的模块名称，如果是共享库，生成libhello.so</div><div class="line">LOCAL_MODULE := hello</div><div class="line"></div><div class="line">#源码列表，多个用空格分开</div><div class="line">LOCAL_SRC_FILES := hello.c</div><div class="line"></div><div class="line">#指定生成的文件类型，BUILD_SHARED_LIBRARY：动态库，BUILD_EXECUTEABLE:可执行文件，BUILD_STATIC_LIBRARY:静态库</div><div class="line">include $(BUILD_EXECUTABLE)</div></pre></td></tr></table></figure>
+<p>现在我们可以在jni上层目录执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ndk-build</div></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[arm64-v8a] Compile        : hello &lt;= hello.c</div><div class="line">[arm64-v8a] SharedLibrary  : libhello.so</div><div class="line">[arm64-v8a] Install        : libhello.so =&gt; libs/arm64-v8a/libhello.so</div><div class="line">[x86_64] Compile        : hello &lt;= hello.c</div><div class="line">[x86_64] SharedLibrary  : libhello.so</div><div class="line">[x86_64] Install        : libhello.so =&gt; libs/x86_64/libhello.so</div><div class="line">[mips64] Compile        : hello &lt;= hello.c</div><div class="line">[mips64] SharedLibrary  : libhello.so</div><div class="line">[mips64] Install        : libhello.so =&gt; libs/mips64/libhello.so</div><div class="line">[armeabi-v7a] Compile arm    : hello &lt;= hello.c</div><div class="line">[armeabi-v7a] SharedLibrary  : libhello.so</div><div class="line">[armeabi-v7a] Install        : libhello.so =&gt; libs/armeabi-v7a/libhello.so</div><div class="line">[armeabi] Compile arm    : hello &lt;= hello.c</div><div class="line">[armeabi] SharedLibrary  : libhello.so</div><div class="line">[armeabi] Install        : libhello.so =&gt; libs/armeabi/libhello.so</div><div class="line">[x86] Compile        : hello &lt;= hello.c</div><div class="line">[x86] SharedLibrary  : libhello.so</div><div class="line">[x86] Install        : libhello.so =&gt; libs/x86/libhello.so</div><div class="line">[mips] Compile        : hello &lt;= hello.c</div><div class="line">[mips] SharedLibrary  : libhello.so</div><div class="line">[mips] Install        : libhello.so =&gt; libs/mips/libhello.so</div></pre></td></tr></table></figure>
+<p>我们可以在当前目录看到生成libs目录有如下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">arm64-v8a</div><div class="line">	hello</div><div class="line">armeabi</div><div class="line">	hello</div><div class="line">armeabi-v7a</div><div class="line">	hello</div><div class="line">mips</div><div class="line">	hello</div><div class="line">mips64</div><div class="line">	hello</div><div class="line">x86</div><div class="line">	hello</div><div class="line">x86_64</div><div class="line">	hello</div></pre></td></tr></table></figure>
+<p>如果我们没有指定编译平台，他会编译所有平台。我只需要将arm下的hello文件push到手机，然后运行也可以看到上面同样的输出</p>
+<h3 id="源码不再jni目录"><a href="#源码不再jni目录" class="headerlink" title="源码不再jni目录"></a>源码不再jni目录</h3><p>有时候我们的源码不一定放在jni目录，那么在当前目录执行ndk-build后有如下提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Android NDK: Could not find application project directory !    </div><div class="line">Android NDK: Please define the NDK_PROJECT_PATH variable to point to it.    </div><div class="line">/Users/renpingqing/Documents/android/android-ndk-r12b/build/core/build-local.mk:151: *** Android NDK: Aborting    .  Stop.</div></pre></td></tr></table></figure>
+<p>解决办法是要指定NDK_PROJECT_PATH等文件的路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk</div></pre></td></tr></table></figure>
+<p>这样就可以编译了，会在当前目录下生产libs目录</p>
+<h2 id="eclipse自动编译"><a href="#eclipse自动编译" class="headerlink" title="eclipse自动编译"></a>eclipse自动编译</h2><p>大家可以发现如果我们的ndk代码很多而又是从java层调用这些代码，如果我改一点在手动编译，可以是说有点麻烦，所以接下来我们说说怎么是eclipse自动编译，所谓自动编译就是我改了c/c++文件，然后运行和java代码编译方式没什么两样，这里我们可以以官方的<a href="https://github.com/googlesamples/android-ndk/tree/android-mk/hello-jni" target="_blank" rel="external">hello-jni</a>例子来演示自动build</p>
+<h3 id="新建一个build"><a href="#新建一个build" class="headerlink" title="新建一个build"></a>新建一个build</h3><p>在项目右键-properties-builders-new，来到如下界面</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build1.png" alt=""></p>
+<p>我们按照上图填写，接下来我们来到refresh标签</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build2.png" alt=""></p>
+<p>build options</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com/eclipse-build3.png" alt=""></p>
+<p>这一步我们除了勾选上图，还需要点击specify resource按钮选择jni目录，到这里基本配置完成了，单机ok，如果配置没问题，就会自动编译jni下面的源码。最重要的是，下次我们改变了jni下面的代码他会自动触发编译</p>
+<h2 id="android-studio"><a href="#android-studio" class="headerlink" title="android studio"></a>android studio</h2><p>创建项目我就不说了。创建完成后再项目右键选择open module settings在sdk location的idk location中选择ndk目录</p>
+<p>将源代码添加到main/jni目录下，不在需要Android.mk这样的文件了。在build.gradle开启ndk编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">    ...</div><div class="line">    ndk&#123;</div><div class="line">        moduleName &quot;hello-jni&quot;    //lib的名称，对应LOCAL_MODULE</div><div class="line">        //stl &quot;stlport_shared&quot;    //对应APP_STL</div><div class="line">        ldLibs &quot;log&quot;, &quot;z&quot;, &quot;m&quot;  //链接时使用到的库，对应LOCAL_LDLIBS</div><div class="line">        //cFlags 编译gcc的flag，对应LOCAL_CFLAGS</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>添加完后，直接运行就可以编译了。如果报错</p>
+<h3 id="Error-NDK-integration-is-deprecated-in-the-current-plugin"><a href="#Error-NDK-integration-is-deprecated-in-the-current-plugin" class="headerlink" title="Error: NDK integration is deprecated in the current plugin"></a>Error: NDK integration is deprecated in the current plugin</h3><p>如果编译时报错，详细错误信息如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Error:Execution failed for task &apos;:app:compileDebugNdk&apos;.</div><div class="line">&gt; Error: NDK integration is deprecated in the current plugin.  Consider trying the new experimental plugin.  For details, see http://tools.android.com/tech-docs/new-build-system/gradle-experimental.  Set &quot;android.useDeprecatedNdk=true&quot; in gradle.properties to continue using the current NDK integration.</div></pre></td></tr></table></figure>
+<p>直接在gradle.properties中添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">android.useDeprecatedNdk=true</div></pre></td></tr></table></figure>
+<h3 id="关闭自动编译"><a href="#关闭自动编译" class="headerlink" title="关闭自动编译"></a>关闭自动编译</h3><p>有时候我们想关闭自动as的自动编译，我们注释掉build.gradle的ndk配置，然后添加Android.mk，在jni上层目录执行ndk-build，但是他生成默认在libs目录下，我们需要手动创建jniLibs然后将libs下面的拷贝到当前目录。<a href="https://github.com/lifengsofts/BuildNativeCodeSimple" target="_blank" rel="external">以上测试代码在这里</a></p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ndk/" rel="tag">#ndk</a>
+          
+            <a href="/tags/ndk-build/" rel="tag">#ndk-build</a>
+          
+            <a href="/tags/make/" rel="tag">#make</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/10/arm-assembly/" rel="next" title="ARM汇编">
+                <i class="fa fa-chevron-left"></i> ARM汇编
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/14/elf-format/" rel="prev" title="elf文件格式">
+                elf文件格式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/14/build-native-program/"
+     data-title="android中原生代码的编译方式"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/08/14/build-native-program/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/14/build-native-program/"
+           data-title="android中原生代码的编译方式" data-url="http://i.woblog.cn/2016/08/14/build-native-program/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ndk"><span class="nav-number">1.</span> <span class="nav-text">ndk</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#arm交叉工具链"><span class="nav-number">1.1.</span> <span class="nav-text">arm交叉工具链</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原生程序编译步骤"><span class="nav-number">2.</span> <span class="nav-text">原生程序编译步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gcc"><span class="nav-number">2.1.</span> <span class="nav-text">gcc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#makefile"><span class="nav-number">2.1.1.</span> <span class="nav-text">makefile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译"><span class="nav-number">2.1.2.</span> <span class="nav-text">编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ndk-build"><span class="nav-number">2.2.</span> <span class="nav-text">ndk-build</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#源码不再jni目录"><span class="nav-number">2.2.1.</span> <span class="nav-text">源码不再jni目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#eclipse自动编译"><span class="nav-number">2.3.</span> <span class="nav-text">eclipse自动编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建一个build"><span class="nav-number">2.3.1.</span> <span class="nav-text">新建一个build</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#android-studio"><span class="nav-number">2.4.</span> <span class="nav-text">android studio</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Error-NDK-integration-is-deprecated-in-the-current-plugin"><span class="nav-number">2.4.1.</span> <span class="nav-text">Error: NDK integration is deprecated in the current plugin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关闭自动编译"><span class="nav-number">2.4.2.</span> <span class="nav-text">关闭自动编译</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

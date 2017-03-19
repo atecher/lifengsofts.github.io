@@ -1,0 +1,823 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="mikrotik," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="任苹蜻的博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="什么是RouterOSMikroTik RouterOS是一种路由操作系统，是基于Linux核心开发，兼容x86 PC的路由软件,并通过该软件将标准的PC电脑变成专业路由器，他有如下优点：
+1、强大的防火墙功能：支持二到七层的防火墙规则，实时监控网络的异常行为，及时发现及时禁止。　　2、有效的带宽管理：优化网络、合理分配网络带宽，有效预防网络拥塞，尽可能保障网络传输通畅。　　3、邮件安全：邮件备份">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vmware安装MikroTik-Routers-OS系统">
+<meta property="og:url" content="http://i.woblog.cn/2016/06/09/vmware安装MikroTik-Routers-OS系统/index.html">
+<meta property="og:site_name" content="任苹蜻的博客">
+<meta property="og:description" content="什么是RouterOSMikroTik RouterOS是一种路由操作系统，是基于Linux核心开发，兼容x86 PC的路由软件,并通过该软件将标准的PC电脑变成专业路由器，他有如下优点：
+1、强大的防火墙功能：支持二到七层的防火墙规则，实时监控网络的异常行为，及时发现及时禁止。　　2、有效的带宽管理：优化网络、合理分配网络带宽，有效预防网络拥塞，尽可能保障网络传输通畅。　　3、邮件安全：邮件备份">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//kd1ugox52z5v13v381p05kkxzu.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//o58vzzpark3aytywgr6pali8ux.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//opgwqe0rdf7mbe7wh9il1d5gn9.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//1nvtapfkhww892wk3ydq4f2mx6.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//jtvsz0c72mlsoflsr2z2tmaxuh.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//n94bq38utm15g1x019kfj5y5bf.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//22a2mfwf8brwlclw2j7eoy8drt.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//h6rnk1t4adwvc76zru8uym8guv.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//1svrsfp461nbqfo82p9dccpcfp.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//ci99x6dlgeng6ykap7gski46xb.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//o0u571h1wqyw4wsa5hcx8guiej.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//7dluz9359eculbzpjm4sfafrsh.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//u5z9mqy86lx1d323m9p8jl8t9y.png">
+<meta property="og:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//su8y8022rfojq5trb6kwpp29sh.png">
+<meta property="og:updated_time" content="2017-03-19T14:22:37.668Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vmware安装MikroTik-Routers-OS系统">
+<meta name="twitter:description" content="什么是RouterOSMikroTik RouterOS是一种路由操作系统，是基于Linux核心开发，兼容x86 PC的路由软件,并通过该软件将标准的PC电脑变成专业路由器，他有如下优点：
+1、强大的防火墙功能：支持二到七层的防火墙规则，实时监控网络的异常行为，及时发现及时禁止。　　2、有效的带宽管理：优化网络、合理分配网络带宽，有效预防网络拥塞，尽可能保障网络传输通畅。　　3、邮件安全：邮件备份">
+<meta name="twitter:image" content="http://7qnc6h.com1.z0.glb.clouddn.com//kd1ugox52z5v13v381p05kkxzu.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <title> vmware安装MikroTik-Routers-OS系统 | 任苹蜻的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?48746acb55f702790215ece2fb3a3be5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">任苹蜻的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                vmware安装MikroTik-Routers-OS系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-09T21:57:06+00:00" content="2016-06-09">
+              2016-06-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Router-OS/" itemprop="url" rel="index">
+                    <span itemprop="name">Router OS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/09/vmware安装MikroTik-Routers-OS系统/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/09/vmware安装MikroTik-Routers-OS系统/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是RouterOS"><a href="#什么是RouterOS" class="headerlink" title="什么是RouterOS"></a>什么是RouterOS</h2><p>MikroTik RouterOS是一种路由操作系统，是基于Linux核心开发，兼容x86 PC的路由软件,并通过该软件将标准的PC电脑变成专业路由器，他有如下优点：</p>
+<p>1、强大的防火墙功能：支持二到七层的防火墙规则，实时监控网络的异常行为，及时发现及时禁止。　　<br>2、有效的带宽管理：优化网络、合理分配网络带宽，有效预防网络拥塞，尽可能保障网络传输通畅。　　<br>3、邮件安全：邮件备份、邮件杀毒，垃圾邮件过滤，确保对外联络的安全。　　<br>4、有效的抵御各种网络威胁：有效对上网人员的上网行为进行管理，制定相应访问策略，降低网络面临的安全风险，保障网络的安全。　　<br>5、多种接入方式：路由、网关、并接等多种接入方式，降低对网络的影响。在不改变网络环境的情况下，方便的实现对原有网络的管理。　　<br>6、规避法律风险：有效屏蔽非法网站，阻断上网人员的非法上网行为。　　<br>7、友好的管理界面：使用方便的WEB方式进行管理，无需安装任何客户端软件就可实现管理和控制。　　<br>8、提高工作效率：控制部分人员上网聊天、游戏等行为，从而提高工作效率。　　<br>9、降低网络管理成本：可使用现有的硬件。同支持网关、防火墙、路由器、IDS、内容监控等等功能，完全能满足一般的网络安全及管理的需求，无需购买 其他的网络 安全设备。有效的解决中小网络用户一方面对网络安全及网络管理方面的强烈需求另一方面又无法过多的投入去购买高昂的各种专业设备的矛盾。</p>
+<p>而我们这里安装的是mikrotik的router os，同类软件有海蜘蛛等</p>
+<h2 id="vmware安装RouterOS"><a href="#vmware安装RouterOS" class="headerlink" title="vmware安装RouterOS"></a>vmware安装RouterOS</h2><h3 id="下载系统"><a href="#下载系统" class="headerlink" title="下载系统"></a>下载系统</h3><p>到<a href="http://www.mikrotik.com/download" target="_blank" rel="external">官网这里下载</a>根据你的CPU架构选择相应的版本，我这里下载的是X86架构</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//kd1ugox52z5v13v381p05kkxzu.png" alt=""></p>
+<p>我这里的版本是mikrotik-6.34.6.iso</p>
+<h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>安装虚拟机我这里就不说了，网上有教程，我这里使用的vm版本是11.0.0，系统选择ubuntu，版本也是<br>其中要注意的就是至少添加两块以上的网卡，模式为桥接模式，不是要勾选复制物理连接状态<br>硬盘的格式改为IDE模式</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//o58vzzpark3aytywgr6pali8ux.png" alt=""></p>
+<p>并移除必须要的硬件，比如：声卡，打印机，USB等，完成后的硬件配置如下：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//opgwqe0rdf7mbe7wh9il1d5gn9.png" alt=""></p>
+<p>编辑CD/DVD添加上面下载的ISO文件，然后开启电源，就可以看到启动界面了</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//1nvtapfkhww892wk3ydq4f2mx6.png" alt=""></p>
+<p>可以看到是让我们选择安装什么样的套件，他预设了两种一种是全安装(a)，另一种是(m)，另外他还说按i键安装，我这里选择全部</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//jtvsz0c72mlsoflsr2z2tmaxuh.png" alt=""></p>
+<p>输入：y</p>
+<p>安装完以后可以看到如下提示，说按ENTER键重启</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//n94bq38utm15g1x019kfj5y5bf.png" alt=""></p>
+<p>重启后可以看到如下界面：</p>
+<p>并登陆，用户名admin，没有密码</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//22a2mfwf8brwlclw2j7eoy8drt.png" alt=""></p>
+<p>到这里我们就安装完成了，下面说的是怎么连接了</p>
+<h2 id="winbox连接"><a href="#winbox连接" class="headerlink" title="winbox连接"></a>winbox连接</h2><p>我实在<a href="http://www.cr173.com/soft/32413.html" target="_blank" rel="external">这里下在</a>的winbox 3.30</p>
+<p>打开后，我们点击这个按钮，他就会自动探测局域网中的软路由设备，并显示MAC地址</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//h6rnk1t4adwvc76zru8uym8guv.png" alt=""></p>
+<p>点击后可以看到我们刚刚安装的系统，并可以看到有两个MAC地址，因为我们刚刚添加了两块网卡</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//1svrsfp461nbqfo82p9dccpcfp.png" alt=""></p>
+<p>选择其中任意一个地址就能连接了，成功后如下图：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//ci99x6dlgeng6ykap7gski46xb.png" alt=""></p>
+<p>第一步，我先设置这个路由器的一些信息，比如：IP</p>
+<p>点击旁边的Quick Set，编写完毕</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//o0u571h1wqyw4wsa5hcx8guiej.png" alt=""></p>
+<p>到这步，我们就可以在手机上通过IP地址来管理他了，当然也可以网页管理了</p>
+<h2 id="网页管理"><a href="#网页管理" class="headerlink" title="网页管理"></a>网页管理</h2><p>直接输入上面填写的IP，随便那一个都行，比如我的地址是：<a href="http://192.168.1.249/webfig/" target="_blank" rel="external">http://192.168.1.249/webfig/</a> 打开后可以看到如下界面：</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//7dluz9359eculbzpjm4sfafrsh.png" alt=""></p>
+<h2 id="使用Tiktool管理"><a href="#使用Tiktool管理" class="headerlink" title="使用Tiktool管理"></a>使用Tiktool管理</h2><p>这是一个手机版本的Winbox，我这里使用的是Android版本，可以在<a href="http://www.tiktool.com/" target="_blank" rel="external">这里下载到</a></p>
+<p>填完用户名和ip地址后</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//u5z9mqy86lx1d323m9p8jl8t9y.png" alt=""></p>
+<p>点击连接，现在你可以直接在手机上管理路由啦</p>
+<p><img src="http://7qnc6h.com1.z0.glb.clouddn.com//su8y8022rfojq5trb6kwpp29sh.png" alt=""></p>
+<p>好，今天的基本安装和使用就到这里啦</p>
+
+      
+    </div>
+    
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="任苹蜻 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton", disable="enable", onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}", style="cursor: pointer; border: 0; outline: 0; border-radius: 100%; padding: 0; margin: 0; letter-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none">
+    <span onmouseover="this.style.color='rgb(236,96,0)';this.style.background='rgb(204,204,204)'" onMouseOut="this.style.color='#fff';this.style.background='rgb(236,96,0)'" style="display: inline-block; width: 70px; height: 70px; border-radius: 100%; line-height: 81px; color: #fff; font: 400 35px/75px 'microsofty'; background: rgb(236,96,0)">赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/wechat-reward-image.png" alt="任苹蜻 WeChat Pay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>微信打赏</p>
+      </div>
+    
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/alipay-reward-image.png" alt="任苹蜻 Alipay" style="width: 200px; max-width: 100%; display: inline-block"/>
+        <p>支付宝打赏</p>
+      </div>
+    
+  </div>
+</div>
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mikrotik/" rel="tag">#mikrotik</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/04/两个surfaceview的重叠效果类似直播效果中的视频和讲义实践/" rel="next" title="两个surfaceview的重叠效果类似直播效果中的视频和讲义实践">
+                <i class="fa fa-chevron-left"></i> 两个surfaceview的重叠效果类似直播效果中的视频和讲义实践
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/09/win7下安装Gta5的一些常见问题/" rel="prev" title="win7下安装Gta5的一些常见问题">
+                win7下安装Gta5的一些常见问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/09/vmware安装MikroTik-Routers-OS系统/"
+     data-title="vmware安装MikroTik-Routers-OS系统"
+     data-content=""
+     data-url="http://i.woblog.cn/2016/06/09/vmware安装MikroTik-Routers-OS系统/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/09/vmware安装MikroTik-Routers-OS系统/"
+           data-title="vmware安装MikroTik-Routers-OS系统" data-url="http://i.woblog.cn/2016/06/09/vmware安装MikroTik-Routers-OS系统/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
+               alt="任苹蜻" />
+          <p class="site-author-name" itemprop="name">任苹蜻</p>
+          <p class="site-description motion-element" itemprop="description">关注移动开发，大数据，云计算，软件架构（原博客：http://me.woblog.cn/）</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">62</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">86</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/renpingqing1993" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lifengsofts/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/2cb78e578e43/latest_articles" target="_blank" title="Jianshu">
+                  
+                    <i class="fa fa-Jianshu"></i>
+                  
+                  Jianshu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element">
+            <div class="links-of-blogroll-title">Links</div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是RouterOS"><span class="nav-number">1.</span> <span class="nav-text">什么是RouterOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vmware安装RouterOS"><span class="nav-number">2.</span> <span class="nav-text">vmware安装RouterOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载系统"><span class="nav-number">2.1.</span> <span class="nav-text">下载系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建虚拟机"><span class="nav-number">2.2.</span> <span class="nav-text">创建虚拟机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#winbox连接"><span class="nav-number">3.</span> <span class="nav-text">winbox连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网页管理"><span class="nav-number">4.</span> <span class="nav-text">网页管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Tiktool管理"><span class="nav-number">5.</span> <span class="nav-text">使用Tiktool管理</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">任苹蜻</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iwoblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
