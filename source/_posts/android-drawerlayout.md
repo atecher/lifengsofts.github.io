@@ -1832,6 +1832,57 @@ Toolbar toolbar= (Toolbar) findViewById(R.id.tb);
 
 ```
 
+# CardView
+
+v7-CardView项目
+
+特性：
+
+1.边框圆角
+
+​	5.x:图片和布局都可以很好地显示圆角，图片也能变圆角
+
+​	4.x：图片不能变圆角，如果要和5.x一样，通过加载图片的时候自己处理成圆角
+
+2.阴影效果
+
+3.5.x有Ripple水波效果（低版本需要自定义）
+
+​	android:foreground="?attr/selectableItemBackground"
+
+​	androi:clickable=”true“
+
+4.可以设置内容边距
+
+​	app:contentPadding="5dp"
+
+
+
+```xml
+<android.support.v7.widget.CardView
+        android:id="@+id/cardView"
+         android:layout_width="300dp"
+         android:layout_height="200dp"
+         app:cardCornerRadius="20dp"
+         app:cardElevation="20dp"
+         android:layout_margin="16dp"
+         android:foreground="?attr/selectableItemBackground"
+         android:clickable="true"
+         android:stateListAnimator="@anim/z_translation"
+         >
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/tulips2" />
+    </android.support.v7.widget.CardView>
+```
+
+foreground:点击放开水波效果
+
+stateListAnimator：按下z轴
+
 # FloatingActionButton
 
 design包，悬浮动作按钮，可以设置着色阴影
@@ -2075,6 +2126,8 @@ public class MainActivity extends AppCompatActivity {
 上面那种实现方法我们还得写监听器，继承ViewGroup,协调并掉拥堵子控件，产生一些效果。
 
 通过设置View的Behavior来设置触摸动画的调度。
+
+滑动控件：RecyclerView/NetstedScrollView(ScorllView升级版)，ViewPager也可以，ListView不行
 
 ## Behavior
 
@@ -2336,5 +2389,498 @@ public class FabBehavior extends FloatingActionButton.Behavior {
   }
 }
 
+```
+
+## 注意
+
+当用FloatActionButton和Snake时，如果外层不是CoordinatorLayout，Snake显示的时候回盖住FloatActionButton
+
+# AppBarLayout
+
+增强ToolBar,在RecycleView上设置一个
+
+app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+然后Toolbar上设置
+
+app:layout_scrollFlags="scroll"，就可以监听RecycleView滑动，TOolbar上滑
+
+layout_scrollFlags取值：
+
+scroll：一定要滑到顶部才显示toolbar
+
+enterAlways:快速返回，只要下滑就显示
+
+enterAlwaysCollapsed:
+
+exitUnitCollapsed:折叠后，toolbar停留在顶部
+
+snap:
+
+## NestedScrollView
+
+v4, ScrollView升级版,联动
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="cn.woblog.android.l16mdfabanimation.MainActivity">
+
+  <android.support.design.widget.AppBarLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.Toolbar
+      android:id="@+id/tb"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimary"
+      app:layout_scrollFlags="scroll|enterAlways"></android.support.v7.widget.Toolbar>
+  </android.support.design.widget.AppBarLayout>
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab"
+    android:layout_width="58dp"
+    android:layout_height="58dp"
+    android:layout_margin="16dp"
+    android:layout_gravity="bottom|end"
+    android:background="@drawable/fab_bg"
+    android:onClick="fabClick"
+    android:src="@android:drawable/ic_input_add"
+    app:layout_behavior="cn.woblog.android.l16mdfabanimation.FabBehavior" />
+
+  <android.support.v4.widget.NestedScrollView
+    android:id="@+id/rv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+      <android.support.v7.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+    </LinearLayout>
+  </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
+```
+
+## ViewPager+TabLyout+Fragment+AppBarLayout
+
+在activity中使用AppBarLayout包裹住Toolbar,TabLyout,然后在TabLyout中添加
+
+app:layout_scrollFlags="scroll|enterAlways"，将NestedScrollView放到每个fragment中。
+
+activity.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  tools:context="cn.woblog.android.l12_md_tablayout.MainActivity">
+
+  <android.support.design.widget.AppBarLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.Toolbar
+      android:id="@+id/tb"
+      android:layout_width="match_parent"
+      android:title="这是标题"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimary"
+      app:layout_scrollFlags="scroll|enterAlways"></android.support.v7.widget.Toolbar>
+    <android.support.design.widget.TabLayout
+      android:id="@+id/tl"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:tabIndicatorColor="#0f0"
+      app:tabMode="fixed"
+      app:tabSelectedTextColor="#f00"
+      app:tabTextColor="@color/colorPrimary"></android.support.design.widget.TabLayout>
+  </android.support.design.widget.AppBarLayout>
+
+
+  <android.support.v4.view.ViewPager
+    android:id="@+id/vp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+</android.support.design.widget.CoordinatorLayout>
+
+```
+
+fragment_news.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <android.support.v4.widget.NestedScrollView
+    android:id="@+id/rv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="5dp">
+        <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleType="centerCrop"
+          android:src="@drawable/tulips2" />
+      </android.support.v7.widget.CardView>
+    </LinearLayout>
+  </android.support.v4.widget.NestedScrollView>
+</LinearLayout>
+```
+
+## CollapsingToolBarLayout
+
+toolbar折叠，
+
+1.AppBarLayout设置固定高度，并且要实现折叠效果必须必toolbar高
+
+2.CollapsingToolBarLayout高度要match_parent
+
+​	app:layout_collapseMode:
+
+​		parallax:视差效果
+
+​			layout_collapseParallaxMultiplier:0~1,视差效果，0：完全被推上去，1：完成不动
+
+​		pin:固定，最后推出去
+
+​		none:推出去
+
+# Behavior
+
+桥梁，监听子控件
+
+所有的Behavior都是CoordinatorLayout里面的public static abstract class Behavior<V extends View>的子类。
+
+他可以应用在一下场景:
+
+1.某个View监听另外一个View的状态,比如：位置，大小，显示状态
+
+​	重写layoutDependsOn/onDependentViewChanged
+
+2.某个View需要监听Coordinator里面的所有控件滑动状态
+
+​	onStartNestedScroll,onNestedScroll,onNestedPreScroll
+
+## 监听另一个控件状态
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingTop="@dimen/activity_vertical_margin"
+  android:paddingBottom="@dimen/activity_vertical_margin"
+  android:paddingLeft="@dimen/activity_horizontal_margin"
+  android:paddingRight="@dimen/activity_horizontal_margin"
+  tools:context="cn.woblog.android.l19mdcustombehavior.MainActivity">
+
+  <TextView
+    android:id="@+id/tv1"
+    android:layout_width="100dp"
+    android:layout_height="200dp"
+    android:background="#f00"
+    android:text="被观察者" />
+
+  <TextView
+    app:layout_behavior="cn.woblog.android.l19mdcustombehavior.CustomBehavior"
+    android:layout_width="100dp"
+    android:layout_height="200dp"
+    android:layout_gravity="right|top"
+    android:background="#0f0"
+    android:text="观察者" />
+</android.support.design.widget.CoordinatorLayout>
+
+```
+
+```java
+package cn.woblog.android.l19mdcustombehavior;
+
+import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.TextView;
+
+/**
+ * Created by renpingqing on 2017/3/18.
+ */
+
+public class CustomBehavior extends CoordinatorLayout.Behavior<View> {
+
+  public CustomBehavior() {
+  }
+
+  public CustomBehavior(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
+
+  /**
+   * 用来决定需要监听哪些控件或者容器的状态
+   *  1.系统需要知道监听谁
+   *  2.监听什么状体
+   *    比如：只监听TextView的上下滑动事件
+   * @param parent 父容器，CoordinatorLayout
+   * @param child 子控件,被监听的View
+   * @param dependency 你要监听的View
+   * @return
+   */
+  @Override
+  public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
+    //可以根据tag，id判断确定检测那个
+    return dependency instanceof TextView || super.layoutDependsOn(parent, child, dependency);
+  }
+
+  /**
+   * 当被监听的View发生改变的时候，这里是Textview1
+   * @param parent
+   * @param child
+   * @param dependency
+   * @return
+   */
+  @Override
+  public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
+
+    //获取被监听View垂直方向的位置
+    int offset=dependency.getTop()-child.getTop();
+    ViewCompat.offsetTopAndBottom(child,offset);
+
+    //还可以旋转
+    child.animate().rotation(child.getTop()*20);
+    return super.onDependentViewChanged(parent, child, dependency);
+  }
+}
+
+```
+
+然后改变TextView1的位置
+
+```java
+tv1 = (TextView) findViewById(R.id.tv1);
+    tv1.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        ViewCompat.offsetTopAndBottom(v,20);
+      }
+    });
+```
+
+## 监听另一个控件滑动
+
+# 属性动画
+
+## 什么是
+
+控制控件属性，3.0开始的，如果兼容3.0以下，使用NineOldAnimation,和系统API差不多
+
+以前都是补间动画BetweenAnimation，帧动画FrameAnimation
+
+## 补间动画 
+
+```
+Animation animation = AnimationUtils.loadAnimation(this, R.anim.translate);
+button.startAnimation(animation);
+```
+
+## 属性动画
+
+```
+ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", 0f, 200f);
+animator.setDuration(400);
+animator.start();
+```
+
+### 多个动画
+
+```
+ObjectAnimator animator=ObjectAnimator.ofFloat(view,"hehe",0f,200f);
+animator.setDuration(5000);
+animator.addUpdateListener(new AnimatorUpdateListener() {
+  @Override
+  public void onAnimationUpdate(ValueAnimator animation) {
+    animation.getAnimatedFraction();//以及执行的动画百分比
+    float v = (float) animation.getAnimatedValue(); //当前值
+    view.setAlpha(v/200);
+    view.setScaleX(v/200);
+    view.setScaleY(v/200);
+  }
+});
+animator.start();
+```
+
+```
+ ValueAnimator valueAnimator = ValueAnimator.ofFloat(0f, 200f);
+  valueAnimator.setDuration(200);
+  valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+      float v= (float) animation.getAnimatedValue();
+      view.setScaleX(0.5f+v/200); //0.5~1.0
+      view.setScaleY(0.5f+v/200); //0.5~1.0
+    }
+  });
+
+valueAnimator.start();
+```
+
+```
+PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0.6f, 1.0f);
+PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0.6f, 1.0f);
+PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0.6f, 1.0f);
+ObjectAnimator objectAnimator = ObjectAnimator
+    .ofPropertyValuesHolder(view, alpha, scaleX, scaleY);
+objectAnimator.setDuration(400);
+objectAnimator.start();
+```
+
+```
+//动画集合
+    ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.6f, 1.0f);
+    ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 0.6f, 1.0f);
+    ObjectAnimator objectAnimator3 = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 0.6f, 1.0f);
+
+    AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet.setDuration(400);
+//    animatorSet.play();//单个动画
+//    animatorSet.playTogether(objectAnimator1,objectAnimator2,objectAnimator3); //将动画加入，同时执行
+    animatorSet.playSequentially(objectAnimator1,objectAnimator2,objectAnimator3); //将动画加入，顺序执行
+    animatorSet.start();
+```
+
+## 插值器
+
+### 加速
+
+```
+ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", 0f, 400f);
+animator.setDuration(2000);
+animator.setInterpolator(new AccelerateInterpolator(5));  //5是插值因子，越大越快
+animator.start();
 ```
 
